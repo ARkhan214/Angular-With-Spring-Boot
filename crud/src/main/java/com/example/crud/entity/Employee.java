@@ -4,6 +4,7 @@ package com.example.crud.entity;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "employees")
 public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +22,10 @@ public class Employee {
         this.salary = salary;
         this.designation = designation;
     }
+
+
+    public Employee(String name,float salary, String designation) {}
+
 
     public Long getId() {
         return id;
@@ -46,11 +51,11 @@ public class Employee {
         this.salary = salary;
     }
 
-    public String getDesagination() {
+    public String getDesignation() {
         return designation;
     }
 
-    public void setDesagination(String designation) {
+    public void setDesignation(String designation) {
         this.designation = designation;
     }
 }
