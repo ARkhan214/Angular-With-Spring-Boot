@@ -50,15 +50,21 @@
 
 </div>
 
-<!-- ✅ SweetAlert Success Message Handler -->
-<script th:if="${message != null}">
-    Swal.fire({
-        icon: 'success',
-        title: [[${message}]],
-        showConfirmButton: false,
-        timer: 2000
-    });
+<!-- ✅ SweetAlert2 Message with Thymeleaf -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    let msg = /*[[${message}]]*/ null;
+    if (msg) {
+        Swal.fire({
+            icon: 'success',
+            title: msg,
+            showConfirmButton: false,
+            timer: 2000
+        });
+    }
+    /*]]>*/
 </script>
+
 
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
