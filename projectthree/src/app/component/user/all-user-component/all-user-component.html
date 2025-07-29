@@ -1,0 +1,63 @@
+<p>all-user-component works!</p>
+<div class="container my-5 p-4 bg-light border rounded shadow-lg">
+
+  <!-- Section Header -->
+  <div class="text-center mb-4 py-3 rounded text-white"
+       style="background: linear-gradient(45deg, #0061ff, #60efff); box-shadow: 0 0 10px rgba(0,0,0,0.2);">
+    <h2 class="fw-bold mb-0">
+      <i class="fa fa-users me-2"></i> User List
+    </h2>
+  </div>
+
+  <!-- 📋 User Table -->
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover table-striped align-middle text-center shadow-sm">
+      <thead class="table-primary">
+        <tr>
+          <th scope="col">#ID</th>
+          <th scope="col">Photo</th>
+          <th scope="col">Name</th>
+          <th scope="col">Email</th>
+          <th scope="col">Phone</th>
+          <th scope="col">Password</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- 🔄 Dynamic User List -->
+        <tr *ngFor="let u of users">
+          <td>{{ u.id }}</td>
+          <td>
+            <img [src]="'http://localhost:8088/images/users/'+u.photo"
+                 alt="User Photo"
+                 class="rounded-circle border border-secondary"
+                 style="width: 100px; height: 100px; object-fit: cover;">
+          </td>
+          <td>{{ u.name }}</td>
+          <td>{{ u.email }}</td>
+          <td>{{ u.phone }}</td>
+          <td>
+            <span class="text-muted fst-italic">••••••••</span>
+          </td>
+          <td>
+            <div class="d-flex justify-content-center gap-2">
+              <button class="btn btn-outline-info btn-sm" (click)="viewUser(u.id)">
+                <i class="fa fa-eye"></i>
+              </button>
+              <button class="btn btn-outline-danger btn-sm" (click)="deleteUser(u.id)">
+                <i class="fa fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- 🟥 No User Fallback -->
+        <tr *ngIf="users.length === 0">
+          <td colspan="7" class="text-center text-danger fw-semibold py-3">
+            <i class="fa fa-exclamation-circle me-2"></i> No users found.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
