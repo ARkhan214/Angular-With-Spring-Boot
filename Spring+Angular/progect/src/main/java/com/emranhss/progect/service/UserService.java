@@ -170,7 +170,9 @@ public class UserService {
         User savedUser = userRepo.save(user);
 
         jobSeeker.setUser(savedUser);
+
         jobSeekerService.save(jobSeeker);
+
         sendActivationEmail(savedUser);
 
     }
