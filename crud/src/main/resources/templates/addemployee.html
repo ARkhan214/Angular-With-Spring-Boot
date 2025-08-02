@@ -7,7 +7,7 @@
           integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
     <title>Add New Employee</title>
 
-    <!-- ✅ SweetAlert2 CDN -->
+    <!--SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
@@ -26,12 +26,12 @@
 
         <div class="mb-3">
             <label class="form-label fw-bold">Monthly Salary (BDT)</label>
-            <input type="text" class="form-control" th:field="*{salary}" placeholder="e.g., 25000" required>
+            <input type="text" class="form-control" th:field="*{salary}" placeholder="25,000 BDT" required>
         </div>
 
         <div class="mb-3">
             <label class="form-label fw-bold">Designation</label>
-            <input type="text" class="form-control" th:field="*{designation}" placeholder="e.g., Software Engineer" required>
+            <input type="text" class="form-control" th:field="*{designation}" placeholder="Software Engineer" required>
         </div>
 
         <div class="text-end">
@@ -40,7 +40,7 @@
     </form>
 </div>
 
-<!-- ✅ SweetAlert Success Message Handler -->
+<!-- SweetAlert Success Message Handler -->
 <script th:if="${message != null}">
     Swal.fire({
         icon: 'success',

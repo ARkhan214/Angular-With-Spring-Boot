@@ -3,54 +3,102 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Student List</title>
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <title>Add Student</title>
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        /* তোমার আগের স্টাইলগুলো 그대로 থাকবে */
+        body {
+            background: linear-gradient(to right, #e0eafc, #cfdef3);
+            font-family: 'Segoe UI', sans-serif;
+            padding: 50px 0;
+        }
+        .container {
+            max-width: 1000px;
+            background: white;
+            border-radius: 15px;
+            padding: 30px 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .container:hover {
+            transform: scale(1.01);
+        }
+        h2 {
+            text-align: center;
+            font-weight: 700;
+            color: #3b3b3b;
+            margin-bottom: 30px;
+        }
+        .table thead th {
+            background-color: #6c63ff;
+            color: white;
+            text-align: center;
+        }
+        .table tbody td {
+            text-align: center;
+        }
+        .table-hover tbody tr:hover {
+            background-color: rgba(108, 99, 255, 0.1);
+        }
+        .btn {
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .btn-warning { background-color: #ffc107; border: none; }
+        .btn-danger { background-color: #dc3545; border: none; }
+        .btn-warning:hover { background-color: #e0a800; }
+        .btn-danger:hover { background-color: #bb2d3b; }
+    </style>
 </head>
 <body>
-<div class="container">
 
-    <table class="table table-striped">
+<div class="container">
+    <h2>📋 Student Information</h2>
+    <table class="table table-striped table-hover align-middle">
         <thead>
         <tr>
-<!--            <th>ID</th>-->
             <th>Name</th>
             <th>Roll</th>
             <th>Marks</th>
             <th>Subject</th>
-            <th>Action</th>
-
+            <th>Actions</th>
         </tr>
-
-
         </thead>
-
         <tbody>
-        <tr th:each=" e: ${list}">
-<!--            <td th:text="${e.id}"></td>-->
+        <tr th:each="e : ${list}">
             <td th:text="${e.name}"></td>
             <td th:text="${e.roll}"></td>
             <td th:text="${e.marks}"></td>
             <td th:text="${e.subject}"></td>
             <td>
-                <a th:href="@{'/edit/' + ${e.id}}" class="btn btn-warning">Edit</a>
-                <a th:href="@{'/delete/' + ${e.id}}" class="btn btn-danger">Delete</a>
-
+                <a th:href="@{'/edit/' + ${e.id}}" class="btn btn-warning btn-sm me-1">✏️ Edit</a>
+                <a th:href="@{'/delete/' + ${e.id}}" class="btn btn-danger btn-sm">🗑️ Delete</a>
             </td>
-
         </tr>
-
         </tbody>
-
     </table>
-
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
+<!-- ✅ SweetAlert trigger -->
+<div th:if="${message}">
+    <script th:inline="javascript">
+        Swal.fire({
+            icon: 'success',
+            title: '[[${message}]]',
+            showConfirmButton: false,
+            timer: 2000
+        });
+    </script>
+</div>
+
 </body>
 </html>

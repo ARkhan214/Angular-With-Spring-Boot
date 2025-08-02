@@ -9,11 +9,80 @@
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
   <title>Add Student</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .glass-container {
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 40px;
+      width: 90%;
+      max-width: 500px;
+    }
+
+    .glass-container h1 {
+      text-align: center;
+      color: #ffffff;
+      font-weight: 600;
+      margin-bottom: 30px;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    label {
+      color: #ffffff;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      background-color: rgba(255, 255, 255, 0.8);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 15px;
+    }
+
+    .form-control:focus {
+      outline: none;
+      box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.5);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 10px;
+      background-color: #ffffff;
+      color: #333;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: all 0.3s ease-in-out;
+      margin-top: 10px;
+    }
+
+    .btn-submit:hover {
+      background-color: #343a40;
+      color: #ffffff;
+    }
+  </style>
 </head>
 <body>
-<h1 class="text-center my-4">Add Student</h1>
 
-<div class="container">
+<div class="glass-container">
+  <h1>Add Student</h1>
+
   <form th:action="@{/save}" th:object="${student}" method="post">
     <input type="hidden" th:field="*{id}" />
 
@@ -31,12 +100,13 @@
       <label class="form-label">Marks</label>
       <input type="text" class="form-control" th:field="*{marks}" required>
     </div>
+
     <div class="mb-3">
       <label class="form-label">Subject</label>
       <input type="text" class="form-control" th:field="*{subject}" required>
     </div>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" class="btn btn-submit">Submit</button>
   </form>
 </div>
 

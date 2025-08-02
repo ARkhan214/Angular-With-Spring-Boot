@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface IPoliceStationRepo extends JpaRepository<PoliceStation,Integer> {
-    List<PoliceStation> findByDistrictId(Integer districtId);
+
 }
