@@ -17,6 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/jobseeker/")
+@CrossOrigin("*")
 public class JobSeekerRestController {
 
 

@@ -1,10 +1,16 @@
 package com.emranhss.progect.entity;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +26,16 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @OneToMany
+    private List<Token> tokens;
+
+    //for user details+++++++++++++++++++++++
+
+    @Column(nullable = false)
+    private boolean active;
+    private boolean isLocke;
+
+
     public User() {
     }
 
@@ -32,6 +48,7 @@ public class User {
         this.photo = photo;
         this.role = role;
     }
+
 
     public int getId() {
         return id;
@@ -65,10 +82,6 @@ public class User {
         this.phone = phone;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public void setPassword(String password) {
         this.password = password;
     }
@@ -87,5 +100,65 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public List<Token> getTokens() {
+        return tokens;
+    }
+
+    public void setTokens(List<Token> tokens) {
+        this.tokens = tokens;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public boolean isLocke() {
+        return isLocke;
+    }
+
+    public void setLocke(boolean locke) {
+        isLocke = locke;
+    }
+
+    // implements Methods ----------------------------------------------------
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public String getPassword() {
+        return "";
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return isLocke;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isEnabled();
     }
 }

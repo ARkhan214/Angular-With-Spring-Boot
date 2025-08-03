@@ -8,6 +8,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig  implements WebMvcConfigurer {
 
+//    "src/main/resources/static/images"
+
     @Value("${image.upload.dir}")
     private String uploadDir;
 
