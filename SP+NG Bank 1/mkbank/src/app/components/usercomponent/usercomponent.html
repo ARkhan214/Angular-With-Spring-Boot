@@ -1,0 +1,85 @@
+<p class="text-center text-muted fs-6 mt-3">User Component Loaded!</p>
+
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<div class="container mt-4">
+  <div class="card shadow-lg border-0">
+    <div class="card-header bg-success text-white text-center py-3">
+      <h3 class="mb-0"><i class="fa fa-user-plus me-2"></i> Add New User</h3>
+    </div>
+
+    <div class="card-body bg-light p-4">
+      <form [formGroup]="userAccountForm" (ngSubmit)="onSubmit()">
+        <div class="row g-3">
+
+          <!-- Name -->
+          <div class="col-md-6">
+            <label class="form-label"><i class="fa fa-user me-1"></i> Name</label>
+            <input type="text" class="form-control" formControlName="name" placeholder="Enter full name" required>
+          </div>
+
+          <!-- Email -->
+          <div class="col-md-6">
+            <label class="form-label"><i class="fa fa-envelope me-1"></i> Email</label>
+            <input type="email" class="form-control" formControlName="email" placeholder="Enter email address" required>
+          </div>
+
+          <!-- Password -->
+          <div class="col-md-6">
+            <label class="form-label"><i class="fa fa-lock me-1"></i> Password</label>
+            <input type="password" class="form-control" formControlName="password" placeholder="Enter password"
+              required>
+          </div>
+
+          <!-- User ID -->
+          <!-- <div class="col-md-6">
+            <label class="form-label"><i class="fa fa-id-badge me-1"></i> User ID</label>
+            <input type="text" class="form-control" formControlName="userId" placeholder="Unique user ID" required>
+          </div> -->
+
+          <!-- Type -->
+          <div class="col-md-6">
+            <label class="form-label"><i class="fa fa-user-tag me-1"></i> Type</label>
+            <select class="form-select" formControlName="type" required>
+              <option value="">Select type</option>
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+              <!-- <option value="employee">Employee</option> -->
+            </select>
+          </div>
+
+          <!-- Balance -->
+          <div class="col-md-6">
+            <label class="form-label"><i class="fa fa-money-bill-wave me-1"></i> Initial Balance</label>
+            <input type="number" class="form-control" formControlName="balance" placeholder="Enter balance" required>
+          </div>
+
+          <!-- For photo -->
+          <div class="col-md-6">
+            <label class="form-label" for="photoUrl">Photo URL</label>
+            <input type="text" id="photoUrl" class="form-control" formControlName="photoUrl"
+              placeholder="Enter photo URL" />
+            
+          </div>
+
+
+        </div>
+
+        <!-- Buttons -->
+        <div class="row mt-4">
+          <div class="col-md-6 d-grid">
+            <button type="submit" class="btn btn-success">
+              <i class="fa fa-save me-1"></i> Save User
+            </button>
+          </div>
+          <div class="col-md-6 d-grid">
+            <button type="reset" class="btn btn-outline-danger">
+              <i class="fa fa-undo me-1"></i> Reset Form
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -8,6 +8,9 @@ import com.emranhss.progect.repository.IUserRepo;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +23,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class UserService {
+public class UserService  implements UserDetailsService {
 
     @Autowired
     private IUserRepo userRepo;
@@ -34,6 +37,17 @@ public class UserService {
 
     @Value("src/main/resources/static/images")
     private String uploadDir;
+
+
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepo.findByEmail(username).
+                orElseThrow(()-> new UsernameNotFoundException("User not found!! please put the right email"));
+    }
+
+
+
 
     public void seveOrUpda(User user, MultipartFile imageFile) {
 

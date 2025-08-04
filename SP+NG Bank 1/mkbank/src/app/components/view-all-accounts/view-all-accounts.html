@@ -1,0 +1,74 @@
+<div class="container my-4 p-4 bg-light border border-success rounded shadow-sm">
+
+  <h1 class="text-center text-white py-3 rounded mb-4"
+    style="background: linear-gradient(to right, #00c6ff, #0072ff); font-weight: bold;">
+    <i class="fa fa-users me-2"></i> All Account Details
+  </h1>
+
+  <!-- 🔍 Search Input -->
+ <div class="mb-3">
+  <strong>Search Account</strong>
+
+  <input
+    type="text"
+    class="form-control"
+    placeholder="Search by Account ID"
+    [(ngModel)]="searchAccountId"
+    (input)="filterAccounts()"
+    style="width: 250px;" />
+</div>
+
+
+
+  <table class="table table-hover table-bordered table-striped text-center align-middle shadow">
+    <thead class="table-success">
+      <tr>
+        <th>ID</th>
+        <th>User ID</th>
+        <th>User Name</th>
+        <th>Type</th>
+        <th>Balance</th>
+        <th>Status</th>
+        <th>Photo</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let a of filteredAccount">
+        <td>{{ a.id }}</td>
+        <td>{{ a.userId }}</td>
+        <td>{{ a.userName }}</td>
+        <td>
+          <span [ngClass]="{
+            'badge bg-info text-dark': a.type === 'Savings',
+            'badge bg-warning text-dark': a.type === 'Current',
+            'badge bg-secondary': a.type !== 'Savings' && a.type !== 'Current'
+          }">{{ a.type }}</span>
+        </td>
+        <td><strong class="text-success">৳{{ a.balance }}</strong></td>
+        <td>
+          <span [ngClass]="{
+            'badge bg-success': a.status === 'Active',
+            'badge bg-danger': a.status === 'Closed'
+          }">{{ a.status || 'Active' }}</span>
+        </td>
+        <td>
+          <img [src]="a.photoUrl ? a.photoUrl : 'https://via.placeholder.com/50'" alt="User photo"
+            style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+        </td>
+        <td>
+          <button class="btn btn-outline-danger btn-sm me-2" (click)="deleteAccount(a?.id!)">
+            <i class="fa fa-trash"></i> Delete
+          </button>
+          <button class="btn btn-outline-warning btn-sm" [disabled]="a.status === 'Closed'"
+            (click)="closeAccount(a?.id!)">
+            Close
+          </button>
+          <button *ngIf="a.status === 'Closed'" class="btn btn-outline-success btn-sm" (click)="openAccount(a?.id!)">
+            Reopen
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,132 @@
+{
+  "user": [
+    {
+      "id": "4006",
+      "name": "Md Limon Islam",
+      "email": "limon@gmail.com",
+      "password": "123",
+      "type": "user",
+      "photoUrl": "https://tinyurl.com/bdh9wrms"
+    },
+    {
+      "id": "050b",
+      "name": "Md Rahim Khan",
+      "email": "mdrahimkhan@gmail.com",
+      "password": "12345",
+      "type": "admin",
+      "photoUrl": "https://tinyurl.com/4akm3ehv"
+    },
+    {
+      "id": "fef7",
+      "name": "Rahmat Ullah",
+      "email": "rahmat@gmail.com",
+      "password": "123",
+      "type": "user",
+      "photoUrl": "https://tinyurl.com/ycydevjb"
+    },
+    {
+      "id": "c729",
+      "name": "Imran Mia",
+      "email": "imran@gmail.com",
+      "password": "123456",
+      "type": "user",
+      "photoUrl": "https://tinyurl.com/mf5n7639 "
+    },
+    {
+      "id": "74d2",
+      "name": "Rakib",
+      "email": "rakib@gmail.com",
+      "password": "1234",
+      "type": "user",
+      "photoUrl": "https://tinyurl.com/3vrbct9a  "
+    },
+    {
+      "id": "4aa9",
+      "name": "Atiqul Islam",
+      "email": "atiq@gmail.com",
+      "password": "123",
+      "type": "user",
+      "photoUrl": "https://tinyurl.com/yc332xxy "
+    },
+    {
+      "id": "05eb",
+      "name": " Taj",
+      "email": "taj@g.c",
+      "password": "123",
+      "type": "user",
+      "photoUrl": "https://tinyurl.com/4akm3ehv"
+    }
+  ],
+  "accounts": [
+    {
+      "id": "7090",
+      "userId": "4006",
+      "userName": "Md Limon Islam",
+      "type": "user",
+      "balance": 0
+    },
+    {
+      "id": "a81f",
+      "userId": "050b",
+      "userName": "Md Rahim Khan",
+      "type": "admin",
+      "balance": 0
+    },
+    {
+      "id": "c87f",
+      "userId": "fef7",
+      "userName": "Rahmat Ullah",
+      "type": "user",
+      "balance": 1000
+    },
+    {
+      "id": "8afb",
+      "userId": "c729",
+      "userName": "Imran Mia",
+      "type": "user",
+      "balance": 0
+    },
+    {
+      "id": "3404",
+      "userId": "74d2",
+      "userName": "Rakib",
+      "type": "user",
+      "balance": 0
+    },
+    {
+      "id": "9cb2",
+      "userId": "4aa9",
+      "userName": "Atiqul Islam",
+      "type": "user",
+      "balance": 0
+    },
+    {
+      "id": "a7e0",
+      "userId": "05eb",
+      "userName": " Taj",
+      "type": "user",
+      "balance": 1000
+    }
+  ],
+  "transactions": [
+    {
+      "id": "d62b",
+      "type": "Deposit",
+      "amount": 1000,
+      "description": "Initial Deposit",
+      "transactiontime": "2025-07-25T16:25:39.627Z",
+      "accountId": "a7e0"
+    },
+    {
+      "id": "ae15",
+      "type": "Deposit",
+      "amount": 1000,
+      "description": "wer",
+      "transactiontime": "2025-07-25T17:03:21.102Z",
+      "accountId": "c87f",
+      "receiverAccountId": ""
+    }
+  ],
+  "deposit": [],
+  "withdraw": []
+}
