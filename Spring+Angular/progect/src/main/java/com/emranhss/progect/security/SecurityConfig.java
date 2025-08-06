@@ -28,10 +28,6 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-    @Autowired
-    private UserService userService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http,

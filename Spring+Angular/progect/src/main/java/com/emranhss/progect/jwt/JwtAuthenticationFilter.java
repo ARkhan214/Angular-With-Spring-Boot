@@ -50,6 +50,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             UserDetails userDetails = userService.loadUserByUsername(username);
 
+            boolean valid = jwtService.isValid(token, userDetails);
+
+
             if (jwtService.isValid(token, userDetails)) {
 
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
@@ -66,5 +69,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request)  {
+        String path = request.getRequestURI();
+        boolean skip = path.equals("/api/user/login") || path.startsWith("/images/") || path.startsWith("api/user/active/") || path.startsWith("/auth/login");
+        return skip;
     }
 }

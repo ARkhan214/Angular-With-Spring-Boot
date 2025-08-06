@@ -3,6 +3,7 @@ package com.emranhss.progect.service;
 import com.emranhss.progect.entity.JobSeeker;
 import com.emranhss.progect.repository.IJobSeekerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,5 +29,10 @@ public class JobSeekerService {
     }
     public  void  delete(Long id){
         jobSeekerRepository.deleteById(id);
+    }
+
+    public JobSeeker getProfileById(int userId) {
+        return jobSeekerRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("JobSeeker not found"));
     }
 }

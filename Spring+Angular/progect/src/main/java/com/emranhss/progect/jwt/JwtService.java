@@ -39,50 +39,55 @@ public class JwtService {
     }
 
     private SecretKey getSigningKey() {
+
         byte[] kebByte = Decoders.BASE64URL.decode(SECREAT_KEY);
         return Keys.hmacShaKeyFor(kebByte);
     }
 
 
     public String generateToken(User  user ){
-        return  Jwts.builder()
+        return  Jwts
+                .builder()
                 .setSubject(user.getEmail())
                 .claim("role",user.getRole())
-                .setIssuedAt(new Date(System.currentTimeMillis()+24*60*60*1000))
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 24*60*60*1000))
                 .signWith(getSigningKey())
                 .compact();
     }
 
     public String extractUsername(String token){
 
-        return extractClaim(token,Claims::getSubject);
+        return extractClaim(token, Claims::getSubject);
 
     }
 
 
     // Extract a specific Claim from the Token Claims
     public <T> T extractClaim(String token, Function<Claims,T>resolve){
+
         Claims claims = extractAllClaims(token);
         return resolve.apply(claims);
     }
 
 private Date extractExpiration(String token){
-        return extractClaim(token,Claims::getExpiration);
+        return extractClaim(token, Claims::getExpiration);
 }
 
 private boolean isTokenExpired(String token){
+
         return extractExpiration(token).before(new Date());
 }
 
+
+//validation chake
 public boolean isValid(String token, UserDetails user){
 
-        String username = extractUsername(token);
+        String userName = extractUsername(token);
+        boolean expired = isTokenExpired(token);
 
-        boolean validToken = tokenRepository
-                .findByToken(token)
-                .map(t-> !t.isLogout())
-                .orElse(false);
-        return (username.equals(user.getUsername()) && !isTokenExpired(token) && validToken);
+
+        return (userName.equals(user.getUsername()) && !expired);
 }
 
 
