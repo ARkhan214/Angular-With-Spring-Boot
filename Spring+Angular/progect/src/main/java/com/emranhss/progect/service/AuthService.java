@@ -274,7 +274,7 @@ public class AuthService {
     }
 
 
-    public String acticateUser(int id){
+    public String activeUser(int id){
         User user = userRepo.findById(id)
                 .orElseThrow(()-> new RuntimeException("User not found with this ID "+id));
         if (user !=null){

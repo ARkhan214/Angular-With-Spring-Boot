@@ -31,7 +31,7 @@ public class JobSeekerService {
         jobSeekerRepository.deleteById(id);
     }
 
-    public JobSeeker getProfileById(int userId) {
+    public JobSeeker getProfileByUserId(int userId) {
         return jobSeekerRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("JobSeeker not found"));
     }
