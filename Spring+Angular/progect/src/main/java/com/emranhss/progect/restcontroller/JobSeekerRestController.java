@@ -77,7 +77,7 @@ public class JobSeekerRestController {
     }
 
 
-    @GetMapping("/profile")
+    @GetMapping("profile")
     public ResponseEntity<?> getProfile(Authentication authentication) {
         System.out.println("Authenticated User: " + authentication.getName());
         System.out.println("Authorities: " + authentication.getAuthorities());

@@ -40,8 +40,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers("/api/user/", "/images/**", "/api/jobseeker/**", "/api/user/active/**", "/api/user/login")
                                 .permitAll()
-                                .requestMatchers("/api/user/all")
-                                .hasAuthority("JOBSEEKER")
+                                .requestMatchers("/api/user/all", "/api/jobseeker/profile")
+                                .hasRole("JOBSEEKER")
                                 .anyRequest().authenticated()
                 ).userDetailsService(userService)
                 .sessionManagement(session ->

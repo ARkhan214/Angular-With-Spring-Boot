@@ -1,6 +1,7 @@
 package com.emranhss.progect.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import javax.xml.crypto.Data;
@@ -25,6 +26,7 @@ public class JobSeeker {
 
     @OneToOne
     @JoinColumn(name = "user_id",nullable = false)
+    @JsonBackReference
     private User user;
 
     public JobSeeker() {

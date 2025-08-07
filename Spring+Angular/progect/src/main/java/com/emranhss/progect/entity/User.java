@@ -1,5 +1,6 @@
 package com.emranhss.progect.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -27,6 +28,7 @@ public class User implements UserDetails {
     private Role role;
 
     @OneToMany
+    @JsonBackReference
     private List<Token> tokens;
 
     //for user details+++++++++++++++++++++++
