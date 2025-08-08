@@ -1,1 +1,40 @@
-<p>jobseeker-profile-component works!</p>
+<div *ngIf="jobSeeker" class="container py-5">
+  <div class="card shadow-lg border-0 rounded-4 p-4" 
+       style="background: linear-gradient(145deg, #ffffff, #f8f9fa);">
+    <div class="row align-items-center">
+      
+      <!-- Profile Image & Name -->
+         <!-- Banner Image -->
+ <div class="col-md-12 text-center">
+  <img [src]="'http://localhost:8088/images/jobSeeker/'+jobSeeker.photo" 
+       alt="Profile Banner" 
+       class="w-100" 
+       style="height:200px; object-fit:cover; border-radius:15px;">
+  
+  <h4 class="fw-bold mb-0 mt-3">{{ jobSeeker.name }}</h4>
+  <p class="text-muted">{{ jobSeeker.gender }}</p>
+</div>
+
+
+
+      <!-- Details -->
+
+<div class="d-flex justify-content-center align-items-center" style="min-height:100vh; background:#f0f2f5;">
+  <div class="card shadow-lg border-0 text-center p-4" style="width:350px;">
+    <img [src]="'http://localhost:8088/images/jobSeeker/'+jobSeeker.photo" class="rounded-circle mb-3 border border-3 border-primary" width="120">
+    <h4>{{ jobSeeker.name }}</h4>
+    <small class="text-muted">{{ jobSeeker.gender }}</small>
+    <hr>
+    <p><i class="bi bi-envelope"></i> {{ jobSeeker.email }}</p>
+    <p><i class="bi bi-phone"></i> {{ jobSeeker.phone }}</p>
+    <p><i class="bi bi-geo-alt"></i> {{ jobSeeker.address }}</p>
+  </div>
+</div>
+
+
+
+
+
+    </div>
+  </div>
+</div>

@@ -30,9 +30,10 @@ export class AuthService {
 
   login(email:string,password:string):Observable<AuthResponse>{
 
-    return this.http.post<AuthResponse>(this.baseUrl+'login',{email,password},{headers:this.headers}).pipe(
+    return this.http.post<AuthResponse>(this.baseUrl+'login',{email,password},{headers: this.headers }).pipe(
       map(
         (response:AuthResponse)=>{
+          
           if(this.isBrowser() && response.token){
 
           localStorage.setItem('authToken',response.token);
@@ -62,5 +63,67 @@ export class AuthService {
 
   }
 
+  getToken():string | null {
 
+    if(this.isBrowser()){
+      return localStorage.getItem('authToken');
+    }
+
+    return null;
+
+  }
+
+
+  getUserRole(): string | null {
+
+    if(this.isBrowser()){
+      return localStorage.getItem('userRole');
+    }
+    return null;
+  }
+
+
+
+   isTokenExpired(token:string):boolean{
+    const decodeToken = this.decodeToken(token);
+
+    const expiry = decodeToken.exp*1000;
+    return Date.now() > expiry;
+   }
+
+
+
+   isLoggIn(): boolean {
+
+    const token = this.getToken();
+
+    if(token && !this.isTokenExpired(token)){
+      return true;
+    }
+
+    this.logout();
+    return false;
+   }
+
+   logout(): void {
+    if(this.isBrowser()){
+      localStorage.removeItem('userRole');
+      localStorage.removeItem('authToken');
+      this.userRoleSubject.next(null);
+    }
+    this.router.navigate(['/login']);
+   }
+
+
+
+   hasRole(roles: string[]):boolean{
+    const userRole = this.getUserRole();
+    return userRole ? roles.includes(userRole):false;
+   }
+
+
+
+   isJobSeeker():boolean{
+    return this.getUserRole() === 'JOBSEEKER';
+   }
 }

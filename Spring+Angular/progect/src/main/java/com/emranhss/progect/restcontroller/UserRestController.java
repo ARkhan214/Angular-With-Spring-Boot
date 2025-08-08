@@ -71,7 +71,7 @@ public class UserRestController {
     }
 
 
-    @GetMapping("/active/{id}")
+    @GetMapping("active/{id}")
     public ResponseEntity<String> activeUser(@PathVariable("id") int id){
 
         String response= authService.activeUser(id);
@@ -79,7 +79,7 @@ public class UserRestController {
     }
 
 
-    @PostMapping("/logout")
+    @PostMapping("logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
         final String authHeader = request.getHeader("Authorization");
 
