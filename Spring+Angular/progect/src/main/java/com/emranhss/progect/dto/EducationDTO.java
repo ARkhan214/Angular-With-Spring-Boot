@@ -1,14 +1,9 @@
-package com.emranhss.progect.entity;
+package com.emranhss.progect.dto;
 
+import com.emranhss.progect.entity.Education;
 
-import jakarta.persistence.*;
-
-@Entity
-public class Education {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class EducationDTO {
     private Long id;
-
     private String level;
     private String institute;
     private String board;
@@ -16,10 +11,14 @@ public class Education {
     private String year;
 
 
-    @ManyToOne
-    @JoinColumn(name = "job_seeker_id")
-    private JobSeeker jobSeeker;
-
+    public EducationDTO(Education education) {
+        this.id = education.getId();
+        this.level = education.getLevel();
+        this.institute = education.getInstitute();
+        this.board = education.getBoard();
+        this.result = education.getResult();
+        this.year = education.getYear();
+    }
 
     public Long getId() {
         return id;
@@ -67,13 +66,5 @@ public class Education {
 
     public void setYear(String year) {
         this.year = year;
-    }
-
-    public JobSeeker getJobSeeker() {
-        return jobSeeker;
-    }
-
-    public void setJobSeeker(JobSeeker jobSeeker) {
-        this.jobSeeker = jobSeeker;
     }
 }
