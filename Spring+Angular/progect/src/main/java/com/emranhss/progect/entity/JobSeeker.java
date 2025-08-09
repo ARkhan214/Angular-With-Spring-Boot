@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 
 import javax.xml.crypto.Data;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class JobSeeker {
@@ -28,6 +29,11 @@ public class JobSeeker {
     @JoinColumn(name = "user_id",nullable = false)
     @JsonBackReference
     private User user;
+
+
+    @OneToMany(mappedBy = "jobSeeker",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<Education>  education;
 
     public JobSeeker() {
     }
