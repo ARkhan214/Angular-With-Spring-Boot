@@ -1,40 +1,131 @@
 <div *ngIf="jobSeeker" class="container py-5">
-  <div class="card shadow-lg border-0 rounded-4 p-4" 
-       style="background: linear-gradient(145deg, #ffffff, #f8f9fa);">
+  <div class="card shadow-lg border-0 rounded-4 p-4" style="background: linear-gradient(145deg, #ffffff, #f8f9fa);">
     <div class="row align-items-center">
-      
-      <!-- Profile Image & Name -->
-         <!-- Banner Image -->
- <div class="col-md-12 text-center">
-  <img [src]="'http://localhost:8088/images/jobSeeker/'+jobSeeker.photo" 
-       alt="Profile Banner" 
-       class="w-100" 
-       style="height:200px; object-fit:cover; border-radius:15px;">
-  
-  <h4 class="fw-bold mb-0 mt-3">{{ jobSeeker.name }}</h4>
-  <p class="text-muted">{{ jobSeeker.gender }}</p>
-</div>
 
+      <div class="col-md-12 text-center">
+        <div></div>
+        <!-- Photo -->
+        <img [src]="'http://localhost:8088/images/jobSeeker/'+jobSeeker.photo"
+          class="rounded-circle border border-3 border-primary me-3" width="50" height="60">
 
+        <h4 class="fw-bold mb-0 mt-3">{{ jobSeeker.name }}</h4>
+        <p class="text-muted">{{ jobSeeker.gender }}</p>
+      </div>
 
       <!-- Details -->
 
-<div class="d-flex justify-content-center align-items-center" style="min-height:100vh; background:#f0f2f5;">
-  <div class="card shadow-lg border-0 text-center p-4" style="width:350px;">
-    <img [src]="'http://localhost:8088/images/jobSeeker/'+jobSeeker.photo" class="rounded-circle mb-3 border border-3 border-primary" width="120">
-    <h4>{{ jobSeeker.name }}</h4>
-    <small class="text-muted">{{ jobSeeker.gender }}</small>
-    <hr>
-    <p><i class="bi bi-envelope"></i> {{ jobSeeker.email }}</p>
-    <p><i class="bi bi-phone"></i> {{ jobSeeker.phone }}</p>
-    <p><i class="bi bi-geo-alt"></i> {{ jobSeeker.address }}</p>
-  </div>
-</div>
+      <div class="d-flex justify-content-center align-items-center" style="min-height:100vh; background:#f0f2f5;">
+        <div class="card shadow-lg border-0 p-4" style="width:450px;">
 
+          <!-- Photo + Name + Gender side by side -->
+          <div class="d-flex align-items-center mb-3">
+            <!-- Photo -->
+            <img [src]="'http://localhost:8088/images/jobSeeker/'+jobSeeker.photo"
+              class="rounded-circle border border-3 border-primary me-3" width="100" height="120">
 
+            <!-- Name & Gender -->
+            <div>
+              <h4 class="mb-1">{{ jobSeeker.name }}</h4>
+              <small class="text-muted">{{ jobSeeker.gender }}</small>
+            </div>
+          </div>
 
+          <hr>
 
-
+          <!-- Other details -->
+          <p><i class="bi bi-envelope"></i> {{ jobSeeker.email }}</p>
+          <p><i class="bi bi-phone"></i> {{ jobSeeker.phone }}</p>
+          <p><i class="bi bi-geo-alt"></i> {{ jobSeeker.address }}</p>
+          <p><i class="bi bi-calendar"></i> {{ jobSeeker.dateOfBirth | date:'dd MMM, yyyy' }}</p>
+     
     </div>
   </div>
+
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-primary col-md-12" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Add Education
+  </button>
+  <h2 class="accordion-header" id="headingTwo">
+      <button class="accordion-button collapsed col-md-6 btn btn-warning mt-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+        aria-expanded="false" aria-controls="collapseTwo">
+        Education
+      </button>
+    </h2>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Add New Education</h1>
+
+
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <!-- educations add -->
+
+        <div class="modal-body">
+          <div class="card p-4 mt-4">
+
+            <form (ngSubmit)="addEducation()">
+              <div class="row mb-2">
+                <div class="col-md-6">
+                  <label>Level</label>
+                  <input type="text" [(ngModel)]="newEducation.level" name="level" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                  <label>Institute</label>
+                  <input type="text" [(ngModel)]="newEducation.institute" name="institute" class="form-control"
+                    required>
+                </div>
+                <div class="col-md-6">
+                  <label>Result</label>
+                  <input type="text" [(ngModel)]="newEducation.result" name="result" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                  <label>Year</label>
+                  <input type="text" [(ngModel)]="newEducation.year" name="year" class="form-control" required>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">Add Education</button>
+            </form>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" (click)="addEducation()">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- educations view -->
+
+  <div class="accordion-item">
+        
+    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+      data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <div *ngIf="educations.length > 0" class="card p-4 mt-4">
+          <h5>Educations</h5>
+          <div *ngFor="let edu of educations" class="border-bottom py-2">
+            <div><strong>Level:</strong> {{ edu.level }}</div>
+            <div><strong>Institute:</strong> {{ edu.institute }}</div>
+            <div><strong>Board:</strong> {{ edu.board }}</div>
+            <div><strong>Result:</strong> {{ edu.result }}</div>
+            <div><strong>Year:</strong> {{ edu.year }}</div>
+            <div> <button class="btn btn-sm btn-danger" (click)="deleteEducation(edu.id)">
+                Delete
+              </button>
+              <a href="" class="btn btn-warning m-2">Edit</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
 </div>

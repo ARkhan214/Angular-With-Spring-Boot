@@ -16,6 +16,8 @@ public interface IJobSeekerRepository extends JpaRepository<JobSeeker, Long> {
     @Query("SELECT js FROM JobSeeker js WHERE js.user.email = :email")
     Optional<JobSeeker> findByUserEmail(@Param("email") String email);
 
-    @Query("SELECT j FROM JobSeeker j LEFT JOIN FETCH j.education WHERE j.id = :id")
+    @Query("SELECT j FROM JobSeeker j LEFT JOIN FETCH j.educations WHERE j.id = :id")
     Optional<JobSeeker> findByIdWithEducations(@Param("id") Long id);
+
+
 }

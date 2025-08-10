@@ -21,6 +21,7 @@ public class EducationService {
     @Autowired
     private IJobSeekerRepository  jobSeekerRepository;
 
+//    For view
     public List<EducationDTO> getByJobSeekerId(Long jobSeekerId) {
         List<Education> educations = educationRepository.findByJobSeekerId(jobSeekerId);
         return educations.stream()
@@ -28,6 +29,7 @@ public class EducationService {
                 .collect(Collectors.toList());
     }
 
+//    for save
     public Education saveEducation(Education education, String email) {
         JobSeeker jobSeeker = jobSeekerRepository.findByUserEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("JobSeeker not found"));
@@ -37,7 +39,7 @@ public class EducationService {
 
 
 
-
+//  delete
     public void delete(Long id) {
         educationRepository.deleteById(id);
     }

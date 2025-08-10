@@ -24,7 +24,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/jobseeker/")
-@CrossOrigin("*")
 public class JobSeekerRestController {
 
     @Autowired

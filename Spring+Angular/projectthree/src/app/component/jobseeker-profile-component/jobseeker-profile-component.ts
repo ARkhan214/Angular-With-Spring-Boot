@@ -36,6 +36,7 @@ export class JobseekerProfileComponent {
    this.loadEducations();
   } 
   
+  //education er sob data load hobe
  loadEducations(): void{
   this.educationService.getEducations().subscribe({
     next:(data) => {
@@ -51,7 +52,7 @@ export class JobseekerProfileComponent {
  }
 
 
-
+// profile dekher jonno
  getProfile() {
 
     this.jobSeekerService.getProfile().subscribe({
@@ -68,6 +69,7 @@ export class JobseekerProfileComponent {
   }
 
 
+  // add Education
   addEducation(): void {
     this.educationService.addEducation(this.newEducation).subscribe({
       next: (addedEdu: any) => {
@@ -79,6 +81,28 @@ export class JobseekerProfileComponent {
       },
       error: (err) => {
         console.error('Failed to add education', err);
+      }
+    });
+  }
+
+
+
+
+  // for delete
+  deleteEducation(id:number):void{
+
+    if(!confirm('Are you sure you want to delete this education?')){
+      return;
+    }
+
+    this.educationService.deleteEducation(id).subscribe({
+      next:() =>{
+        this.loadEducations();
+        this.cdr.markForCheck();
+      },
+      error:(err)=>{
+        console.error('Failed to delete education:', err);
+        alert('Failed to delete education.')
       }
     });
   }

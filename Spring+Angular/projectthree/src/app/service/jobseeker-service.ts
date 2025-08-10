@@ -8,35 +8,36 @@ import { JobSeeker } from '../model/jobSeeker.model';
   providedIn: 'root'
 })
 export class JobseekerService {
-  
-private baseUrl = environment.apiBaseUrl+'/jobseeker/';
 
-constructor(
-  private http:HttpClient
-){}
+  private baseUrl = environment.apiBaseUrl + '/jobseeker/';
 
-registerJobSeeker(user:any,jobseeker:any,photo:File):Observable<any>{
-const fofmData = new FormData;
+  constructor(
+    private http: HttpClient
+  ) { }
 
-fofmData.append('user',JSON.stringify(user));
-fofmData.append('jobSeeker',JSON.stringify(jobseeker));
-fofmData.append('photo',photo);
+  registerJobSeeker(user: any, jobseeker: any, photo: File): Observable<any> {
+    const fofmData = new FormData;
 
-return this.http.post(this.baseUrl,fofmData);
+    fofmData.append('user', JSON.stringify(user));
+    fofmData.append('jobSeeker', JSON.stringify(jobseeker));
+    fofmData.append('photo', photo);
 
-}
+    return this.http.post(this.baseUrl, fofmData);
 
-getProfile(): Observable<JobSeeker> {
-  const token = localStorage.getItem('authToken');
-  let headers = new HttpHeaders();
-
-  if(token){
-    headers = headers.set('Authorization','Bearer ' + token);
   }
 
-  return this.http.get<JobSeeker>(`${this.baseUrl}profile`,{headers});
+  getProfile(): Observable<JobSeeker> {
+    
+    const token = localStorage.getItem('authToken');
+    let headers = new HttpHeaders();
 
-}
+    if (token) {
+      headers = headers.set('Authorization', 'Bearer ' + token);
+    }
+
+    return this.http.get<JobSeeker>(`${this.baseUrl}profile`, { headers });
+
+  }
 
 
 

@@ -13,6 +13,7 @@ import java.util.List;
 @Table(name = "users")
 public class User implements UserDetails {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -24,22 +25,25 @@ public class User implements UserDetails {
     private String password;
     private String photo;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(value = EnumType.STRING)
     private Role role;
 
     @OneToMany
-    @JsonBackReference
     private List<Token> tokens;
 
-    //for user details+++++++++++++++++++++++
+
+
+    // for user details +++++++++++++++++++++++++++++++++++++++++
 
     @Column(nullable = false)
-    private boolean active;
-    private boolean isLocke;
+    private  boolean active;
+    private boolean isLock;
 
 
     public User() {
     }
+
+
 
     public User(int id, String name, String email, String phone, String password, String photo, Role role) {
         this.id = id;
@@ -50,7 +54,6 @@ public class User implements UserDetails {
         this.photo = photo;
         this.role = role;
     }
-
 
     public int getId() {
         return id;
@@ -82,6 +85,10 @@ public class User implements UserDetails {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public void setPassword(String password) {
@@ -120,23 +127,18 @@ public class User implements UserDetails {
         this.active = active;
     }
 
-    public boolean isLocke() {
-        return isLocke;
+    public boolean isLock() {
+        return isLock;
     }
 
-    public void setLocke(boolean locke) {
-        isLocke = locke;
+    public void setLock(boolean lock) {
+        isLock = lock;
     }
 
     // implements Methods ----------------------------------------------------
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
     }
 
     @Override
@@ -151,7 +153,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return isLocke;
+        return isLock;
     }
 
     @Override
@@ -161,6 +163,10 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return isEnabled();
+        return true;
     }
+
+
+
+
 }

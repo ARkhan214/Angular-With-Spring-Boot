@@ -1,6 +1,7 @@
 package com.emranhss.progect.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -15,11 +16,10 @@ public class Education {
     private String result;
     private String year;
 
-
     @ManyToOne
     @JoinColumn(name = "job_seeker_id")
+    @JsonBackReference
     private JobSeeker jobSeeker;
-
 
     public Long getId() {
         return id;

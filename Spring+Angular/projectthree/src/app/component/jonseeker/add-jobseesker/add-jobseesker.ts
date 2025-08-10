@@ -14,7 +14,10 @@ userForm: FormGroup;
   photoFile!: File;
   message: string = '';
 
-  constructor(private fb: FormBuilder, private jobseekerService: JobseekerService) {
+  constructor(
+    private fb: FormBuilder,
+    private jobseekerService: JobseekerService
+  ) {
     this.userForm = this.fb.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],

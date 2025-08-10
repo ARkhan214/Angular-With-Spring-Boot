@@ -51,4 +51,11 @@ public ResponseEntity<List<EducationDTO>> getEducationsByJobSeekerId(Authenticat
     return ResponseEntity.ok(educations);
 }
 
+
+@DeleteMapping("{id}")
+public ResponseEntity<Void>deleteEducation(@PathVariable Long id){
+    educationService.delete(id);
+    return ResponseEntity.noContent().build();
+}
+
 }

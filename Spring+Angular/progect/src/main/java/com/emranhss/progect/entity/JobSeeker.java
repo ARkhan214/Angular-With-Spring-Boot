@@ -2,6 +2,7 @@ package com.emranhss.progect.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import javax.xml.crypto.Data;
@@ -22,20 +23,19 @@ public class JobSeeker {
     private String gender;
     private String address;
     private Date dateOfBirth;
-    private  String photo;
-
+    private String photo;
 
     @OneToOne
-    @JoinColumn(name = "user_id",nullable = false)
-    @JsonBackReference
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-
-    @OneToMany(mappedBy = "jobSeeker",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "jobSeeker", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonBackReference
-    private List<Education>  education;
+    private List<Education> educations;
+
 
     public JobSeeker() {
+
     }
 
     public JobSeeker(Long id, String name, String email, String phone, String gender, String address, Date dateOfBirth, String photo, User user) {
@@ -121,4 +121,6 @@ public class JobSeeker {
     public void setUser(User user) {
         this.user = user;
     }
+
+
 }

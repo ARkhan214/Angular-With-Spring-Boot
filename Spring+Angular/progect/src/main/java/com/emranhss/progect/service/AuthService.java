@@ -196,6 +196,7 @@ public class AuthService {
         // Encode password before saving User
         user.setPassword((passwordEncoder.encode(user.getPassword())));
         user.setRole(Role.JOBSEEKER);
+        user.setLock(false);
         user.setActive(false);
 
         // Save User FIRST and get persisted instance

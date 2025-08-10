@@ -3,6 +3,7 @@ package com.emranhss.progect.dto;
 import com.emranhss.progect.entity.Education;
 
 public class EducationDTO {
+
     private Long id;
     private String level;
     private String institute;

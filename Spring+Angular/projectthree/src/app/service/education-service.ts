@@ -13,14 +13,22 @@ export class EducationService {
   private apiUrl = environment.apiBaseUrl +'/education/';
 
   constructor(
-    private http:HttpClient,
+
+    private http: HttpClient,
     @Inject(PLATFORM_ID) private platformId:Object
+
   ){}
 
+
+  // add method
   addEducation(education:any):Observable<any>{
+
     let headers = new HttpHeaders();
+
     if(isPlatformBrowser(this.platformId)){
+
       const token = localStorage.getItem('authToken');
+
       if(token){
         headers = headers.set('Authorization', 'Bearer ' + token);
       }
@@ -28,6 +36,9 @@ export class EducationService {
     return this.http.post(this.apiUrl+"add",education,{headers});
   }
 
+
+
+// get method
 getEducations(): Observable<Education[]>{
   let headers = new HttpHeaders();
 
@@ -38,6 +49,14 @@ getEducations(): Observable<Education[]>{
     }
   }
   return this.http.get<Education[]>(this.apiUrl+'all',{headers});
+}
+
+
+//delete Method
+deleteEducation(id:number): Observable<void>{
+
+  return this.http.delete<void>(this.apiUrl+id);
+  
 }
 
 }
