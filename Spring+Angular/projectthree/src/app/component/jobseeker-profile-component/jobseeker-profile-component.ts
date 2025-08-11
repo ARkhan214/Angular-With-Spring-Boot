@@ -1,8 +1,9 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, PLATFORM_ID } from '@angular/core';
 import { JobSeeker } from '../../model/jobSeeker.model';
 import { JobseekerService } from '../../service/jobseeker-service';
 import { Education } from '../../model/education';
 import { EducationService } from '../../service/education-service';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-jobseeker-profile-component',
@@ -20,6 +21,7 @@ export class JobseekerProfileComponent {
   newEducation = {
     level:'',
     institute: '',
+    board:'',
     result: '',
     year: ''
   };
@@ -27,13 +29,19 @@ export class JobseekerProfileComponent {
   constructor(
     private jobSeekerService: JobseekerService, 
     private cdr:ChangeDetectorRef,
-    private educationService:EducationService
+    private educationService:EducationService,
+     @Inject(PLATFORM_ID) private platformId: object
   ){}
 
 
   ngOnInit(): void{
-   this.getProfile();
-   this.loadEducations();
+    if(isPlatformBrowser(this.platformId)){
+    this.getProfile();
+    this.loadEducations();
+  }else{
+     console.warn('Not running in browser — skipping profile/education load.');
+  }
+   
   } 
   
   //education er sob data load hobe
@@ -77,7 +85,9 @@ export class JobseekerProfileComponent {
           this.jobSeeker.educations = [];
         }
         this.jobSeeker.educations.push(addedEdu);  // Update UI
-        this.newEducation = { level: '', institute: '', result: '', year: '' };  // Reset form
+        this.newEducation = { level: '', institute: '', result: '', year: '' ,board:''};  // Reset form
+        alert("Education added successfully");
+        this.cdr.markForCheck();
       },
       error: (err) => {
         console.error('Failed to add education', err);
