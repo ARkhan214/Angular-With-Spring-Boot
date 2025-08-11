@@ -1,0 +1,21 @@
+<section class="py-5 bg-light">
+  <div class="container d-flex justify-content-center align-items-center">
+    <form (ngSubmit)="onSubmitLogin()" class="shadow p-4 rounded bg-white" style="width: 100%; max-width: 400px;">
+      <h4 class="mb-4 text-center">Login</h4>
+
+      <div class="form-outline mb-4">
+        <input [(ngModel)]="email" name="email" type="email" class="form-control" required />
+        <label class="form-label">Email address</label>
+      </div>
+
+      <div class="form-outline mb-4">
+        <input [(ngModel)]="password" name="password" type="password" class="form-control" required />
+        <label class="form-label">Password</label>
+      </div>
+
+      <div *ngIf="errorMessage" class="text-danger mb-3 text-center">{{ errorMessage }}</div>
+
+      <button type="submit" class="btn btn-primary btn-block w-100 mb-3">Login</button>
+    </form>
+  </div>
+</section>
