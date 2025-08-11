@@ -6,6 +6,7 @@ import { App } from './app';
 import { Home } from './home/home';
 import { Navbar } from './layout/navbar/navbar';
 
+
 import { Footer } from './layout/footer/footer';
 import { Usercomponent } from './components/usercomponent/usercomponent';
 import { Viewallusercomponent } from './components/viewallusercomponent/viewallusercomponent';
@@ -25,13 +26,15 @@ import { UserProfile } from './auth/user-profile/user-profile';
 import { AdminProfile } from './auth/admin-profile/admin-profile';
 import { ContactUs } from './layout/contact-us/contact-us';
 import { AdminDashboard } from './components/admin-dashboard/admin-dashboard';
+import { Sidebar } from './layout/sidebar/sidebar';
 
 
 @NgModule({
   declarations: [
     App,
     Home,
-    Navbar,  
+    Navbar,
+    Sidebar,  
     Footer, Usercomponent, Viewallusercomponent, Updateusercomponent, ViewAllAccounts, DepositComponent, WithdrawComponent, TransactionComponent, AboutBank, Addtransaction, TransactionStatement, Login, Logout, UserProfile, AdminProfile, ContactUs, AdminDashboard,
   ],
   imports: [

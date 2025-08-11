@@ -55,6 +55,14 @@
       "password": "123",
       "type": "user",
       "photoUrl": "https://tinyurl.com/4akm3ehv"
+    },
+    {
+      "id": "daae",
+      "name": "MH Sohan",
+      "email": "mh@gmail.com",
+      "password": "12345",
+      "type": "user",
+      "photoUrl": "https://tinyurl.com/ycydevjb"
     }
   ],
   "accounts": [
@@ -106,6 +114,13 @@
       "userName": " Taj",
       "type": "user",
       "balance": 1000
+    },
+    {
+      "id": "a2e5",
+      "userId": "daae",
+      "userName": "MH Sohan",
+      "type": "user",
+      "balance": 2000
     }
   ],
   "transactions": [
@@ -125,6 +140,14 @@
       "transactiontime": "2025-07-25T17:03:21.102Z",
       "accountId": "c87f",
       "receiverAccountId": ""
+    },
+    {
+      "id": "80c7",
+      "type": "Deposit",
+      "amount": 2000,
+      "description": "Initial Deposit",
+      "transactiontime": "2025-08-11T11:57:57.346Z",
+      "accountId": "a2e5"
     }
   ],
   "deposit": [],

@@ -1,0 +1,130 @@
+<ul class="navbar-nav sidebar sidebar-dark accordion shadow" id="accordionSidebar"
+    style="background: linear-gradient(to bottom right, #30302f, #141414); color: white;">
+
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" routerLink="/about" style="padding: 1rem;">
+        <!-- <div class="sidebar-brand-icon rotate-n-15">
+            <i class="fas fa-user-shield fa-lg" style="color: rgb(252, 218, 30);"></i>
+        </div> -->
+        <div class="sidebar-brand-text mx-3 fw-bold" style="font-weight: bold;"> <i class="fa fa-university mr-2 text-info"></i>MK Bank</div>
+    </a>
+
+    <hr class="sidebar-divider my-0" style="border-color: rgba(255,255,255,0.3);">
+
+           <li class="nav-item">
+        <a class="nav-link text-warning fw-semibold" routerLink="/"><i class="fa fa-home me-1 text-warning"></i>Home</a>
+      </li>
+    
+
+
+    <!-- Dashboard -->
+    <!-- <li class="nav-item active">
+        <a class="nav-link" routerLink="/admindash" style="color: #fff;">
+            <i class="fas fa-home" style="color: #fcd34d;"></i>
+            <span style="margin-left: 10px;">Dashboard</span>
+        </a>
+    </li> -->
+
+    <!-- admin access start-->
+     <li class="nav-item">
+          <a class="nav-link text-info fw-semibold" routerLink="/viewallaccount"><i
+              class="fa fa-credit-card me-1 text-info"></i>Accounts</a>
+        </li>
+         <li class="nav-item">
+          <a class="nav-link text-info fw-semibold" routerLink="/admindash"><i
+              class="fa fa-credit-card me-1 text-info"></i>Dashboard</a>
+        </li>
+         <li class="nav-item">
+        <a class="nav-link text-success fw-semibold" routerLink="/trst"><i
+            class="fa fa-exchange me-1 text-success"></i>Transaction Statement</a>
+      </li>
+       
+        <li class="nav-item">
+          <a class="nav-link text-muted fw-semibold" routerLink="/adduser"><i
+              class="fa fa-user-plus me-1 text-muted"></i>Add
+            User</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-info fw-semibold" routerLink="/viewalluser"><i
+              class="fa fa-credit-card me-1 text-info"></i>All User Details</a>
+        </li>
+       <li class="nav-item">
+        <a class="nav-link text-success fw-semibold" routerLink="/admin-profile"><i class="fa-solid fa-user me-1"></i>Admin Profile</a>
+      </li> 
+    <!-- admin access end -->
+
+    <!-- User access  st-->
+     <div>
+        <li class="nav-item">
+        <a class="nav-link text-success fw-semibold" routerLink="/addtr"><i
+            class="fa fa-exchange me-1 text-success"></i>Transaction</a>
+      </li>
+         <li class="nav-item">
+        <a class="nav-link text-success fw-semibold" routerLink="/user-profile"><i
+            class="fa fa-exchange me-1 text-success"></i>User Profile</a>
+      </li>
+     </div>
+    <!-- User access  end-->
+
+    <hr class="sidebar-divider" style="border-color: rgba(255,255,255,0.2);">
+
+    <!-- Heading -->
+    <div class="sidebar-heading" style="color: #f8fafc;">Interface</div>
+
+    <!-- Components -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" style="color: #fff;">
+            <i class="fas fa-puzzle-piece" style="color: #f87171;"></i>
+            <span style="margin-left: 10px;">Accounts</span>
+        </a>
+        <div id="collapseTwo" class="collapse">
+            <div class="bg-light py-2 collapse-inner rounded">
+                <h6 class="collapse-header text-dark">Savings</h6>
+                <a class="collapse-item" routerLink="/addtr">Deposit</a>
+                <a class="collapse-item" routerLink="/addtr">Withdwaw</a>
+                <a class="collapse-item" routerLink="/addtr">Transfar Money</a>
+                <a class="collapse-item" routerLink="/trst">Transaction Statement</a>
+            </div>
+        </div>
+    </li>
+
+    <!-- Utilities -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" style="color: #fff;">
+            <i class="fas fa-tools" style="color: #34d399;"></i>
+            <span style="margin-left: 10px;">Payment</span>
+        </a>
+        <div id="collapseUtilities" class="collapse">
+            <div class="bg-light py-2 collapse-inner rounded">
+                <h6 class="collapse-header text-dark">Utilities Bill:</h6>
+                <a class="collapse-item" href="utilities-color.html">Electric Bill</a>
+                <a class="collapse-item" href="utilities-border.html">Water Bill</a>
+                <a class="collapse-item" href="utilities-animation.html">Gas Bill</a>
+                <a class="collapse-item" href="utilities-other.html">Education</a>
+            </div>
+        </div>
+    </li>
+
+    <hr class="sidebar-divider" style="border-color: rgba(255,255,255,0.2);">
+
+    <!-- Addons -->
+    <div class="sidebar-heading" style="color: #f8fafc;">Addons</div>
+
+    <!-- Pages -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" style="color: #fff;">
+            <i class="fas fa-copy" style="color: #facc15;"></i>
+            <span style="margin-left: 10px;">Pages</span>
+        </a>
+        <div id="collapsePages" class="collapse">
+            <div class="bg-light py-2 collapse-inner rounded">
+                <a class="nav-link text-success fw-semibold me-5" routerLink="/login"><i class="fa fa-sign-in me-1"></i>Login</a>
+                <a class="collapse-item" href="register.html">Register</a>
+                <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+               
+            </div>
+        </div>
+    </li>
+
+
+</ul>

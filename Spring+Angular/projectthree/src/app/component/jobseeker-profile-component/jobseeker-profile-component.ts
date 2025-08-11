@@ -35,9 +35,10 @@ export class JobseekerProfileComponent {
 
 
   ngOnInit(): void{
+
     if(isPlatformBrowser(this.platformId)){
     this.getProfile();
-    this.loadEducations();
+    this.loadEducations();    
   }else{
      console.warn('Not running in browser — skipping profile/education load.');
   }
@@ -88,6 +89,7 @@ export class JobseekerProfileComponent {
         this.newEducation = { level: '', institute: '', result: '', year: '' ,board:''};  // Reset form
         alert("Education added successfully");
         this.cdr.markForCheck();
+        this.loadEducations();
       },
       error: (err) => {
         console.error('Failed to add education', err);

@@ -1,10 +1,5 @@
 export class Deposit {
 
-  // accountId!: string;
-  // amount!: number;
-  // transactionDate?: Date;
-
-
   accountId!: string;    
   amount!: number;           
   transactionDate!: Date; 

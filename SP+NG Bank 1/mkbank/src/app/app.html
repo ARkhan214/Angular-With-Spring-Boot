@@ -1,7 +1,35 @@
+<div id="wrapper">
 
-<app-navbar></app-navbar>
+  <!-- Sidebar Component -->
+  <app-sidebar></app-sidebar>
 
-<router-outlet />
+  <!-- Content Wrapper -->
+  <div id="content-wrapper" class="d-flex flex-column">
 
-<app-footer></app-footer>
+    <!-- Main Content -->
+    <div id="content">
 
+      <!-- Topbar Component -->
+      <app-navbar></app-navbar>
+
+      <!-- Main Page Content -->
+      <div class="container-fluid">
+        <router-outlet></router-outlet>
+      </div>
+
+    </div>
+    <!-- End of Main Content -->
+
+    <!-- Footer Component -->
+    <app-footer></app-footer>
+
+  </div>
+  <!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+  <i class="fas fa-angle-up"></i>
+</a>
