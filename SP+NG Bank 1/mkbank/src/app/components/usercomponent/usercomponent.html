@@ -1,83 +1,84 @@
-<p class="text-center text-muted fs-6 mt-3">User Component Loaded!</p>
-
 <!-- Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<div class="container mt-4">
-  <div class="card shadow-lg border-0">
-    <div class="card-header bg-success text-white text-center py-3">
-      <h3 class="mb-0"><i class="fa fa-user-plus me-2"></i> Add New User</h3>
+<div class="container mt-5">
+  <div class="card shadow rounded-4 border-0">
+
+    <div class="card-header bg-primary text-white text-center py-4" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+      <h2 class="mb-1 fw-bold">
+        <i class="fa fa-university me-3"></i> MK Bank
+      </h2>
+      <h5 class="mb-0 fw-semibold">
+        Create New User with Account
+      </h5>
+      <small class="text-light fst-italic mt-1 d-block">
+        Secure & Easy Banking Starts Here
+      </small>
     </div>
 
     <div class="card-body bg-light p-4">
-      <form [formGroup]="userAccountForm" (ngSubmit)="onSubmit()">
-        <div class="row g-3">
+      <form [formGroup]="userAccountForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="row g-4">
 
           <!-- Name -->
-          <div class="col-md-6">
-            <label class="form-label"><i class="fa fa-user me-1"></i> Name</label>
-            <input type="text" class="form-control" formControlName="name" placeholder="Enter full name" required>
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold d-block mb-2"><i class="fa fa-user me-2 mr-2 text-primary"></i>Name</label>
+            <input type="text" class="form-control form-control-lg" formControlName="name" placeholder="Enter full name" required>
           </div>
 
           <!-- Email -->
-          <div class="col-md-6">
-            <label class="form-label"><i class="fa fa-envelope me-1"></i> Email</label>
-            <input type="email" class="form-control" formControlName="email" placeholder="Enter email address" required>
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold d-block mb-2"><i class="fa fa-envelope me-2 mr-2 text-primary"></i>Email</label>
+            <input type="email" class="form-control form-control-lg" formControlName="email" placeholder="Enter email address" required>
           </div>
 
           <!-- Password -->
-          <div class="col-md-6">
-            <label class="form-label"><i class="fa fa-lock me-1"></i> Password</label>
-            <input type="password" class="form-control" formControlName="password" placeholder="Enter password"
-              required>
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold d-block mb-2"><i class="fa fa-lock me-2 mr-2 text-primary"></i>Password</label>
+            <input type="password" class="form-control form-control-lg" formControlName="password" placeholder="Enter password" required>
           </div>
 
-          <!-- User ID -->
-          <!-- <div class="col-md-6">
-            <label class="form-label"><i class="fa fa-id-badge me-1"></i> User ID</label>
-            <input type="text" class="form-control" formControlName="userId" placeholder="Unique user ID" required>
-          </div> -->
-
-          <!-- Type -->
-          <div class="col-md-6">
-            <label class="form-label"><i class="fa fa-user-tag me-1"></i> Type</label>
-            <select class="form-select" formControlName="type" required>
-              <option value="">Select type</option>
-              <option value="user">User</option>
-              <option value="admin">Admin</option>
-              <!-- <option value="employee">Employee</option> -->
+          <!-- Account Type -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold d-block mb-2"><i class="fa fa-user-tag me-2 mr-2 text-primary"></i>Account Type</label>
+            <select formControlName="type" class="form-select form-select-lg" required>
+              <option value="" disabled selected>Select type</option>
+              <option value="SAVINGS">Savings</option>
+              <option value="CURRENT">Current</option>
+              <option value="FIXED_DEPOSIT">Fixed Deposit</option>
             </select>
           </div>
 
-          <!-- Balance -->
-          <div class="col-md-6">
-            <label class="form-label"><i class="fa fa-money-bill-wave me-1"></i> Initial Balance</label>
-            <input type="number" class="form-control" formControlName="balance" placeholder="Enter balance" required>
+          <!-- Initial Balance -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold d-block mb-2"><i class="fa fa-money-bill-wave me-2 mr-2 text-primary"></i>Initial Balance</label>
+            <input type="number" class="form-control form-control-lg" formControlName="balance" placeholder="Enter balance" required>
           </div>
 
-          <!-- For photo -->
-         <div class="mb-6">
-      <label>Photo</label>
-        <input type="file" />
-    </div>
-
+          <!-- Photo -->
+          <div class="col-md-6 mb-2 d-flex flex-column">
+            <label class="fw-semibold mb-2 mr-2">Upload Photo</label>
+            <input type="file" class="form-control form-control-sm" (change)="onFileSelected($event)" />
+          </div>
 
         </div>
 
         <!-- Buttons -->
         <div class="row mt-4">
           <div class="col-md-6 d-grid">
-            <button type="submit" class="btn btn-success">
-              <i class="fa fa-save me-1"></i> Save User
+            <button type="submit" class="btn btn-success btn-lg fw-semibold">
+              <i class="fa fa-save me-2"></i> Save User
             </button>
           </div>
           <div class="col-md-6 d-grid">
-            <button type="reset" class="btn btn-outline-danger">
-              <i class="fa fa-undo me-1"></i> Reset Form
+            <button type="reset" class="btn btn-outline-danger btn-lg fw-semibold">
+              <i class="fa fa-undo me-2"></i> Reset Form
             </button>
           </div>
         </div>
+
       </form>
     </div>
+
   </div>
 </div>

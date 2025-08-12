@@ -16,6 +16,7 @@ import { Transactionsservice } from '../../service/transactionsservice';
 export class Usercomponent implements OnInit {
 
   userAccountForm !: FormGroup
+   selectedFile: File | null = null;
 
   constructor(
     private userService: UserService,
@@ -30,59 +31,53 @@ export class Usercomponent implements OnInit {
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
-      type: ['savings', Validators.required],
+      type: ['user', Validators.required],
       balance: ['', Validators.required],
-      photoUrl: ['']   // For Photo
+      photoUrl: ['']
     });
   }
+
+    onFileSelected(event: any) {
+    if(event.target.files && event.target.files.length > 0){
+      this.selectedFile = event.target.files[0];
+    }
+  }
+
 
   onSubmit() {
     if (this.userAccountForm.valid) {
       const { name, email, password, type, balance, photoUrl } = this.userAccountForm.value;
 
-      const newUser: User = { name, email, password, type, photoUrl };
+      const userObj = { name, email, password, photoUrl };
+      const accountObj = {
+        type,
+        balance: Number(balance),
+        userName: name,
+        activeStatus: true,
+        photo: photoUrl
+      };
 
-      // 1. Save User First
-      this.userService.saveAllUser(newUser).subscribe(savedUser => {
-        const newAccount: Accounts = {
-          userId: savedUser.id!,
-          userName: savedUser.name,
-          type,
-          balance :0,
-          
-        };
+      const formData = new FormData();
+      formData.append('user', JSON.stringify(userObj));
+      formData.append('account', JSON.stringify(accountObj));
+      if(this.selectedFile){
+        formData.append('photo', this.selectedFile, this.selectedFile.name);
+      }
 
-        // 2. Save Account
-        this.accountService.addAccount(newAccount).subscribe(savedAccount => {
-          console.log('User saved:', savedUser);
-          console.log('Account saved:', savedAccount);
-
-          // 3. Create Initial Deposit Transaction
-          const initialTransaction = {
-            type: 'Deposit' as const,  // tells TS this is the literal "Deposit"
-            amount: balance,
-            description: 'Initial Deposit',
-            transactiontime: new Date(),
-            accountId: savedAccount.id!
-          };
-
-
-          // 4. Save the transaction
-          this.transactionService.addTransactionWithBalance(initialTransaction).subscribe({
-            next: () => {
-              console.log('Initial deposit transaction saved');
-              this.userAccountForm.reset();
-              alert('User, account, and initial deposit transaction saved!');
-            },
-            error: err => {
-              console.error('Transaction error:', err);
-              alert('Failed to save initial deposit transaction.');
-            }
-          });
-        });
+      this.accountService.registerAccount(formData).subscribe({
+        next: () => {
+          alert('User and Account saved successfully!');
+          this.userAccountForm.reset();
+          this.selectedFile = null;
+        },
+        error: (err) => {
+          console.error(err);
+          alert('Failed to save user and account.');
+        }
       });
     }
   }
+
 
 
   loadUserWithAccounts(userId: number) {
