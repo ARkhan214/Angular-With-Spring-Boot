@@ -19,4 +19,45 @@ public class Token {
     private  User user;
 
 
+    public Token() {
+    }
+
+    public Token(Long id, String token, boolean logout, User user) {
+        this.id = id;
+        this.token = token;
+        this.logout = logout;
+        this.user = user;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public boolean isLogout() {
+        return logout;
+    }
+
+    public void setLogout(boolean logout) {
+        this.logout = logout;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

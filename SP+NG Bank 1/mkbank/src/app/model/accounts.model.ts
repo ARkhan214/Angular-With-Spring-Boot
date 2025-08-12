@@ -2,7 +2,7 @@ export class Accounts{
 
 
     id ?:number;
-    userId ?:string;
+    userId ?:number;
     type !:string;
     balance !:number;
     userName?: string;

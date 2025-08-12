@@ -1,0 +1,68 @@
+<!-- Topbar -->
+<nav class="navbar navbar-expand navbar-light mb-4 shadow" 
+     style="background: linear-gradient(90deg, #4e54c8, #8f94fb); color: white;">
+
+    <!-- Sidebar Toggle (Topbar) -->
+    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3 text-white">
+        <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- Topbar Search -->
+    <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+        <div class="input-group">
+            <input type="text" class="form-control border-0 shadow-sm" 
+                   style="background: #ffffff; border-radius: 20px 0 0 20px; padding: 10px;"
+                   placeholder="Search..." aria-label="Search">
+            <div class="input-group-append">
+                <button class="btn" type="button" 
+                        style="background-color: #ff6f61; color: white; border-radius: 0 20px 20px 0;">
+                    <i class="fas fa-search fa-sm"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Topbar Navbar -->
+    <ul class="navbar-nav ml-auto align-items-center">
+
+        <!-- Alerts -->
+        <li class="nav-item dropdown no-arrow mx-1">
+            <a class="nav-link dropdown-toggle text-white" href="#" id="alertsDropdown" role="button" data-toggle="dropdown">
+                <i class="fas fa-bell"></i>
+                <span class="badge badge-danger badge-counter">3+</span>
+            </a>
+        </li>
+
+        <!-- Messages -->
+        <li class="nav-item dropdown no-arrow mx-1">
+            <a class="nav-link dropdown-toggle text-white" href="#" id="messagesDropdown" role="button" data-toggle="dropdown">
+                <i class="fas fa-envelope"></i>
+                <span class="badge badge-danger badge-counter">7</span>
+            </a>
+        </li>
+
+        <!-- Divider -->
+        <div class="topbar-divider d-none d-sm-block" style="height: 40px; border-left: 1px solid rgba(255,255,255,0.4);"></div>
+
+        <!-- User Info -->
+        <li class="nav-item dropdown no-arrow">
+            <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" id="userDropdown" role="button" data-toggle="dropdown">
+                <span class="mr-2 d-none d-lg-inline text-white small font-weight-bold">Douglas McGee</span>
+                <img class="img-profile rounded-circle" src="img/undraw_profile.svg" style="width: 35px; height: 35px;">
+            </a>
+            <!-- Dropdown - User Information -->
+            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#"><i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>Profile</a>
+                <a class="dropdown-item" href="#"><i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>Settings</a>
+                <a class="dropdown-item" href="#"><i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>Activity Log</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>Logout
+                </a>
+            </div>
+        </li>
+
+    </ul>
+
+</nav>
+<!-- End of Topbar -->
