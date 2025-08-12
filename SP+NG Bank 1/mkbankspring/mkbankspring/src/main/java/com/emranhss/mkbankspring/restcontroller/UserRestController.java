@@ -1,7 +1,8 @@
 package com.emranhss.mkbankspring.restcontroller;
 
+import com.emranhss.mkbankspring.entity.Accounts;
 import com.emranhss.mkbankspring.entity.User;
-import com.emranhss.mkbankspring.service.UserService;
+import com.emranhss.mkbankspring.service.AuthService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,19 +20,19 @@ import java.util.Map;
 public class UserRestController {
 
     @Autowired
-    private UserService userService;
+    private AuthService authService;
 
 
     @PostMapping
     public ResponseEntity<Map<String,String>>saveUser(
             @RequestPart(value = "user")String userJson,
             @RequestParam(value = "photo")MultipartFile file
-            ) throws JsonProcessingException {
+    ) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         User user = objectMapper.readValue(userJson, User.class);
 
         try {
-            userService.saveOrUpdateUser(user, file);
+            authService.saveOrUpdateUser(user, file);
             Map<String, String> response = new HashMap<>();
             response.put("Message", "User Added Successfully ");
 
@@ -48,7 +49,7 @@ public class UserRestController {
 
     @GetMapping("")
     public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.findAll();
+        List<User> users = authService.findAll();
         return ResponseEntity.ok(users);
 
     }

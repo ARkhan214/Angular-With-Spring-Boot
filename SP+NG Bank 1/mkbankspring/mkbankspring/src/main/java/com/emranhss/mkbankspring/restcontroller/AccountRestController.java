@@ -2,6 +2,7 @@ package com.emranhss.mkbankspring.restcontroller;
 
 import com.emranhss.mkbankspring.entity.Accounts;
 import com.emranhss.mkbankspring.entity.User;
+import com.emranhss.mkbankspring.service.AuthService;
 import com.emranhss.mkbankspring.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,6 +22,9 @@ public class AccountRestController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AuthService authService;
+
     @PostMapping("")
     public ResponseEntity<Map<String,String>>registerAccount(
             @RequestPart(value = "user")String userJson,
@@ -32,7 +36,7 @@ public class AccountRestController {
         Accounts accounts = objectMapper.readValue(accountJson, Accounts.class);
 
         try {
-            userService.registerAccount(user, file, accounts);
+            authService.registerAccount(user, file, accounts);
             Map<String, String> response = new HashMap<>();
             response.put("Message", "User Added Successfully ");
 

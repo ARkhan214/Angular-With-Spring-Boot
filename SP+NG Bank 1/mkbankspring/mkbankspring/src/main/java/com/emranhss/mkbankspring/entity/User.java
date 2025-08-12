@@ -22,6 +22,7 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private  Role role;
 
+
     @OneToMany
     private List<Token> tokens;
 
@@ -93,4 +94,5 @@ public class User {
     public void setTokens(List<Token> tokens) {
         this.tokens = tokens;
     }
+
 }

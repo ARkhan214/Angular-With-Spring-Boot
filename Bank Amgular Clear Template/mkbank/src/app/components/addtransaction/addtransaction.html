@@ -1,0 +1,67 @@
+<div class="container mt-4">
+  <h3>Add Transaction (Manual Account ID)</h3>
+
+  <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()">
+    <!-- Account ID -->
+    <div class="mb-3">
+      <label for="accountId">Account ID</label>
+      <input
+        id="accountId"
+        type="text"
+        class="form-control"
+        formControlName="accountId"
+        placeholder="Enter Account ID"
+      />
+    </div>
+
+    <!-- Transaction Type -->
+    <div class="mb-3">
+      <label for="type">Transaction Type</label>
+      <select id="type" class="form-select" formControlName="type">
+        <option value="">-- Select --</option>
+        <option value="Deposit">Deposit</option>
+        <option value="Withdraw">Withdraw</option>
+        <option value="Transfer">Transfer</option>
+      </select>
+    </div>
+
+    <!-- Receiver Account ID -->
+    <div class="mb-3" *ngIf="transactionForm.get('type')?.value === 'Transfer'">
+      <label for="receiverAccountId">Receiver Account ID</label>
+      <input
+        id="receiverAccountId"
+        type="text"
+        class="form-control"
+        formControlName="receiverAccountId"
+        placeholder="Enter Receiver Account ID"
+      />
+    </div>
+
+    <!-- Amount -->
+    <div class="mb-3">
+      <label for="amount">Amount</label>
+      <input
+        id="amount"
+        type="number"
+        class="form-control"
+        formControlName="amount"
+        placeholder="Enter Amount"
+      />
+    </div>
+
+    <!-- Description -->
+    <div class="mb-3">
+      <label for="description">Description</label>
+      <textarea
+        id="description"
+        class="form-control"
+        formControlName="description"
+        placeholder="Optional Description"
+      ></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="transactionForm.invalid">
+      Submit Transaction
+    </button>
+  </form>
+</div>
