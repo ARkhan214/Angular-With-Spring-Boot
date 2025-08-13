@@ -1,40 +1,55 @@
 package com.emranhss.mkbankspring.entity;
 
 import jakarta.persistence.*;
-import jakarta.persistence.spi.PersistenceUnitTransactionType;
-
 import java.util.Date;
 
-
 @Entity
+@Table(name = "transactions")
 public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(value = EnumType.STRING)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
     private TransactionType type;
 
+    @Column(nullable = false)
     private double amount;
-    private Date transactiontime;
-    private String description;
-    private Long accountId;
-    private Long receiverAccountId;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "transaction_time", nullable = false)
+    private Date transactionTime;
+
+    @Column(length = 255)
+    private String description;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id", nullable = false)
+    private Accounts account;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "receiver_account_id")
+    private Accounts receiverAccount;
+
+
+    @Column(length = 100)
     private String token;
 
     public Transaction() {
     }
 
-    public Transaction(Long id, TransactionType type, double amount, Date transactiontime, String description, Long accountId, Long receiverAccountId) {
+    public Transaction(Long id, TransactionType type, double amount, Date transactionTime, String description, Accounts account, Accounts receiverAccount, String token) {
         this.id = id;
         this.type = type;
         this.amount = amount;
-        this.transactiontime = transactiontime;
+        this.transactionTime = transactionTime;
         this.description = description;
-        this.accountId = accountId;
-        this.receiverAccountId = receiverAccountId;
+        this.account = account;
+        this.receiverAccount = receiverAccount;
+        this.token = token;
     }
 
     public Long getId() {
@@ -61,12 +76,12 @@ public class Transaction {
         this.amount = amount;
     }
 
-    public Date getTransactiontime() {
-        return transactiontime;
+    public Date getTransactionTime() {
+        return transactionTime;
     }
 
-    public void setTransactiontime(Date transactiontime) {
-        this.transactiontime = transactiontime;
+    public void setTransactionTime(Date transactionTime) {
+        this.transactionTime = transactionTime;
     }
 
     public String getDescription() {
@@ -77,20 +92,20 @@ public class Transaction {
         this.description = description;
     }
 
-    public Long getAccountId() {
-        return accountId;
+    public Accounts getAccount() {
+        return account;
     }
 
-    public void setAccountId(Long accountId) {
-        this.accountId = accountId;
+    public void setAccount(Accounts account) {
+        this.account = account;
     }
 
-    public Long getReceiverAccountId() {
-        return receiverAccountId;
+    public Accounts getReceiverAccount() {
+        return receiverAccount;
     }
 
-    public void setReceiverAccountId(Long receiverAccountId) {
-        this.receiverAccountId = receiverAccountId;
+    public void setReceiverAccount(Accounts receiverAccount) {
+        this.receiverAccount = receiverAccount;
     }
 
     public String getToken() {

@@ -3,6 +3,8 @@ package com.emranhss.mkbankspring.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 public class Accounts {
 
@@ -23,6 +25,9 @@ public class Accounts {
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Transaction> transactions;
 
     public Accounts() {
     }
@@ -91,5 +96,13 @@ public class Accounts {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
     }
 }

@@ -22,6 +22,11 @@ public class AccountService {
         return accountRepository.findById(id);
     }
 
+    public Accounts findAccountById(Long id) {
+        // account return or null
+        return accountRepository.findById(id).orElse(null);
+    }
+
     public Accounts save(Accounts accounts) {
         return accountRepository.save(accounts);
     }

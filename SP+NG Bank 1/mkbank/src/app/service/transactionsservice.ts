@@ -12,15 +12,18 @@ import { environment } from '../environment/environment';
 export class Transactionsservice {
 
 
-  private accountsUrl = environment.springUrl; // JSON server URL
-  private transactionsUrl = environment.springUrl;
+   private apiUrl = environment.springUrl+"account";
+  private transactionsUrl = environment.springUrl+"transactions";
 
   constructor(private http: HttpClient) { }
 
   addTransactionWithBalance(transaction: Transaction): Observable<any> {
     const accountId = transaction.accountId;
 
-    return this.http.get<Accounts>(`${this.accountsUrl}/${accountId}`).pipe(
+    console.log(accountId);
+
+    return this.http.get<Accounts>(`${this.apiUrl}/${accountId}`).pipe(
+      
       switchMap(account => {
         if (!account) {
           return throwError(() => new Error('Account not found!'));
@@ -32,6 +35,7 @@ export class Transactionsservice {
       }
 
         let newBalance = account.balance || 0;
+        console.log(accountId);
 
         if (transaction.type === 'Deposit') {
           newBalance += transaction.amount;
@@ -53,7 +57,7 @@ export class Transactionsservice {
           // Find Receiver account and incarage balance
           const receiverId = transaction.receiverAccountId;
 
-          this.http.get<Accounts>(`${this.accountsUrl}/${receiverId}`).subscribe(receiverAccount => {
+          this.http.get<Accounts>(`${this.apiUrl}/${receiverId}`).subscribe(receiverAccount => {
             
             const updatedReceiver = {
               ...receiverAccount,
@@ -61,7 +65,7 @@ export class Transactionsservice {
             };
 
             // update Receiver- balance
-            this.http.put(`${this.accountsUrl}/${receiverId}`, updatedReceiver).subscribe({
+            this.http.put(`${this.apiUrl}/${receiverId}`, updatedReceiver).subscribe({
               next: () => {
                 console.log('Receiver balance updated!');
               },
@@ -77,7 +81,7 @@ export class Transactionsservice {
         // Update account balance
         const updatedAccount: Accounts = { ...account, balance: newBalance };
 
-        return this.http.put<Accounts>(`${this.accountsUrl}/${accountId}`, updatedAccount).pipe(
+        return this.http.put<Accounts>(`${this.apiUrl}/${accountId}`, updatedAccount).pipe(
           switchMap(() => {
             return this.http.post<Transaction>(this.transactionsUrl, transaction);
           })

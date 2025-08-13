@@ -1,5 +1,22 @@
 
 http://localhost:8085/api/user/
+@CrossOrigin(origins = "http://localhost:4200")
+
+//me
+user
+{
+  "name": "Md Rahim Khan",
+  "email": "mdrahimkhan107107@gmail.com",
+  "password": "12345" 
+}
+
+account
+{
+  "type": "SAVINGS",
+  "balance": 15000.50,
+  "userName": "Md Rahim Khan",
+  "activeStatus": true 
+}
 
 
 //reja

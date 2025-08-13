@@ -19,6 +19,16 @@ public class User {
     private String password;
     private String photoUrl;
 
+    @Column(unique = true, length = 17, nullable = false)
+    private String nid;
+
+    @Column(length = 15, unique = true, nullable = false)
+    private String phone;
+
+    @Column(length = 255)
+    private String address;
+
+
     @Enumerated(value = EnumType.STRING)
     private  Role role;
 
@@ -29,12 +39,15 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String name, String email, String password, String photoUrl, Role role, List<Token> tokens) {
+    public User(Long id, String name, String email, String password, String photoUrl, String nid, String phone, String address, Role role, List<Token> tokens) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.photoUrl = photoUrl;
+        this.nid = nid;
+        this.phone = phone;
+        this.address = address;
         this.role = role;
         this.tokens = tokens;
     }
@@ -79,6 +92,30 @@ public class User {
         this.photoUrl = photoUrl;
     }
 
+    public String getNid() {
+        return nid;
+    }
+
+    public void setNid(String nid) {
+        this.nid = nid;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public Role getRole() {
         return role;
     }
@@ -94,5 +131,4 @@ public class User {
     public void setTokens(List<Token> tokens) {
         this.tokens = tokens;
     }
-
 }

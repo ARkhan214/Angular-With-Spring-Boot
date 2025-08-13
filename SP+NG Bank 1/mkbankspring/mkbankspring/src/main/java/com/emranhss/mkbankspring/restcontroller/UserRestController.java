@@ -48,7 +48,7 @@ public class UserRestController {
 
 
 
-    @GetMapping("")
+    @GetMapping("all")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = authService.findAll();
         return ResponseEntity.ok(users);

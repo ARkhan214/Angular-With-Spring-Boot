@@ -111,7 +111,7 @@ findAccountByUserId(userId: number): Observable<Accounts | null> {
 
   //for admin dashbord
 getAllAccounts() {
-  return this.http.get<Accounts[]>('http://localhost:3000/accounts');
+  return this.http.get<Accounts[]>(this.apiUrl);
 }
 
 

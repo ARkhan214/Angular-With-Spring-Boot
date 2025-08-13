@@ -5,6 +5,9 @@ export class User{
     email!:string;
     password!:string;
     type !:string;
-    photoUrl?: string;  
+    photoUrl?: string;
+    nid !:string;
+    phone !:string;
+    address !:string;  
     
 }

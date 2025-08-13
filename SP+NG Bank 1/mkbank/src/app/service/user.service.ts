@@ -82,7 +82,9 @@ export class UserService {
     return this.http.get<User[]>('http://localhost:3000/user');
   }
 
-
+ registerUser(formData: FormData): Observable<any> {
+  return this.http.post(this.baseUrl, formData);
+}
 
 
 }

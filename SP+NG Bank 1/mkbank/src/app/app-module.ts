@@ -27,6 +27,7 @@ import { AdminProfile } from './auth/admin-profile/admin-profile';
 import { ContactUs } from './layout/contact-us/contact-us';
 import { AdminDashboard } from './components/admin-dashboard/admin-dashboard';
 import { Sidebar } from './layout/sidebar/sidebar';
+import { OnlyAddUser } from './components/only-add-user/only-add-user';
 
 
 @NgModule({
@@ -35,7 +36,7 @@ import { Sidebar } from './layout/sidebar/sidebar';
     Home,
     Navbar,
     Sidebar,  
-    Footer, Usercomponent, Viewallusercomponent, Updateusercomponent, ViewAllAccounts, DepositComponent, WithdrawComponent, TransactionComponent, AboutBank, Addtransaction, TransactionStatement, Login, Logout, UserProfile, AdminProfile, ContactUs, AdminDashboard,
+    Footer, Usercomponent, Viewallusercomponent, Updateusercomponent, ViewAllAccounts, DepositComponent, WithdrawComponent, TransactionComponent, AboutBank, Addtransaction, TransactionStatement, Login, Logout, UserProfile, AdminProfile, ContactUs, AdminDashboard, OnlyAddUser,
   ],
   imports: [
     BrowserModule,

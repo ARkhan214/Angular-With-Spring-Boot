@@ -17,6 +17,7 @@ import { AdminProfile } from './auth/admin-profile/admin-profile';
 import { ContactUs } from './layout/contact-us/contact-us';
 import { UserGuard } from './guards/user-guard';
 import { AdminDashboard } from './components/admin-dashboard/admin-dashboard';
+import { OnlyAddUser } from './components/only-add-user/only-add-user';
 
 
 
@@ -38,6 +39,7 @@ const routes: Routes = [
   {path: 'admin-profile', component: AdminProfile},
   {path: 'contact', component: ContactUs},
   {path: 'admindash', component: AdminDashboard},
+  {path: 'onlyadduser', component: OnlyAddUser},
 
 
   

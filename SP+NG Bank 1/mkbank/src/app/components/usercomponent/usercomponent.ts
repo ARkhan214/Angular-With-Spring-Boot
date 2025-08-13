@@ -33,6 +33,9 @@ export class Usercomponent implements OnInit {
       password: ['', Validators.required],
       type: ['user', Validators.required],
       balance: ['', Validators.required],
+      nid: ['', Validators.required],
+      phone: ['',Validators.required],
+      address: ['',Validators.required],
       photoUrl: ['']
     });
   }
@@ -46,9 +49,9 @@ export class Usercomponent implements OnInit {
 
   onSubmit() {
     if (this.userAccountForm.valid) {
-      const { name, email, password, type, balance, photoUrl } = this.userAccountForm.value;
+      const { name, email, password, type, balance,nid,phone,address, photoUrl } = this.userAccountForm.value;
 
-      const userObj = { name, email, password, photoUrl };
+      const userObj = { name, email, password,nid,phone,address, photoUrl };
       const accountObj = {
         type,
         balance: Number(balance),

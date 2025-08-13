@@ -2,6 +2,7 @@ package com.emranhss.mkbankspring.restcontroller;
 
 import com.emranhss.mkbankspring.entity.Accounts;
 import com.emranhss.mkbankspring.entity.User;
+import com.emranhss.mkbankspring.service.AccountService;
 import com.emranhss.mkbankspring.service.AuthService;
 import com.emranhss.mkbankspring.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,6 +27,9 @@ public class AccountRestController {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private AccountService accountService;
+
     @PostMapping("")
     public ResponseEntity<Map<String,String>>registerAccount(
             @RequestPart(value = "user")String userJson,
@@ -47,6 +51,18 @@ public class AccountRestController {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("Message", "User Add Faild " + e);
             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Accounts> getAccountById(@PathVariable Long id) {
+        Accounts account = accountService.findAccountById(id);
+        if (account != null) {
+            return ResponseEntity.ok(account);
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 
