@@ -30,7 +30,7 @@ export class Transactionsservice {
         }
 
          //new code for status
-      if (account.status === 'Closed') {
+      if (account.accountActiveStatus === false) {
         return throwError(() => new Error('This account is closed and cannot perform transactions.'));
       }
 

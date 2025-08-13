@@ -35,7 +35,7 @@ public class AuthService {
     public void saveOrUpdateUser(User user, MultipartFile imageFile) {
         if (imageFile != null && !imageFile.isEmpty()) {
             String fileName = saveImage(imageFile,user);
-            user.setPhotoUrl(fileName);
+            user.setPhoto(fileName);
         }
 
         user.setRole(Role.USER);
@@ -134,7 +134,7 @@ public class AuthService {
             }
         }
 
-        String accountName = account.getUserName();
+        String accountName = account.getName();
         String fileName = accountName.trim().replaceAll("\\s+", "_") ;
 
         String savedFileName = fileName+"_"+UUID.randomUUID().toString();
@@ -157,7 +157,7 @@ public class AuthService {
             String filename = saveImage(imageFile, user);
             String accountPhoto = saveImageForAccount(imageFile, accountData);
             accountData.setPhoto(accountPhoto);
-            user.setPhotoUrl(filename);
+            user.setPhoto(filename);
 
         }
 

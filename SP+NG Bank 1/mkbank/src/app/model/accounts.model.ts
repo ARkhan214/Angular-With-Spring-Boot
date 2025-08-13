@@ -3,10 +3,16 @@ export class Accounts{
 
     id ?:number;
     userId ?:number;
-    type !:string;
+    accountType !:string;
     balance !:number;
-    userName?: string;
-    status?: 'Active' | 'Closed';
-    photoUrl?: string;
-
+    name?: string;
+    accountActiveStatus?:boolean;
+    photo?: string;
+    nid?:string;
+    phoneNumber?:string;
+    address?:string;
+    dateOfBirth?:Date;
+    accountOpeningDate?:Date;
+    accountClosingDate?:Date;
+    role !:string;
 }

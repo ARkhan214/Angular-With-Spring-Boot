@@ -4,7 +4,7 @@
 <div class="container mt-5">
   <div class="card shadow rounded-4 border-0">
 
-    <div class="card-header bg-primary text-white text-center py-4" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+    <div class="card-header bg-primary text-white text-center py-4">
       <h2 class="mb-1 fw-bold">
         <i class="fa fa-university me-3"></i> MK Bank
       </h2>
@@ -21,63 +21,110 @@
         <div class="row g-4">
 
           <!-- Name -->
-          <div class="col-md-6 mb-3">
-            <label class="form-label fw-semibold d-block mb-2"><i class="fa fa-user me-2 mr-2 text-primary"></i>Name</label>
-            <input type="text" class="form-control form-control-lg" formControlName="name" placeholder="Enter full name" required>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold"><i class="fa fa-user me-2 text-primary"></i>Name</label>
+            <input type="text" class="form-control form-control-lg" formControlName="name"
+              placeholder="Enter full name">
           </div>
 
           <!-- Email -->
-          <div class="col-md-6 mb-3">
-            <label class="form-label fw-semibold d-block mb-2"><i class="fa fa-envelope me-2 mr-2 text-primary"></i>Email</label>
-            <input type="email" class="form-control form-control-lg" formControlName="email" placeholder="Enter email address" required>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold"><i class="fa fa-envelope me-2 text-primary"></i>Email</label>
+            <input type="email" class="form-control form-control-lg" formControlName="email"
+              placeholder="Enter email address">
           </div>
 
           <!-- Password -->
-          <div class="col-md-6 mb-3">
-            <label class="form-label fw-semibold d-block mb-2"><i class="fa fa-lock me-2 mr-2 text-primary"></i>Password</label>
-            <input type="password" class="form-control form-control-lg" formControlName="password" placeholder="Enter password" required>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold"><i class="fa fa-lock me-2 text-primary"></i>Password</label>
+            <input type="password" class="form-control form-control-lg" formControlName="password"
+              placeholder="Enter password">
           </div>
 
-          <!-- nid -->
-            <div class="col-md-6 mb-3">
-            <label class="form-label fw-semibold d-block mb-2"><i class="fa fa-user me-2 mr-2 text-primary"></i>NID</label>
-            <input type="text" class="form-control form-control-lg" formControlName="nid" placeholder="NID Number" required>
+          <!-- Phone Number -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold"><i class="fa fa-phone me-2 text-primary"></i>Phone Number</label>
+            <input type="text" class="form-control form-control-lg" formControlName="phoneNumber"
+              placeholder="Enter phone number">
           </div>
 
-          <!-- phone -->
-            <div class="col-md-6 mb-3">
-            <label class="form-label fw-semibold d-block mb-2"><i class="fa fa-user me-2 mr-2 text-primary"></i>Phone</label>
-            <input type="text" class="form-control form-control-lg" formControlName="phone" placeholder="Phone Number" required>
+          <!-- Date of Birth -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold"><i class="fa fa-calendar me-2 text-primary"></i>Date of Birth</label>
+            <input type="date" class="form-control form-control-lg" formControlName="dateOfBirth">
           </div>
 
-          <!-- address -->
-           <div class="col-md-6 mb-3">
-            <label class="form-label fw-semibold d-block mb-2"><i class="fa fa-user me-2 mr-2 text-primary"></i>Address</label>
-            <input type="text" class="form-control form-control-lg" formControlName="address" placeholder="Enter your full Address" required>
+          <!-- Role -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold"><i class="fa fa-user-shield me-2 text-primary"></i>Role</label>
+            <select class="form-select form-select-lg" formControlName="role">
+              <option value="USER">USER</option>
+              <option value="ADMIN">ADMIN</option>
+              <option value="EMPLOYEE">EMPLOYEE</option>
+            </select>
+
           </div>
 
+          <!-- NID -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold"><i class="fa fa-id-card me-2 text-primary"></i>NID</label>
+            <input type="text" class="form-control form-control-lg" formControlName="nid"
+              placeholder="Enter NID number">
+          </div>
+
+          <!-- Address -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold"><i class="fa fa-home me-2 text-primary"></i>Address</label>
+            <input type="text" class="form-control form-control-lg" formControlName="address"
+              placeholder="Enter address">
+          </div>
 
           <!-- Account Type -->
-          <div class="col-md-6 mb-3">
-            <label class="form-label fw-semibold d-block mb-2"><i class="fa fa-user-tag me-2 mr-2 text-primary"></i>Account Type</label>
-            <select formControlName="type" class="form-select form-select-lg" required>
-              <option value="" disabled selected>Select type</option>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold"><i class="fa fa-user-tag me-2 text-primary"></i>Account Type</label>
+            <select formControlName="accountType" class="form-select form-select-lg">
+              <option value="" disabled>Select type</option>
               <option value="SAVINGS">Savings</option>
               <option value="CURRENT">Current</option>
               <option value="FIXED_DEPOSIT">Fixed Deposit</option>
             </select>
           </div>
 
-          <!-- Initial Balance -->
-          <div class="col-md-6 mb-3">
-            <label class="form-label fw-semibold d-block mb-2"><i class="fa fa-money-bill-wave me-2 mr-2 text-primary"></i>Initial Balance</label>
-            <input type="number" class="form-control form-control-lg" formControlName="balance" placeholder="Enter balance" required>
+          <!-- Balance -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold"><i class="fa fa-money-bill-wave me-2 text-primary"></i>Balance</label>
+            <input type="number" class="form-control form-control-lg" formControlName="balance"
+              placeholder="Enter balance">
           </div>
 
-          <!-- Photo -->
-          <div class="col-md-6 mb-2 d-flex flex-column">
-            <label class="fw-semibold mb-2 mr-2">Upload Photo</label>
-            <input type="file" class="form-control form-control-sm" (change)="onFileSelected($event)" />
+          <!-- Account Active Status -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold"><i class="fa fa-check-circle me-2 text-primary"></i>Account Active
+              Status</label>
+            <select class="form-select form-select-lg" formControlName="accountActiveStatus">
+              <option [value]="true">Active</option>
+              <option [value]="false">Inactive</option>
+            </select>
+          </div>
+
+          <!-- Account Opening Date -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold"><i class="fa fa-calendar-plus me-2 text-primary"></i>Account Opening
+              Date</label>
+            <input type="date" class="form-control form-control-lg" formControlName="accountOpeningDate">
+          </div>
+
+          <!-- Account Closing Date -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold"><i class="fa fa-calendar-times me-2 text-primary"></i>Account Closing
+              Date</label>
+            <input type="date" class="form-control form-control-lg" formControlName="accountClosingDate">
+          </div>
+
+          <!-- Upload Photo -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold"><i class="fa fa-image me-2 text-primary"></i>Upload Photo</label>
+            <input type="file" class="form-control" (change)="onFileSelected($event)">
           </div>
 
         </div>
@@ -95,7 +142,6 @@
             </button>
           </div>
         </div>
-
       </form>
     </div>
 

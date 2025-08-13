@@ -4,10 +4,9 @@ export class User{
     name!:string;
     email!:string;
     password!:string;
-    type !:string;
-    photoUrl?: string;
-    nid !:string;
-    phone !:string;
-    address !:string;  
+    phoneNumber!:string;
+    dateOfBirth!:Date;
+    role !:string;
+    photo?: string;  
     
 }

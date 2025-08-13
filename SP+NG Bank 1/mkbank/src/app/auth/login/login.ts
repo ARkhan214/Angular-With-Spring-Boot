@@ -54,7 +54,7 @@ export class Login {
         this.userService.setLoginUser(foundUser);
 
         // ✅ Navigate based on role
-        if (foundUser.type === 'admin') {
+        if (foundUser.role === 'admin') {
           this.router.navigate(['/admin-profile']);
         } else {
           this.router.navigate(['/user-profile']);

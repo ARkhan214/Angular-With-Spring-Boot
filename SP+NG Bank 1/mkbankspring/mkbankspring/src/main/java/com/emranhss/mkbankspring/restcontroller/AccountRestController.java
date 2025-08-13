@@ -56,7 +56,7 @@ public class AccountRestController {
 
 
 
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<Accounts> getAccountById(@PathVariable Long id) {
         Accounts account = accountService.findAccountById(id);
         if (account != null) {
@@ -65,5 +65,10 @@ public class AccountRestController {
             return ResponseEntity.notFound().build();
         }
     }
+
+
+
+
+
 
 }

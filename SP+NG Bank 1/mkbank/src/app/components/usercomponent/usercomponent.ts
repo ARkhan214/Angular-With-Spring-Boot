@@ -15,8 +15,8 @@ import { Transactionsservice } from '../../service/transactionsservice';
 })
 export class Usercomponent implements OnInit {
 
-  userAccountForm !: FormGroup
-   selectedFile: File | null = null;
+  userAccountForm!: FormGroup;
+  selectedFile: File | null = null;
 
   constructor(
     private userService: UserService,
@@ -28,42 +28,65 @@ export class Usercomponent implements OnInit {
 
   ngOnInit(): void {
     this.userAccountForm = this.formbuilder.group({
+      // User fields
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
-      type: ['user', Validators.required],
+      phoneNumber: ['', Validators.required],
+      dateOfBirth: ['', Validators.required],
+      role: ['', Validators.required],
+      photo: [''],
+
+      // Account fields
+      accountType: ['', Validators.required],
       balance: ['', Validators.required],
+      accountActiveStatus: [true, Validators.required],
       nid: ['', Validators.required],
-      phone: ['',Validators.required],
-      address: ['',Validators.required],
-      photoUrl: ['']
+      address: ['', Validators.required],
+      accountOpeningDate: ['', Validators.required],
+      accountClosingDate: ['']
     });
   }
 
-    onFileSelected(event: any) {
-    if(event.target.files && event.target.files.length > 0){
+  onFileSelected(event: any) {
+    if (event.target.files && event.target.files.length > 0) {
       this.selectedFile = event.target.files[0];
     }
   }
 
-
   onSubmit() {
     if (this.userAccountForm.valid) {
-      const { name, email, password, type, balance,nid,phone,address, photoUrl } = this.userAccountForm.value;
+      const formValues = this.userAccountForm.value;
 
-      const userObj = { name, email, password,nid,phone,address, photoUrl };
-      const accountObj = {
-        type,
-        balance: Number(balance),
-        userName: name,
-        activeStatus: true,
-        photo: photoUrl
+      const userObj: User = {
+        name: formValues.name,
+        email: formValues.email,
+        password: formValues.password,
+        phoneNumber: formValues.phoneNumber,
+        dateOfBirth: formValues.dateOfBirth,
+        role: formValues.role,
+        photo: formValues.photo
+      };
+
+      const accountObj: Accounts = {
+        accountType: formValues.accountType,
+        balance: Number(formValues.balance),
+        name: formValues.name,
+        accountActiveStatus: formValues.accountActiveStatus,
+        photo: formValues.photo,
+        nid: formValues.nid,
+        phoneNumber: formValues.phoneNumber,
+        address: formValues.address,
+        dateOfBirth: formValues.dateOfBirth,
+        accountOpeningDate: formValues.accountOpeningDate,
+        accountClosingDate: formValues.accountClosingDate,
+        role: formValues.role
       };
 
       const formData = new FormData();
       formData.append('user', JSON.stringify(userObj));
       formData.append('account', JSON.stringify(accountObj));
-      if(this.selectedFile){
+      if (this.selectedFile) {
         formData.append('photo', this.selectedFile, this.selectedFile.name);
       }
 
@@ -80,8 +103,6 @@ export class Usercomponent implements OnInit {
       });
     }
   }
-
-
 
   loadUserWithAccounts(userId: number) {
     this.userService.getUserById(userId).subscribe(user => {

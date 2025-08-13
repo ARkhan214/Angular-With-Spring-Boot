@@ -35,8 +35,8 @@ export class ViewAllAccounts implements OnInit {
 
       accounts.forEach(acc => {
         this.userService.getUserById(acc.userId!).subscribe(user => {
-          acc.userName = user.name;
-          acc.photoUrl = user.photoUrl;
+          acc.name = user.name;
+          acc.photo = user.photo;
 
           updatedAccounts.push(acc);
           processed++;

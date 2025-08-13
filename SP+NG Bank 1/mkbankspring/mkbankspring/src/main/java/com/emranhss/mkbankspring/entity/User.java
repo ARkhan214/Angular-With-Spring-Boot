@@ -2,6 +2,7 @@ package com.emranhss.mkbankspring.entity;
 
 import jakarta.persistence.*;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -17,21 +18,15 @@ public class User {
     @Column(unique = true)
     private String email;
     private String password;
-    private String photoUrl;
-
-    @Column(unique = true, length = 17, nullable = false)
-    private String nid;
 
     @Column(length = 15, unique = true, nullable = false)
-    private String phone;
+    private String phoneNumber;
+    private String photo;
 
-    @Column(length = 255)
-    private String address;
-
+    private Date dateOfBirth;
 
     @Enumerated(value = EnumType.STRING)
     private  Role role;
-
 
     @OneToMany
     private List<Token> tokens;
@@ -39,15 +34,14 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String name, String email, String password, String photoUrl, String nid, String phone, String address, Role role, List<Token> tokens) {
+    public User(Long id, String name, String email, String password, String phoneNumber, String photo, Date dateOfBirth, Role role, List<Token> tokens) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
-        this.photoUrl = photoUrl;
-        this.nid = nid;
-        this.phone = phone;
-        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.photo = photo;
+        this.dateOfBirth = dateOfBirth;
         this.role = role;
         this.tokens = tokens;
     }
@@ -84,36 +78,28 @@ public class User {
         this.password = password;
     }
 
-    public String getPhotoUrl() {
-        return photoUrl;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
-    public String getNid() {
-        return nid;
+    public String getPhoto() {
+        return photo;
     }
 
-    public void setNid(String nid) {
-        this.nid = nid;
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 
-    public String getPhone() {
-        return phone;
+    public Date getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     public Role getRole() {
@@ -121,7 +107,7 @@ public class User {
     }
 
     public void setRole(Role role) {
-        this.role = Role.USER;
+        this.role = role;
     }
 
     public List<Token> getTokens() {

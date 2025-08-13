@@ -19,7 +19,7 @@ export class Accountsservice {
   const url = `${this.apiUrl}/${id}`;
   return this.http.get<Accounts>(url).pipe(
     switchMap(account => {
-      if (account.status === 'Closed') {
+      if (account.accountActiveStatus === false) {
         return throwError(() => new Error('This account is closed and cannot accept deposits.'));
       }
       account.balance += amount;
@@ -36,7 +36,7 @@ export class Accountsservice {
   const url = `${this.apiUrl}/${id}`;
   return this.http.get<Accounts>(url).pipe(
     switchMap(account => {
-      if (account.status === 'Closed') {
+      if (account.accountActiveStatus === false) {
         return throwError(() => new Error('This account is closed and cannot withdraw money.'));
       }
       if (account.balance < amount) {
@@ -55,7 +55,7 @@ export class Accountsservice {
   const url = `${this.apiUrl}/${id}`;
   return this.http.get<Accounts>(url).pipe(
     switchMap(account => {
-      account.status = 'Closed';
+      account.accountActiveStatus = false;
       return this.http.put(url, account);
     })
   );
@@ -66,7 +66,7 @@ openAccount(id: number): Observable<any> {
   const url = `${this.apiUrl}/${id}`;
   return this.http.get<Accounts>(url).pipe(
     switchMap(account => {
-      account.status = 'Active';  //  status change
+      account.accountActiveStatus = true;  //  status change
       return this.http.put(url, account);
     })
   );

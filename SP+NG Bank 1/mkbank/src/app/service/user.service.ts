@@ -51,7 +51,7 @@ export class UserService {
 
   getLoginUserRole(): string | null {
     const user = this.currentUserSubject.value;
-    return user ? user.type : null;
+    return user ? user.role : null;
   }
 
 

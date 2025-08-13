@@ -121,7 +121,7 @@ export class AuthService {
   // log out end
 
   getUserRole(): any {
-    return this.currentUserValue?.type;
+    return this.currentUserValue?.role;
   }
   
   public get currentUserValue(): User | null {
@@ -154,12 +154,12 @@ export class AuthService {
   }
 
    isAdmin(): boolean {
-    return this.getUserRole() === 'admin';
+    return this.getUserRole() === 'ADMIN';
   }
 
   isUser(): boolean {
     const role = this.getUserRole();
-    return role === 'user';
+    return role === 'USER';
   }
 
 

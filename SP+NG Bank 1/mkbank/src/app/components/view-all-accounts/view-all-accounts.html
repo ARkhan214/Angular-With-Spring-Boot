@@ -37,34 +37,34 @@
       <tr *ngFor="let a of filteredAccount">
         <td>{{ a.id }}</td>
         <td>{{ a.userId }}</td>
-        <td>{{ a.userName }}</td>
+        <td>{{ a.name }}</td>
         <td>
           <span [ngClass]="{
-            'badge bg-info text-dark': a.type === 'Savings',
-            'badge bg-warning text-dark': a.type === 'Current',
-            'badge bg-secondary': a.type !== 'Savings' && a.type !== 'Current'
-          }">{{ a.type }}</span>
+            'badge bg-info text-dark': a.accountType === 'Savings',
+            'badge bg-warning text-dark': a.accountType === 'Current',
+            'badge bg-secondary': a.accountType !== 'Savings' && a.accountType !== 'Current'
+          }">{{ a.accountType }}</span>
         </td>
         <td><strong class="text-success">৳{{ a.balance }}</strong></td>
         <td>
           <span [ngClass]="{
-            'badge bg-success': a.status === 'Active',
-            'badge bg-danger': a.status === 'Closed'
-          }">{{ a.status || 'Active' }}</span>
+            'badge bg-success': a.accountActiveStatus === true,
+            'badge bg-danger': a.accountActiveStatus === false
+          }">{{ a.accountActiveStatus || true }}</span>
         </td>
         <td>
-          <img [src]="a.photoUrl ? a.photoUrl : 'https://via.placeholder.com/50'" alt="User photo"
+          <img [src]="a.photo ? a.photo : 'https://via.placeholder.com/50'" alt="User photo"
             style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
         </td>
         <td>
           <button class="btn btn-outline-danger btn-sm me-2" (click)="deleteAccount(a?.id!)">
             <i class="fa fa-trash"></i> Delete
           </button>
-          <button class="btn btn-outline-warning btn-sm" [disabled]="a.status === 'Closed'"
+          <button class="btn btn-outline-warning btn-sm" [disabled]="a.accountActiveStatus === false"
             (click)="closeAccount(a?.id!)">
             Close
           </button>
-          <button *ngIf="a.status === 'Closed'" class="btn btn-outline-success btn-sm" (click)="openAccount(a?.id!)">
+          <button *ngIf="a.accountActiveStatus === false" class="btn btn-outline-success btn-sm" (click)="openAccount(a?.id!)">
             Reopen
           </button>
         </td>
