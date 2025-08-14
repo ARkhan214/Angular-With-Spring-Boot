@@ -3,9 +3,9 @@ import { Accounts } from "./accounts.model";
 export class Transaction {
 
     id?:number;
-    type!: 'Deposit' | 'Withdraw' | 'Fixed Deposit' | 'Transfer' | 'Receive';
+    type!: 'DEPOSIT' | 'WITHDRAW' | 'FIXED_DEPOSIT' | 'TRANSFER' | 'RECEIVE';
     amount !: number;
-    transactiontime !: Date;
+    transactionTime !: Date;
     description?: string;
     accountId !: number;
     receiverAccountId ?: number;

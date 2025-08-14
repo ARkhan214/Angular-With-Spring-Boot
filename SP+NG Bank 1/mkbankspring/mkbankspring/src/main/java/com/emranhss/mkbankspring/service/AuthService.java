@@ -38,7 +38,7 @@ public class AuthService {
             user.setPhoto(fileName);
         }
 
-        user.setRole(Role.USER);
+        user.setRole(Role.ADMIN);
         userRepository.save(user);
         sendActivationEmail(user);
     }

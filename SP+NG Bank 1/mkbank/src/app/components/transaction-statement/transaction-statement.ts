@@ -37,7 +37,7 @@ export class TransactionStatement implements OnInit {
       if (accountIdFromUrl) {
         this.accountId = accountIdFromUrl;
         this.isLoggedInUser = true;
-        this.findStatement();   // ✅ Auto load on route param
+        this.findStatement();   //  Auto load on route param
       } else {
         this.errorMessage = 'No account ID found in URL.';
       }
@@ -84,7 +84,7 @@ export class TransactionStatement implements OnInit {
           const end = new Date(this.endDate);
 
           result = result.filter(t => {
-            const tDate = new Date(t.transactiontime);
+            const tDate = new Date(t.transactionTime);
             return tDate >= start && tDate <= end;
           });
         }
@@ -92,15 +92,15 @@ export class TransactionStatement implements OnInit {
         if (result.length === 0) {
           this.errorMessage = 'No transactions found for this Account ID.';
         } else {
-          result.sort((a, b) => new Date(a.transactiontime).getTime() - new Date(b.transactiontime).getTime());
+          result.sort((a, b) => new Date(a.transactionTime).getTime() - new Date(b.transactionTime).getTime());
 
           let balance = 0;
           this.transactionsWithBalance = result.map(t => {
 
-            if (t.type === 'Deposit' || t.type === 'Receive') {
+            if (t.type === 'DEPOSIT' || t.type === 'RECEIVE') {
               balance += t.amount;
               console.log(t.amount);
-            } else if (t.type === 'Withdraw' || t.type === 'Transfer') {
+            } else if (t.type === 'WITHDRAW' || t.type === 'TRANSFER') {
               balance -= t.amount;
             }
             

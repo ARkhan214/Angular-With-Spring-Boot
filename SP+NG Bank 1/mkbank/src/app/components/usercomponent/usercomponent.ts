@@ -34,7 +34,7 @@ export class Usercomponent implements OnInit {
       password: ['', Validators.required],
       phoneNumber: ['', Validators.required],
       dateOfBirth: ['', Validators.required],
-      role: ['', Validators.required],
+      role: ['USER'],
       photo: [''],
 
       // Account fields
@@ -80,7 +80,7 @@ export class Usercomponent implements OnInit {
         dateOfBirth: formValues.dateOfBirth,
         accountOpeningDate: formValues.accountOpeningDate,
         accountClosingDate: formValues.accountClosingDate,
-        role: formValues.role
+        role:userObj.role
       };
 
       const formData = new FormData();

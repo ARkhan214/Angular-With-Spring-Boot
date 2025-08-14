@@ -1,5 +1,5 @@
 <!-- only-add-user.html -->
-<form [formGroup]="userForm" (ngSubmit)="onSubmit()" novalidate class="form-wrap">
+<form [formGroup]="userAccountForm" (ngSubmit)="onSubmit()" novalidate class="form-wrap">
 
     <div class="card-header bg-primary text-white text-center py-4"
         style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
@@ -38,23 +38,28 @@
 
     </div>
 
-    <!-- nid -->
-            <div class="mb-3">
-            <label class="form-label fw-semibold d-block mb-2">NID</label>
-            <input type="text" class="form-control form-control-lg" formControlName="nid" placeholder="NID Number" required>
+          <!-- Date of Birth -->
+          <div class="col-md-6">
+            <label class="form-label fw-semibold"><i class="fa fa-calendar me-2 text-primary"></i>Date of Birth</label>
+            <input type="date" class="form-control form-control-lg" formControlName="dateOfBirth">
           </div>
 
           <!-- phone -->
             <div class="mb-3">
-            <label class="form-label fw-semibold d-block mb-2">Phone</label>
-            <input type="text" class="form-control form-control-lg" formControlName="phone" placeholder="Phone Number" required>
+            <label class="form-label fw-semibold d-block mb-2">Phone Number</label>
+            <input type="text" class="form-control form-control-lg" formControlName="phoneNumber" placeholder="Phone Number" required>
           </div>
 
-          <!-- address -->
-           <div class="mb-3">
-            <label class="form-label fw-semibold d-block mb-2">Address</label>
-            <input type="text" class="form-control form-control-lg" formControlName="address" placeholder="Enter your full Address" required>
-          </div>
+          <!-- Role -->
+          <!-- <div class="col-md-6">
+            <label class="form-label fw-semibold"><i class="fa fa-user-shield me-2 text-primary"></i>Role</label>
+            <select class="form-select form-select-lg" formControlName="role">
+              <option value="ADMIN">ADMIN</option>
+              <option value="USER">USER</option>
+            </select>
+
+          </div> -->
+          
 
     <!-- File upload (image) -->
     <div class="form-field">
@@ -65,10 +70,10 @@
 
     <!-- Actions -->
     <div class="actions">
-        <button type="submit" [disabled]="userForm.invalid">
+        <button type="submit" [disabled]="userAccountForm.invalid">
             Save User
         </button>
-        <button type="button" (click)="userForm.reset(); selectedFile=null;">
+        <button type="button" (click)="userAccountForm.reset(); selectedFile=null;">
             Reset
         </button>
     </div>

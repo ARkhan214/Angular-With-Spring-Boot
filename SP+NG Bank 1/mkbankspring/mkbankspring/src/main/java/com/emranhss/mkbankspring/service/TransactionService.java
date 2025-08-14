@@ -7,18 +7,23 @@ import com.emranhss.mkbankspring.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class TransactionService {
 
-    private final TransactionRepository transactionRepository;
+    @Autowired
+    private TransactionRepository transactionRepository;
     @Autowired
     private AccountRepository accountRepository;
 
-    public TransactionService(TransactionRepository transactionRepository){
+    @Autowired
+    public TransactionService(TransactionRepository transactionRepository,
+                              AccountRepository accountRepository){
         this.transactionRepository = transactionRepository;
+        this.accountRepository = accountRepository;
     }
 
     // Save or update transaction
@@ -46,6 +51,8 @@ public class TransactionService {
         return transactionRepository.findById(id);
     }
 
+
+    // for save Transaction process.It will  handle Deposit, Withdraw, Transfer and balance update + transaction save
     public Transaction addTransaction(Transaction transaction) {
         Accounts sender = transaction.getAccount();
         if (!sender.isAccountActiveStatus()) {
@@ -77,13 +84,14 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
+    // Get transactions by Accounts object
     public List<Transaction> getTransactionsByAccount(Accounts account) {
         return transactionRepository.findByAccount(account);
     }
 
-//    public List<Transaction> getAllTransactions() {
-//        return transactionRepository.findAll();
-//    }
-
+    // Get transactions by account + date range
+    public List<Transaction> getTransactionsByAccountAndDateRange(Long accountId, Date start, Date end){
+        return transactionRepository.findByAccountIdAndTransactionTimeBetweenOrderByTransactionTimeAsc(accountId, start, end);
+    }
 
 }

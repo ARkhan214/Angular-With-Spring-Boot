@@ -58,7 +58,7 @@ export class Addtransaction {
       type: this.transactionForm.value.type,
       amount: this.transactionForm.value.amount,
       description: this.transactionForm.value.description,
-      transactiontime: new Date(),
+      transactionTime: new Date(),
       accountId: this.transactionForm.value.accountId,
       receiverAccountId: this.transactionForm.value.receiverAccountId
     };
@@ -66,12 +66,12 @@ export class Addtransaction {
     // Sender Transaction
     this.transactionService.addTransactionWithBalance(transaction).subscribe({
       next: () => {
-        if (transaction.type === 'Transfer') {
+        if (transaction.type === 'TRANSFER') {
           const receiverTransaction: Transaction = {
-            type: 'Receive',
+            type: 'RECEIVE',
             amount: transaction.amount,
             description: transaction.description,
-            transactiontime: new Date(),
+            transactionTime: new Date(),
             accountId: transaction.receiverAccountId!,
             receiverAccountId: transaction.accountId
           };

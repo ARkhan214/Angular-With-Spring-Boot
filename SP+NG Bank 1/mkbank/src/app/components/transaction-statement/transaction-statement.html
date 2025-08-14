@@ -69,9 +69,9 @@
       </thead>
       <tbody>
         <tr *ngFor="let t of transactionsWithBalance">
-          <td>{{ t.transactiontime | date: 'short' }}</td>
+          <td>{{ t.transactionTime | date: 'short' }}</td>
           <td>{{ t.accountId }}</td>
-          <td>{{ t.type === 'Deposit' || t.type === 'Withdraw' ? 'Self' : t.receiverAccountId }}</td>
+          <td>{{ t.type === 'DEPOSIT' || t.type === 'WITHDRAW' ? 'Self' : t.receiverAccountId }}</td>
           <td>{{ t.type }}</td>
           <td>{{ t.description || '-' }}</td>
           <td>৳{{ t.amount }}</td>

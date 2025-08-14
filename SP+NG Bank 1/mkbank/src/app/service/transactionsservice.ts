@@ -12,12 +12,12 @@ import { environment } from '../environment/environment';
 export class Transactionsservice {
 
 
-   private apiUrl = environment.springUrl+"account";
-  private transactionsUrl = environment.springUrl+"transactions";
+  private apiUrl = environment.springUrl+"account";
+  private transactionsUrl = environment.springUrl+"transactions/";
 
   constructor(private http: HttpClient) { }
 
-  addTransactionWithBalance(transaction: Transaction): Observable<any> {
+  addTransactionWithBalance(transaction: Transaction): Observable<any> {  
     const accountId = transaction.accountId;
 
     console.log(accountId);
@@ -37,16 +37,16 @@ export class Transactionsservice {
         let newBalance = account.balance || 0;
         console.log(accountId);
 
-        if (transaction.type === 'Deposit') {
+        if (transaction.type === 'DEPOSIT') {
           newBalance += transaction.amount;
-        } else if (transaction.type === 'Withdraw') {
+        } else if (transaction.type === 'WITHDRAW') {
           if (transaction.amount > newBalance) {
             return throwError(() => new Error('Insufficient balance!'));
           }
           newBalance -= transaction.amount;
         }
 
-        else if (transaction.type === 'Transfer') {
+        else if (transaction.type === 'TRANSFER') {
           if (transaction.amount > newBalance) {
             return throwError(() => new Error('Insufficient balance!'));
           }
@@ -100,15 +100,9 @@ export class Transactionsservice {
     return this.http.get<Transaction[]>(this.transactionsUrl, { params });
   }
 
-
-  //for all transaction
-//   getAllTransactions(): Observable<Transaction[]> {
-//   return this.http.get<Transaction[]>('http://localhost:3000/transactions');
-// }
-
 getAllTransactions(): Observable<Transaction[]> {
   return this.http.get<Transaction[]>('http://localhost:3000/transactions').pipe(
-    map(data => data.filter(t => t.amount > 0)) // শুধু positive amount
+    map(data => data.filter(t => t.amount > 0)) // only positive amount
   );
 }
 getPositiveTransactions(): Observable<Transaction[]> {
@@ -120,7 +114,7 @@ getPositiveTransactions(): Observable<Transaction[]> {
 
 getWithdrawTransactions(): Observable<Transaction[]> {
   return this.http.get<Transaction[]>('http://localhost:3000/transactions').pipe(
-    map(data => data.filter(t => t.type === 'Withdraw' || t.type === 'Transfer'))
+    map(data => data.filter(t => t.type === 'WITHDRAW' || t.type === 'TRANSFER'))
   );
 }
 
