@@ -31,10 +31,10 @@ public class AccountRestController {
     private AccountService accountService;
 
     @PostMapping("")
-    public ResponseEntity<Map<String,String>>registerAccount(
-            @RequestPart(value = "user")String userJson,
-            @RequestPart(value = "account")String accountJson,
-            @RequestParam(value = "photo")MultipartFile file
+    public ResponseEntity<Map<String, String>> registerAccount(
+            @RequestPart(value = "user") String userJson,
+            @RequestPart(value = "account") String accountJson,
+            @RequestParam(value = "photo") MultipartFile file
     ) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         User user = objectMapper.readValue(userJson, User.class);
@@ -55,7 +55,6 @@ public class AccountRestController {
     }
 
 
-
     @GetMapping("{id}")
     public ResponseEntity<Accounts> getAccountById(@PathVariable Long id) {
         Accounts account = accountService.findAccountById(id);
@@ -66,9 +65,16 @@ public class AccountRestController {
         }
     }
 
-
-
-
-
+    @PutMapping("/")
+    public Accounts updateAccount(Accounts account) {
+        return accountService.save(account);
+    }
 
 }
+
+
+
+
+
+
+
