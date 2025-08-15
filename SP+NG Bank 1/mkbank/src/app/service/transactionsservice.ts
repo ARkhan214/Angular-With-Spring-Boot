@@ -12,29 +12,32 @@ import { environment } from '../environment/environment';
 export class Transactionsservice {
 
 
-  private apiUrl = environment.springUrl+"account";
-  private transactionsUrl = environment.springUrl+"transactions/";
+  private apiUrl = environment.springUrl + "account";
+  private transactionsUrl = environment.springUrl + "transactions/";
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient
+  ) { }
 
-  addTransactionWithBalance(transaction: Transaction): Observable<any> {  
+  addTransactionWithBalance(transaction: Transaction): Observable<any> {
     const accountId = transaction.accountId;
 
     console.log(accountId);
 
     return this.http.get<Accounts>(`${this.apiUrl}/${accountId}`).pipe(
-      
+
       switchMap(account => {
         if (!account) {
           return throwError(() => new Error('Account not found!'));
         }
 
-         //new code for status
-      if (account.accountActiveStatus === false) {
-        return throwError(() => new Error('This account is closed and cannot perform transactions.'));
-      }
+        //new code for status
+        if (account.accountActiveStatus === false) {
+          return throwError(() => new Error('This account is closed and cannot perform transactions.'));
+        }
 
         let newBalance = account.balance || 0;
+
         console.log(accountId);
 
         if (transaction.type === 'DEPOSIT') {
@@ -58,7 +61,7 @@ export class Transactionsservice {
           const receiverId = transaction.receiverAccountId;
 
           this.http.get<Accounts>(`${this.apiUrl}/${receiverId}`).subscribe(receiverAccount => {
-            
+
             const updatedReceiver = {
               ...receiverAccount,
               balance: receiverAccount.balance + transaction.amount
@@ -77,7 +80,7 @@ export class Transactionsservice {
             console.error('Receiver not found:', error);
           });
         }
-       
+
         // Update account balance
         const updatedAccount: Accounts = { ...account, balance: newBalance };
 
@@ -86,12 +89,46 @@ export class Transactionsservice {
             return this.http.post<Transaction>(this.transactionsUrl, transaction);
           })
         );
-     })
+      })
     );
 
   }
 
 
+
+
+
+  addTransaction(transaction: Transaction): Observable<any> {
+
+    const accountId = transaction.accountId;
+
+    return this.http.get<Accounts>(`${this.apiUrl}/${accountId}`).pipe(
+      switchMap(account => {
+        if (!account) {
+          return throwError(() => new Error('Account not found!'));
+        }
+
+        let newBalance = account.balance || 0;
+
+        if (transaction.type === 'DEPOSIT') {
+          newBalance += transaction.amount;
+        } else if (transaction.type === 'WITHDRAW') {
+          if (transaction.amount > newBalance) {
+            return throwError(() => new Error('Insufficient balance!'));
+          }
+          newBalance -= transaction.amount;
+        }
+         const updatedAccount: Accounts = { ...account, balance: newBalance };
+
+               return this.http.put<Accounts>(`${this.apiUrl}/${accountId}`, updatedAccount).pipe(
+          switchMap(() => {
+            return this.http.post<Transaction>(this.transactionsUrl, transaction);
+          })
+        );
+      })
+
+    );
+  }
 
 
   getTransactionsByAccountId(accountId: number): Observable<Transaction[]> {
@@ -100,23 +137,23 @@ export class Transactionsservice {
     return this.http.get<Transaction[]>(this.transactionsUrl, { params });
   }
 
-getAllTransactions(): Observable<Transaction[]> {
-  return this.http.get<Transaction[]>('http://localhost:3000/transactions').pipe(
-    map(data => data.filter(t => t.amount > 0)) // only positive amount
-  );
-}
-getPositiveTransactions(): Observable<Transaction[]> {
-  return this.http.get<Transaction[]>('http://localhost:3000/transactions').pipe(
-    map(data => data.filter(t => t.amount > 0))
-  );
-}
+  getAllTransactions(): Observable<Transaction[]> {
+    return this.http.get<Transaction[]>('http://localhost:3000/transactions').pipe(
+      map(data => data.filter(t => t.amount > 0)) // only positive amount
+    );
+  }
+  getPositiveTransactions(): Observable<Transaction[]> {
+    return this.http.get<Transaction[]>('http://localhost:3000/transactions').pipe(
+      map(data => data.filter(t => t.amount > 0))
+    );
+  }
 
 
-getWithdrawTransactions(): Observable<Transaction[]> {
-  return this.http.get<Transaction[]>('http://localhost:3000/transactions').pipe(
-    map(data => data.filter(t => t.type === 'WITHDRAW' || t.type === 'TRANSFER'))
-  );
-}
+  getWithdrawTransactions(): Observable<Transaction[]> {
+    return this.http.get<Transaction[]>('http://localhost:3000/transactions').pipe(
+      map(data => data.filter(t => t.type === 'WITHDRAW' || t.type === 'TRANSFER'))
+    );
+  }
 
 
 

@@ -24,6 +24,7 @@ public class UserRestController {
     private AuthService authService;
 
 
+    //Method for only user Save,update or register (Method number -1)
     @PostMapping("")
     public ResponseEntity<Map<String,String>>saveUser(
             @RequestPart(value = "user")String userJson,
@@ -46,8 +47,19 @@ public class UserRestController {
         }
     }
 
+    // for Show User view by id (Method Number -2)
+    @GetMapping("{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        User user = authService.findUserById(id);
+        if (user != null){
+            return ResponseEntity.ok(user);
+        }else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 
+    //Method for show all users (Method Number -3)
     @GetMapping("all")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = authService.findAll();

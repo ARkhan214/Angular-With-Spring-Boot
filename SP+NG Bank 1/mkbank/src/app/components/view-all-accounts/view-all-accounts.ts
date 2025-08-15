@@ -18,7 +18,7 @@ export class ViewAllAccounts implements OnInit {
   searchAccountId:  number | null = null;
 
   constructor(
-    private accounService: Accountsservice,
+    private accountService: Accountsservice,
     private userService: UserService,
     private router: Router,
     private cdr: ChangeDetectorRef
@@ -29,27 +29,13 @@ export class ViewAllAccounts implements OnInit {
   }
 
   loadData(): void {
-    this.accounService.getAllAccount().subscribe(accounts => {
-      const updatedAccounts: any[] = [];
-      let processed = 0;
+  this.accountService.getAllAccount().subscribe(accounts => {
+    this.account = accounts;           
+    this.filteredAccount = [...accounts]; 
+    this.cdr.markForCheck();            
+  });
+}
 
-      accounts.forEach(acc => {
-        this.userService.getUserById(acc.userId!).subscribe(user => {
-          acc.name = user.name;
-          acc.photo = user.photo;
-
-          updatedAccounts.push(acc);
-          processed++;
-
-          if (processed === accounts.length) {
-            this.account = [...updatedAccounts];
-            this.filteredAccount = [...updatedAccounts]; // 👈 Filtered list set
-            this.cdr.markForCheck();
-          }
-        });
-      });
-    });
-  }
 
   filterAccounts(): void {
     if (this.searchAccountId === null) {
@@ -72,7 +58,7 @@ deleteAccount(id: number): void {
     return; // user cancelled
   }
 
-  this.accounService.deleteAccount(id).subscribe({
+  this.accountService.deleteAccount(id).subscribe({
     next: () => {
       console.log('Account deleted');
       this.loadData();
@@ -92,7 +78,7 @@ deleteAccount(id: number): void {
     }
 
 
-    this.accounService.closeAccount(id).subscribe({
+    this.accountService.closeAccount(id).subscribe({
       next: () => {
         this.loadData();
         this.cdr.markForCheck();
@@ -104,7 +90,7 @@ deleteAccount(id: number): void {
   }
 
   openAccount(id: number): void {
-    this.accounService.openAccount(id).subscribe({
+    this.accountService.openAccount(id).subscribe({
       next: () => {
         this.loadData();
         this.cdr.markForCheck();

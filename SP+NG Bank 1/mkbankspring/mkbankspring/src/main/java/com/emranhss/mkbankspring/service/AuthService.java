@@ -31,7 +31,7 @@ public class AuthService {
     @Value("src/main/resources/static/images")
     private String uploadDir;
 
-
+    //Method for save,update or register (connected with UserResCon Method Number -1)
     public void saveOrUpdateUser(User user, MultipartFile imageFile) {
         if (imageFile != null && !imageFile.isEmpty()) {
             String fileName = saveImage(imageFile,user);
@@ -44,18 +44,28 @@ public class AuthService {
     }
 
 
+    //method for find all user
     public List<User> findAll() {
         return userRepository.findAll();
     }
+    //method for find user by id
     public User findById(Long id) {
         return userRepository.findById(id).get();
     }
+
+    //method for find user by id or return null
+    public User findUserById(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
+
 
     public void delete(User user) {
         userRepository.delete(user);
     }
 
 
+
+    //Method for Send Email (connected with this saveOrUpdateUser methode)
     private void sendActivationEmail(User user) {
         String subject = "Welcome to Our Service – Confirm Your Registration";
 
@@ -97,7 +107,7 @@ public class AuthService {
         }
     }
 
-    // for User folder
+    //Method for save image of file in User table
     public String saveImage(MultipartFile file, User user) {
 
         Path uploadPath = Paths.get(uploadDir + "/user");
@@ -122,7 +132,7 @@ public class AuthService {
 
 
 
-    // for Account folder
+    //Method for save image of file in Account table
     public String saveImageForAccount(MultipartFile file, Accounts account) {
         Path uploadPath = Paths.get(uploadDir+"/account");
         if (!Files.exists(uploadPath)) {
@@ -150,7 +160,7 @@ public class AuthService {
     }
 
 
-
+    // for account save or update or registration (connected with AccountResCon Method Number -1)
     public void registerAccount(User user, MultipartFile imageFile,Accounts accountData) {
         if (imageFile != null && !imageFile.isEmpty()) {
 

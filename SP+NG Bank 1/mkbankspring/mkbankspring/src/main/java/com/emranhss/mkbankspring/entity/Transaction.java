@@ -1,5 +1,6 @@
 package com.emranhss.mkbankspring.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import java.util.Date;
 
@@ -27,6 +28,7 @@ public class Transaction {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     @JoinColumn(name = "account_id", nullable = false)
     private Accounts account;
 

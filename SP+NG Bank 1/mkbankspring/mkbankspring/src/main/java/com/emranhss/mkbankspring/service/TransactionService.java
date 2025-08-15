@@ -2,6 +2,7 @@ package com.emranhss.mkbankspring.service;
 
 import com.emranhss.mkbankspring.entity.Accounts;
 import com.emranhss.mkbankspring.entity.Transaction;
+import com.emranhss.mkbankspring.entity.TransactionType;
 import com.emranhss.mkbankspring.repository.AccountRepository;
 import com.emranhss.mkbankspring.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,31 +10,60 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TransactionService {
-
     @Autowired
     private TransactionRepository transactionRepository;
     @Autowired
     private AccountRepository accountRepository;
 
-    @Autowired
-    public TransactionService(TransactionRepository transactionRepository,
-                              AccountRepository accountRepository){
-        this.transactionRepository = transactionRepository;
-        this.accountRepository = accountRepository;
+    // Method for Transaction Taka (connected with TransactionResCon Method Number -1)
+    public Transaction addTransaction(Transaction transaction, Long id) {
+
+        Accounts sender = accountRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Account not found!"));
+
+        if (!sender.isAccountActiveStatus()) {
+            throw new RuntimeException("Sender account is closed!");
+        }
+
+        double newBalance = sender.getBalance();
+
+
+        if (transaction.getType() == TransactionType.DEPOSIT) {
+            newBalance += transaction.getAmount();
+        } else if (transaction.getType() == TransactionType.WITHDRAW) {
+            if (transaction.getAmount() > newBalance) {
+                throw new RuntimeException("Insufficient balance!");
+            }
+            newBalance -= transaction.getAmount();
+        }
+
+
+        sender.setBalance(newBalance);
+        accountRepository.save(sender);
+
+        transaction.setAccount(sender);
+        transaction.setTransactionTime(new Date());
+
+        return transactionRepository.save(transaction);
     }
+
 
     // Save or update transaction
     public Transaction saveTransaction(Transaction transaction){
         return transactionRepository.save(transaction);
     }
 
-    // Get all transactions
+    // Get all transactions(connected with TransactionResCon Method Number -2)
     public List<Transaction> getAllTransactions(){
         return transactionRepository.findAll();
+    }
+
+    // Get transactions by Account ID
+    public Transaction getTransactionByAccountId(Long accountId){
+        return transactionRepository.findById(accountId).get();
     }
 
     // Get transactions by accountId
@@ -41,57 +71,43 @@ public class TransactionService {
         return transactionRepository.findByAccountId(accountId);
     }
 
-    // Get transactions by type
-    public List<Transaction> getTransactionsByType(String type){
-        return transactionRepository.findByType(type);
-    }
-
-    // Optional: Get transaction by Id
-    public Optional<Transaction> getTransactionById(Long id){
-        return transactionRepository.findById(id);
+    //for delete transaction by id (connected with TransactionResCon Method Number -4)
+    public void deleteTransactionByAccountId(Long accountId) {
+        transactionRepository.deleteByAccountId(accountId);
     }
 
 
-    // for save Transaction process.It will  handle Deposit, Withdraw, Transfer and balance update + transaction save
-    public Transaction addTransaction(Transaction transaction) {
-        Accounts sender = transaction.getAccount();
-        if (!sender.isAccountActiveStatus()) {
-            throw new RuntimeException("Sender account is closed!");
-        }
-
-        double newBalance = sender.getBalance();
-        switch (transaction.getType()) {
-            case DEPOSIT -> newBalance += transaction.getAmount();
-            case WITHDRAW -> {
-                if (transaction.getAmount() > newBalance) throw new RuntimeException("Insufficient balance!");
-                newBalance -= transaction.getAmount();
-            }
-            case TRANSFER -> {
-                if (transaction.getAmount() > newBalance) throw new RuntimeException("Insufficient balance!");
-                newBalance -= transaction.getAmount();
-
-                Accounts receiver = transaction.getReceiverAccount();
-                if (receiver == null || !receiver.isAccountActiveStatus()) {
-                    throw new RuntimeException("Receiver account is invalid or closed!");
-                }
-                receiver.setBalance(receiver.getBalance() + transaction.getAmount());
-                accountRepository.save(receiver);
-            }
-        }
-
-        sender.setBalance(newBalance);
-        accountRepository.save(sender);
-        return transactionRepository.save(transaction);
-    }
-
-    // Get transactions by Accounts object
+    // Get transactions by Accounts object (connected with TransactionResCon Method Number -3)
     public List<Transaction> getTransactionsByAccount(Accounts account) {
         return transactionRepository.findByAccount(account);
     }
 
-    // Get transactions by account + date range
-    public List<Transaction> getTransactionsByAccountAndDateRange(Long accountId, Date start, Date end){
-        return transactionRepository.findByAccountIdAndTransactionTimeBetweenOrderByTransactionTimeAsc(accountId, start, end);
+
+
+    //Table Relation Use kore filter kora(Transaction table er sathe Account Table er Relation k kaje lagano)
+    //Transaction Type baboher kore filter kora(connected with TransactionResCon Method Number -5)
+    //Method for Search Transaction by deposit
+    public List<Transaction> getDepositsByAccount(Long accountId) {
+        Accounts account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found!"));
+
+        return account.getTransactions().stream()
+                .filter(t -> t.getType() == TransactionType.DEPOSIT)
+                .toList();
     }
+
+
+    //Table Relation Use kore filter kora(Transaction table er sathe Account Table er Relation k kaje lagano)
+    //Transaction Type baboher kore filter kora(connected with TransactionResCon Method Number -6)
+    //Method for Search Transaction by withdraw
+    public List<Transaction> getWithdrawsByAccount(Long accountId) {
+        Accounts account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found!"));
+
+        return account.getTransactions().stream()
+                .filter(t -> t.getType() == TransactionType.WITHDRAW)
+                .toList();
+    }
+
 
 }

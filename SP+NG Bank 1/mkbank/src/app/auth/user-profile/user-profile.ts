@@ -3,7 +3,7 @@ import { User } from '../../model/user.model';
 import { Accountsservice } from '../../service/accountsservice';
 import { Accounts } from '../../model/accounts.model';
 import { UserService } from '../../service/user.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-profile',
@@ -13,74 +13,36 @@ import { Router } from '@angular/router';
 })
 export class UserProfile implements OnInit {
 
-  user!: User;
-
-
-  account !: Accounts;
-  accId !: number;
+ 
+  account!: Accounts;
 
   constructor(
     private accountService: Accountsservice,
-    private userService: UserService,
     private router: Router,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
-
-    // this.loadAccountDetails(this.account.id!);
-
-    const data = localStorage.getItem('loggedInUser');
-    if (data) {
-      this.user = JSON.parse(data);
-
-      // find user account
-      this.accountService.findAccountByUserId(this.user.id!).subscribe(account => {
-        if (account) {
-          this.account = account;
-          this.cdRef.markForCheck();
-          console.log('Loaded account:', this.account);
-        } else {
-          console.warn('No account found for this user.');
-        }
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    if (id) {
+      this.accountService.getAllAccountById(id).subscribe({
+        next: (acc: Accounts) => this.account = acc,
+        error: (err) => console.error('Account fetch error:', err)
       });
+    } else {
+      console.error('No account ID provided in route');
     }
-
-
   }
-
-
 
   logout() {
     alert('You have been logged out successfully!');
     localStorage.removeItem('loggedInUser');
-    window.location.href = '/login';
+    this.router.navigate(['/login']);
   }
 
-
-
-  loadAccountDetails(id: number): void {
-
-    this.accountService.getAllAccountById(id).subscribe({
-      next: (acc: Accounts) => {
-        this.account = acc;
-      },
-
-    })
-  }
-
-  //new method for statement
   viewStatement(): void {
-    this.router.navigate(['/trst'], {
-      queryParams: { accountId: this.account.id }
-    });
-  }
-
-
-    getLoginUserDetails() {
-    localStorage.getItem('loggedInUser');
-    console.log(localStorage.getItem('loggedInUser'));
-
+    this.router.navigate(['/trst'], { queryParams: { accountId: this.account.id } });
   }
 
 

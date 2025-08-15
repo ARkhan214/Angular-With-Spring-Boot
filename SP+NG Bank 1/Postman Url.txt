@@ -1,0 +1,13 @@
+=>Show Transaction Filter By Transaction Type.
+GET http://localhost:8085/api/transactions/1/deposits
+GET http://localhost:8085/api/transactions/1/withdraws
+
+=>Account Details
+GET http://localhost:8085/api/account/1
+
+=>Show Transaction
+GET http://localhost:8085/api/transactions/all
+GET http://localhost:8085/api/transactions/account/1
+
+=>For Transaction (Deposi,withdraw)
+POST http://localhost:8085/api/transactions/1

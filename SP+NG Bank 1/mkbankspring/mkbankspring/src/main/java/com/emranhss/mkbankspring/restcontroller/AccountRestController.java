@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -30,6 +31,7 @@ public class AccountRestController {
     @Autowired
     private AccountService accountService;
 
+    // for account save or update or registration (Method Number -1)
     @PostMapping("")
     public ResponseEntity<Map<String, String>> registerAccount(
             @RequestPart(value = "user") String userJson,
@@ -54,7 +56,7 @@ public class AccountRestController {
         }
     }
 
-
+    // for account view by id (Method Number -2)
     @GetMapping("{id}")
     public ResponseEntity<Accounts> getAccountById(@PathVariable Long id) {
         Accounts account = accountService.findAccountById(id);
@@ -65,10 +67,33 @@ public class AccountRestController {
         }
     }
 
-    @PutMapping("/")
-    public Accounts updateAccount(Accounts account) {
-        return accountService.save(account);
+    //for all account view (Method Number -3)
+    @GetMapping("all")
+    public List<Accounts>  getAllAccounts() {
+        return accountService.getAll();
     }
+
+
+    // Method for Transaction Taka (Method Number -4)
+    @PutMapping("{id}")
+    public ResponseEntity<Accounts> updateAccount(
+            @PathVariable Long id,
+            @RequestBody Accounts account) {
+
+        // Find existing account(ami j account id dicci sai id khuja)
+        Accounts existing = accountService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Account not found with id: " + id));
+
+        // Update only relevant fields
+        existing.setName(account.getName());
+        existing.setBalance(account.getBalance());
+        existing.setAccountActiveStatus(account.isAccountActiveStatus());
+
+        Accounts updated = accountService.save(existing);
+
+        return ResponseEntity.ok(updated);
+    }
+
 
 }
 

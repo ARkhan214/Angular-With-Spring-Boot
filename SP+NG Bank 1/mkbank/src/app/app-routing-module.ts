@@ -35,7 +35,7 @@ const routes: Routes = [
   {path:'addtr',component:Addtransaction},
   {path:'trst',component:TransactionStatement},
   {path:'login',component:Login},
-  {path: 'user-profile', component: UserProfile},
+  {path: 'user-profile/:id', component: UserProfile},
   {path: 'admin-profile', component: AdminProfile},
   {path: 'contact', component: ContactUs},
   {path: 'admindash', component: AdminDashboard},

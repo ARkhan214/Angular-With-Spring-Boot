@@ -10,9 +10,11 @@ import { environment } from '../environment/environment';
 export class Accountsservice {
 
 
-  private apiUrl = environment.springUrl+"account/";
+  private apiUrl = environment.springUrl+"account";
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient
+  ) { }
 
 // new method for close part
   depositToAccount(id: number, amount: number): Observable<any> {
@@ -91,9 +93,11 @@ findAccountByUserId(userId: number): Observable<Accounts | null> {
   //last update Accounts[]
 
   getAllAccount(): Observable<Accounts[]> {
-    return this.http.get<Accounts[]>(this.apiUrl);
+    return this.http.get<Accounts[]>(this.apiUrl+"/all");
   }
 
+
+  // view account info
   getAllAccountById(id:number): Observable<Accounts> {
     return this.http.get<Accounts>(this.apiUrl+"/"+id);
   }

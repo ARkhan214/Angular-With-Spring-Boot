@@ -1,6 +1,7 @@
 package com.emranhss.mkbankspring.repository;
 
 import com.emranhss.mkbankspring.entity.Token;
+import com.emranhss.mkbankspring.entity.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -18,5 +19,9 @@ public interface TokenRepository extends JpaRepository<Token,Long> {
     where t.user.id= :userId and t.logout=false
 """)
     List<Token> findAllTokenByUser(int userId);
+
+    @Query("SELECT t.receiverAccount.id FROM Transaction t WHERE t.id = :txId")
+    Long findReceiverIdByTransactionId( Long txId);
+
 
 }
