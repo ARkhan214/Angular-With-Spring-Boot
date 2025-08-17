@@ -11,3 +11,177 @@ GET http://localhost:8085/api/transactions/account/1
 
 =>For Transaction (Deposi,withdraw)
 POST http://localhost:8085/api/transactions/1
+
+=>For Save Account
+POST http://localhost:8085/api/account/
+
+
+==>deposit request
+POST http://localhost:8085/api/transactions/1
+
+{
+  "amount": 5000,
+  "type": "DEPOSIT",
+  "description": "Cash deposit"
+}
+
+
+==>withdraw request
+POST http://localhost:8085/api/transactions/1
+
+{
+  "amount": 2000,
+  "type": "WITHDRAW",
+  "description": "ATM cash withdrawal"
+}
+
+==>transfer request
+POST http://localhost:8085/api/transactions/1
+{
+  "amount": 1500,
+  "type": "TRANSFER",
+  "description": "Transfer to another account",
+  "receiverAccount": {
+    "id": 2
+  }
+}
+
+
+
+
+
+EMAIL:=
+farihamariam@gmail.com
+mdrahimkhan107107@gmail.com
+parvejmd4469@gmail.com
+sadiar.rahman970@gmail.com
+mr.t.imran11@gmail.com
+sathekhanom550@gmail.com
+cmrejaulkarim@gmail.com
+mdrahimkhan107107@gmail.com
+
+MD Rahim Khan
+Fariha Mariam
+
+
+==>json form
+{
+  "name": "Fariha Mariam",
+  "email": "farihamariam@gmail.com",
+  "password": "12345",
+  "phoneNumber": "017859940",
+  "dateOfBirth": "1990-01-02"
+}
+{
+  "name": "Fariha Mariam",
+  "accountActiveStatus": true,
+  "accountType": "SAVINGS",
+  "balance": 5000.0,
+  "nid": "09905679793",
+  "phoneNumber": "017859940",
+  "address": "Dhaka, Bangladesh",
+  "dateOfBirth": "1990-01-02",
+  "accountOpeningDate": "2025-08-16",
+  "accountClosingDate": null,
+  "role": "USER"
+}
+
+
+ public void sendTransactionEmail(Transaction transaction) {
+        Accounts accounts = transaction.getAccount();
+        User user = accounts.getUser();  // account holder
+
+        String subject = "Transaction Confirmation";
+        String mailText =  "<!DOCTYPE html>"
+                + "<html>"
+                + "<head>"
+                + "<style>"
+                + "  body { font-family: Arial, sans-serif; line-height: 1.6; }"
+                + "  .container { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; }"
+                + "  .header { background-color: #4CAF50; color: white; padding: 10px; text-align: center; border-radius: 10px 10px 0 0; }"
+                + "  .content { padding: 20px; }"
+                + "  .footer { font-size: 0.9em; color: #777; margin-top: 20px; text-align: center; }"
+                + "</style>"
+                + "</head>"
+                + "<body>"
+                + "  <div class='container'>"
+                + "    <div class='header'>"
+                + "      <h2>Congratulations!!</h2>"
+                + "    </div>"
+                + "    <div class='content'>"
+                + "<p>Dear " + user.getName() + ",</p>"
+                + "<p>TK " + transaction.getAmount() + " " + transaction.getType() + " successful on " + transaction.getTransactionTime() + " From Account ID: "+accounts.getId()+" Your Current balance is "+ accounts.getBalance()+"</p>"
+                + "<p>Thanks for staying with us.</p>"
+                + "    <div class='footer'>"
+                + "      <p> Sincerely,</p>"
+                + "      <p>MK Bank Ltd.</p>"
+                + "    </div>"
+                + "  </div>"
+                + "</body>"
+                + "</html>";
+
+        try {
+            emailService.sendSimpleEmail(user.getEmail(), subject, mailText);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Failed to send transaction email", e);
+        }
+    }
+
+
+
+
+
+
+public void sendTransactionEmail(Transaction transaction) {
+        Accounts accounts = transaction.getAccount();
+        User user = accounts.getUser();
+
+        String currentBalance;
+        if (transaction.getType() == TransactionType.INITIALBALANCE) {
+            currentBalance = String.format("%.2f", transaction.getAmount());
+        } else {
+            currentBalance = String.format("%.2f", accounts.getBalance());
+        }
+
+        String subject = "Transaction Confirmation";
+        String mailText =  "<!DOCTYPE html>"
+                + "<html>"
+                + "<head>"
+                + "<style>"
+                + "  body { font-family: Arial, sans-serif; line-height: 1.6; }"
+                + "  .container { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; }"
+                + "  .header { background-color: #4CAF50; color: white; padding: 10px; text-align: center; border-radius: 10px 10px 0 0; }"
+                + "  .content { padding: 20px; }"
+                + "  .footer { font-size: 0.9em; color: #777; margin-top: 20px; text-align: center; }"
+                + "</style>"
+                + "</head>"
+                + "<body>"
+                + "  <div class='container'>"
+                + "    <div class='header'>"
+                + "      <h2>Congratulations!!</h2>"
+                + "    </div>"
+                + "    <div class='content'>"
+                + "<p>Dear " + user.getName() + ",</p>"
+                + "<p>TK " + String.format("%.2f", transaction.getAmount()) + " " + transaction.getType()
+                + " successful on " + transaction.getTransactionTime()
+                + " From Account ID: "+accounts.getId()
+                + " Your Current balance is " + currentBalance + "</p>"
+                + "<p>Thanks for staying with us.</p>"
+                + "    <div class='footer'>"
+                + "      <p> Sincerely,</p>"
+                + "      <p>MK Bank Ltd.</p>"
+                + "    </div>"
+                + "  </div>"
+                + "</body>"
+                + "</html>";
+
+        try {
+            emailService.sendSimpleEmail(user.getEmail(), subject, mailText);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Failed to send transaction email", e);
+        }
+    }
+
+
+
+

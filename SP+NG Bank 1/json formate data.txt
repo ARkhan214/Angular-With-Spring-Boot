@@ -3,6 +3,38 @@ http://localhost:8085/api/user/
 @CrossOrigin(origins = "http://localhost:4200")
 
 farihamariam@gmail.com
+==>json form
+{
+  "name": "CM Reja",
+  "email": "cmrejaulkarim@gmail.com",
+  "password": "12345",
+  "phoneNumber": "01735473348",
+  "dateOfBirth": "1990-01-01"
+}
+{
+  "name": "CM Reja",
+  "accountActiveStatus": true,
+  "accountType": "SAVINGS",
+  "balance": 5000.0,
+  "nid": "1234567890123",
+  "phoneNumber": "01735473348",
+  "address": "Dhaka, Bangladesh",
+  "dateOfBirth": "1990-01-01",
+  "accountOpeningDate": "2025-08-16",
+  "accountClosingDate": null,
+  "role": "USER"
+}
+
+
+
+
+
+
+
+
+
+
+
 
 //me
 user

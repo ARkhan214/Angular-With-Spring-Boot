@@ -1,0 +1,70 @@
+package com.emranhss.mkbankspring.restcontroller;
+
+import com.emranhss.mkbankspring.entity.Accounts;
+import com.emranhss.mkbankspring.entity.User;
+import com.emranhss.mkbankspring.service.AuthService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/user/")
+@CrossOrigin("*")
+public class UserRestController {
+
+    @Autowired
+    private AuthService authService;
+
+
+    //Method for only user Save,update or register (Method number -1)
+    @PostMapping("")
+    public ResponseEntity<Map<String,String>>saveUser(
+            @RequestPart(value = "user")String userJson,
+            @RequestParam(value = "photo")MultipartFile file
+    ) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        User user = objectMapper.readValue(userJson, User.class);
+
+        try {
+            authService.saveOrUpdateUser(user, file);
+            Map<String, String> response = new HashMap<>();
+            response.put("Message", "User Added Successfully ");
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("Message", "User Add Faild " + e);
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // for Show User view by id (Method Number -2)
+    @GetMapping("{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        User user = authService.findUserById(id);
+        if (user != null){
+            return ResponseEntity.ok(user);
+        }else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
+    //Method for show all users (Method Number -3)
+    @GetMapping("all")
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = authService.findAll();
+        return ResponseEntity.ok(users);
+
+    }
+
+}

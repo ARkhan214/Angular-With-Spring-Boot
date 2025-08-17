@@ -10,7 +10,7 @@ import { environment } from '../environment/environment';
 export class Accountsservice {
 
 
-  private apiUrl = environment.springUrl+"account";
+  private apiUrl = environment.springUrl+"account/";
 
   constructor(
     private http: HttpClient

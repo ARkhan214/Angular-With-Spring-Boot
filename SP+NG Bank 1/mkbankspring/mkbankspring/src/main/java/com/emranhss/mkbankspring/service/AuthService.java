@@ -1,8 +1,6 @@
 package com.emranhss.mkbankspring.service;
 
-import com.emranhss.mkbankspring.entity.Accounts;
-import com.emranhss.mkbankspring.entity.Role;
-import com.emranhss.mkbankspring.entity.User;
+import com.emranhss.mkbankspring.entity.*;
 import com.emranhss.mkbankspring.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +21,15 @@ public class AuthService {
 
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private AccountService accountService;
+
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private TransactionService transactionService;
 
     @Value("src/main/resources/static/images")
     private String uploadDir;
@@ -107,6 +110,58 @@ public class AuthService {
         }
     }
 
+
+
+
+
+//    private void sendTransactionEmail(Accounts accounts) {
+//        Transaction transaction = new Transaction();
+//        User user = new User();
+//
+//        String subject = "Transaction Confermation";
+//
+//        String mailText = "<!DOCTYPE html>"
+//                + "<html>"
+//                + "<head>"
+//                + "<style>"
+//                + "  body { font-family: Arial, sans-serif; line-height: 1.6; }"
+//                + "  .container { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; }"
+//                + "  .header { background-color: #4CAF50; color: white; padding: 10px; text-align: center; border-radius: 10px 10px 0 0; }"
+//                + "  .content { padding: 20px; }"
+//                + "  .footer { font-size: 0.9em; color: #777; margin-top: 20px; text-align: center; }"
+//                + "</style>"
+//                + "</head>"
+//                + "<body>"
+//                + "  <div class='container'>"
+//                + "    <div class='header'>"
+//                + "      <h2>Welcome to Our Platform</h2>"
+//                + "    </div>"
+//                + "    <div class='content'>"
+//                + "      <p>Dear " + accounts.getName() + ",</p>"
+//                + "      <p>TK "+ transaction.getAmount()+" "+ transaction.getType()+" Succefull on "+ transaction.getTransactionTime()+"</p>"
+//                + "      <br>"
+//                + "      <p> Thanks for Stay with us</p>"
+//                + "      <br>"
+//                + "    </div>"
+//                + "    <div class='footer'>"
+//                + "      <p> Sincerely,</p>"
+//                + "      <br>"
+//                + "      <p>MK Bank Ltd.</p>"
+//                + "    </div>"
+//                + "  </div>"
+//                + "</body>"
+//                + "</html>";
+//
+//        try {
+//            emailService.sendSimpleEmail(user.getEmail(), subject, mailText);
+//        } catch (MessagingException e) {
+//            throw new RuntimeException("Failed to send activation email", e);
+//        }
+//    }
+
+
+
+
     //Method for save image of file in User table
     public String saveImage(MultipartFile file, User user) {
 
@@ -178,6 +233,14 @@ public class AuthService {
         accountData.setUser(savedUser);
 
         accountService.save(accountData);
+        //for add initialDeposit ad first Transaction
+        if (accountData.getBalance()>0){
+            Transaction initialDeposit = new Transaction();
+            initialDeposit.setAmount(accountData.getBalance());
+            initialDeposit.setType(TransactionType.INITIALBALANCE);
+            initialDeposit.setDescription("Initial deposit");
+            transactionService.addTransaction(initialDeposit,accountData.getId());
+        }
 
         sendActivationEmail(savedUser);
     }

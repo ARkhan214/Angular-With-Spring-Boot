@@ -1,0 +1,491 @@
+দারুণ! নিচে **JWT + Spring Security (Spring Boot 3/Spring Security 6)** এর একটি কাজের-জন্য-প্রস্তুত মিনিমাল সেটআপ দিলাম—তুমি সরাসরি প্রজেক্টে রেখে চালাতে পারবে। আমি ধরে নিয়েছি **email**-ই তোমার username।
+
+---
+
+# 1) `pom.xml` – dependencies
+
+```xml
+<dependencies>
+  <!-- Web & Security -->
+  <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+  </dependency>
+  <dependency>
+    <groupId="org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-security</artifactId>
+  </dependency>
+
+  <!-- JWT -->
+  <dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-api</artifactId>
+    <version>0.11.5</version>
+  </dependency>
+  <dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-impl</artifactId>
+    <version>0.11.5</version>
+    <scope>runtime</scope>
+  </dependency>
+  <dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt-jackson</artifactId>
+    <version>0.11.5</version>
+    <scope>runtime</scope>
+  </dependency>
+
+  <!-- JPA & DB (তোমারটা যেমন আছে) -->
+  <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+    <scope>runtime</scope>
+  </dependency>
+
+  <!-- Lombok (optional but handy) -->
+  <dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <optional>true</optional>
+  </dependency>
+
+  <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-validation</artifactId>
+  </dependency>
+</dependencies>
+```
+
+---
+
+# 2) `application.properties` (বা `yml`)
+
+```properties
+# JWT
+app.jwt.secret=ChangeThisToAReallyLongSecretKeyForHS256_AtLeast_256_bits____________________
+app.jwt.expiration-ms=3600000   # 1 hour
+
+# (তোমার DB config যেমন আছে)
+spring.jpa.hibernate.ddl-auto=update
+```
+
+---
+
+# 3) Repository – `UserRepository`
+
+```java
+package com.emranhss.mkbankspring.repository;
+
+import com.emranhss.mkbankspring.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByEmail(String email);
+    boolean existsByEmail(String email);
+}
+```
+
+---
+
+# 4) Security UserDetails adapter – `UserPrincipal`
+
+```java
+package com.emranhss.mkbankspring.security;
+
+import com.emranhss.mkbankspring.entity.Role;
+import com.emranhss.mkbankspring.entity.User;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
+
+public class UserPrincipal implements UserDetails {
+    private final User user;
+
+    public UserPrincipal(User user) {
+        this.user = user;
+    }
+
+    public Long getId() { return user.getId(); }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Role role = user.getRole(); // enum
+        return List.of(new SimpleGrantedAuthority("ROLE_" + (role != null ? role.name() : "USER")));
+    }
+
+    @Override
+    public String getPassword() { return user.getPassword(); }
+
+    @Override
+    public String getUsername() { return user.getEmail(); }
+
+    @Override
+    public boolean isAccountNonExpired() { return true; }
+    @Override
+    public boolean isAccountNonLocked() { return true; }
+    @Override
+    public boolean isCredentialsNonExpired() { return true; }
+    @Override
+    public boolean isEnabled() { return true; }
+}
+```
+
+---
+
+# 5) `CustomUserDetailsService`
+
+```java
+package com.emranhss.mkbankspring.security;
+
+import com.emranhss.mkbankspring.entity.User;
+import com.emranhss.mkbankspring.repository.UserRepository;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
+
+    private final UserRepository userRepo;
+
+    public CustomUserDetailsService(UserRepository userRepo) {
+        this.userRepo = userRepo;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+        return new UserPrincipal(user);
+    }
+}
+```
+
+---
+
+# 6) `JwtUtil`
+
+```java
+package com.emranhss.mkbankspring.security;
+
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
+import java.util.Date;
+
+@Component
+public class JwtUtil {
+
+    private final SecretKey key;
+    private final long expirationMs;
+
+    public JwtUtil(@Value("${app.jwt.secret}") String secret,
+                   @Value("${app.jwt.expiration-ms}") long expirationMs) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes()); // HS256
+        this.expirationMs = expirationMs;
+    }
+
+    public String generateToken(UserDetails userDetails) {
+        Date now = new Date();
+        Date expiry = new Date(now.getTime() + expirationMs);
+
+        return Jwts.builder()
+                .setSubject(userDetails.getUsername()) // email
+                .setIssuedAt(now)
+                .setExpiration(expiry)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String extractUsername(String token) {
+        return parseClaims(token).getBody().getSubject();
+    }
+
+    public boolean validate(String token, UserDetails userDetails) {
+        try {
+            String username = extractUsername(token);
+            return username.equals(userDetails.getUsername()) && !isExpired(token);
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    public boolean isExpired(String token) {
+        return parseClaims(token).getBody().getExpiration().before(new Date());
+    }
+
+    private Jws<Claims> parseClaims(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+    }
+}
+```
+
+---
+
+# 7) `JwtAuthenticationFilter`
+
+```java
+package com.emranhss.mkbankspring.security;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.util.StringUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private final JwtUtil jwtUtil;
+    private final CustomUserDetailsService userDetailsService;
+
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, CustomUserDetailsService uds) {
+        this.jwtUtil = jwtUtil;
+        this.userDetailsService = uds;
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+                                    FilterChain chain) throws ServletException, IOException {
+
+        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String token = null;
+        String username = null;
+
+        if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {
+            token = header.substring(7);
+            try {
+                username = jwtUtil.extractUsername(token);
+            } catch (Exception ignored) {}
+        }
+
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+            if (jwtUtil.validate(token, userDetails)) {
+                UsernamePasswordAuthenticationToken auth =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }
+        }
+
+        chain.doFilter(request, response);
+    }
+}
+```
+
+---
+
+# 8) `SecurityConfig`
+
+```java
+package com.emranhss.mkbankspring.config;
+
+import com.emranhss.mkbankspring.security.CustomUserDetailsService;
+import com.emranhss.mkbankspring.security.JwtAuthenticationFilter;
+import com.emranhss.mkbankspring.security.JwtUtil;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+@Configuration
+public class SecurityConfig {
+
+    private final CustomUserDetailsService uds;
+    private final JwtUtil jwtUtil;
+
+    public SecurityConfig(CustomUserDetailsService uds, JwtUtil jwtUtil) {
+        this.uds = uds;
+        this.jwtUtil = jwtUtil;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider p = new DaoAuthenticationProvider();
+        p.setUserDetailsService(uds);
+        p.setPasswordEncoder(passwordEncoder());
+        return p;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(jwtUtil, uds);
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable())
+            .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/auth/**").permitAll()   // login/register open
+                .requestMatchers("/actuator/health").permitAll()
+                .anyRequest().authenticated()
+            )
+            .authenticationProvider(authenticationProvider())
+            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+            .httpBasic(Customizer.withDefaults()); // optional
+
+        return http.build();
+    }
+}
+```
+
+---
+
+# 9) Auth DTOs
+
+```java
+package com.emranhss.mkbankspring.dto;
+
+public record LoginRequest(String email, String password) { }
+
+public record AuthResponse(String token) { }
+```
+
+---
+
+# 10) `AuthController`
+
+```java
+package com.emranhss.mkbankspring.controller;
+
+import com.emranhss.mkbankspring.dto.AuthResponse;
+import com.emranhss.mkbankspring.dto.LoginRequest;
+import com.emranhss.mkbankspring.entity.User;
+import com.emranhss.mkbankspring.repository.UserRepository;
+import com.emranhss.mkbankspring.security.CustomUserDetailsService;
+import com.emranhss.mkbankspring.security.JwtUtil;
+import com.emranhss.mkbankspring.security.UserPrincipal;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/auth")
+public class AuthController {
+
+    private final AuthenticationManager authManager;
+    private final JwtUtil jwtUtil;
+    private final UserRepository userRepo;
+    private final PasswordEncoder passwordEncoder;
+    private final CustomUserDetailsService uds;
+
+    public AuthController(AuthenticationManager authManager, JwtUtil jwtUtil,
+                          UserRepository userRepo, PasswordEncoder passwordEncoder,
+                          CustomUserDetailsService uds) {
+        this.authManager = authManager;
+        this.jwtUtil = jwtUtil;
+        this.userRepo = userRepo;
+        this.passwordEncoder = passwordEncoder;
+        this.uds = uds;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@RequestBody @Valid LoginRequest request) {
+        try {
+            var authToken = new UsernamePasswordAuthenticationToken(request.email(), request.password());
+            authManager.authenticate(authToken);
+        } catch (BadCredentialsException ex) {
+            return ResponseEntity.status(401).build();
+        }
+
+        var userDetails = uds.loadUserByUsername(request.email());
+        String token = jwtUtil.generateToken(userDetails);
+        return ResponseEntity.ok(new AuthResponse(token));
+    }
+
+    // Optional: simple register endpoint
+    @PostMapping("/register")
+    public ResponseEntity<AuthResponse> register(@RequestBody User user) {
+        if (userRepo.existsByEmail(user.getEmail())) {
+            return ResponseEntity.badRequest().build();
+        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepo.save(user);
+
+        String token = jwtUtil.generateToken(new UserPrincipal(user));
+        return ResponseEntity.ok(new AuthResponse(token));
+    }
+}
+```
+
+---
+
+# 11) Controller-এ JWT ব্যবহার
+
+যেকোনো protected endpoint কল করার সময় header-এ পাঠাও:
+
+```
+Authorization: Bearer <token>
+```
+
+**উদাহরণ cURL:**
+
+```bash
+# Login
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","password":"secret"}'
+
+# secured API call
+curl http://localhost:8080/api/accounts/me \
+  -H "Authorization: Bearer <token-from-login-response>"
+```
+
+---
+
+## ছোট Checklist
+
+* [ ] DB-তে user টেবিলে password **BCrypt** করে সেভ হচ্ছে তো?
+* [ ] `User` entity-র `email` ফিল্ড unique—OK.
+* [ ] `Role` enum থাকলে `ROLE_XXX` আকারে map হয়েছে—OK.
+* [ ] `app.jwt.secret` যথেষ্ট লম্বা random string—OK.
+
+---
+
+যদি চাও, আমি তোমার বিদ্যমান `User`/`Role`/`Controller` অনুযায়ী কোডটা আরেকটু **custom-fit** করে দিতে পারি—যেমন login username হিসেবে phone number, বা multi-role authorize ইত্যাদি। বললেই করে দিচ্ছি, bondhu!
