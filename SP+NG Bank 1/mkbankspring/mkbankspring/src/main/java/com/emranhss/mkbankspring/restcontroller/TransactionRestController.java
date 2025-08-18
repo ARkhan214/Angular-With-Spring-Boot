@@ -23,13 +23,6 @@ public class TransactionRestController {
     @Autowired
     private AccountRepository accountRepository;
 
-//    @Autowired
-//    public TransactionRestController(TransactionService transactionService,
-//                                     AccountRepository accountRepository){
-//        this.transactionService = transactionService;
-//        this.accountRepository = accountRepository;
-//    }
-
 
     //   Method for Transaction Taka(Method Number -1)
     @PostMapping("{accountId}")
@@ -38,6 +31,16 @@ public class TransactionRestController {
             @PathVariable Long accountId) {
 
         Transaction savedTransaction = transactionService.addTransaction(transaction, accountId);
+        return ResponseEntity.ok(savedTransaction);
+    }
+
+    @PostMapping("transfer/{senderId}/{receiverId}")
+    public ResponseEntity<Transaction> onlyTransfer(
+            @RequestBody Transaction transaction,
+            @PathVariable Long senderId,
+            @PathVariable Long receiverId
+    ){
+        Transaction savedTransaction = transactionService.onlyTransfer(transaction, senderId, receiverId);
         return ResponseEntity.ok(savedTransaction);
     }
 

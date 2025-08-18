@@ -186,4 +186,25 @@ public class Accounts {
     public void setTransactions(List<Transaction> transactions) {
         this.transactions = transactions;
     }
+
+    @Override
+    public String toString() {
+        return "Accounts{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", accountActiveStatus=" + accountActiveStatus +
+                ", accountType='" + accountType + '\'' +
+                ", balance=" + balance +
+                ", user=" + user +
+                ", nid='" + nid + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", address='" + address + '\'' +
+                ", photo='" + photo + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", accountOpeningDate=" + accountOpeningDate +
+                ", accountClosingDate=" + accountClosingDate +
+                ", role=" + role +
+                ", transactions=" + transactions +
+                '}';
+    }
 }

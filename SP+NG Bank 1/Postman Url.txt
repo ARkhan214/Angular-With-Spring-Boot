@@ -12,8 +12,6 @@ GET http://localhost:8085/api/transactions/account/1
 =>For Transaction (Deposi,withdraw)
 POST http://localhost:8085/api/transactions/1
 
-=>For Save Account
-POST http://localhost:8085/api/account/
 
 
 ==>deposit request
@@ -35,17 +33,13 @@ POST http://localhost:8085/api/transactions/1
   "description": "ATM cash withdrawal"
 }
 
-==>transfer request
-POST http://localhost:8085/api/transactions/1
+==>Transfer request
+http://localhost:8085/api/transactions/transfer/1/2
 {
-  "amount": 1500,
   "type": "TRANSFER",
-  "description": "Transfer to another account",
-  "receiverAccount": {
-    "id": 2
-  }
+  "amount": 5000.0,
+  "description": "Payment for House Rent"
 }
-
 
 
 
@@ -62,29 +56,69 @@ mdrahimkhan107107@gmail.com
 
 MD Rahim Khan
 Fariha Mariam
+Sadier Rahman
+
+=>For Save Account
+POST http://localhost:8085/api/account/
+
 
 
 ==>json form
 {
-  "name": "Fariha Mariam",
-  "email": "farihamariam@gmail.com",
+  "name": "Sadier Rahman",
+  "email": "sadiar.rahman970@gmail.com",
   "password": "12345",
-  "phoneNumber": "017859940",
+  "phoneNumber": "017859950",
   "dateOfBirth": "1990-01-02"
 }
 {
-  "name": "Fariha Mariam",
+  "name": "Sadier Rahman",
   "accountActiveStatus": true,
   "accountType": "SAVINGS",
   "balance": 5000.0,
-  "nid": "09905679793",
-  "phoneNumber": "017859940",
+  "nid": "09905679783",
+  "phoneNumber": "017859950",
   "address": "Dhaka, Bangladesh",
   "dateOfBirth": "1990-01-02",
   "accountOpeningDate": "2025-08-16",
   "accountClosingDate": null,
   "role": "USER"
 }
+
+ //Transfer
+
+transactionService er addtransaction method er  transfer part.eta bad diea notun kore onlytransfer method banaysi.
+        else if (transaction.getType() == TransactionType.TRANSFER) {
+
+            Long receiverId = transaction.getReceiverAccount().getId();
+            Accounts receiver = accountRepository.findById(receiverId)
+                    .orElseThrow(() -> new RuntimeException("Receiver account not found!"));
+
+            System.out.println("Receiver current balance: " + receiver);
+
+            if (receiver == null) {
+                throw new RuntimeException("Receiver account must be provided for transfer!");
+            }
+
+            if (!receiver.isAccountActiveStatus()){
+                throw new RuntimeException("Receiver account is closed!");
+            }
+            if (transaction.getAmount() > newBalance) {
+                throw new RuntimeException("Insufficient balance!");
+            }
+            //minus amount from sender account
+            newBalance -= transaction.getAmount();
+
+            //update reciver balance
+            double receiverBalance = receiver.getBalance();   //receiver balance find
+            receiverBalance +=transaction.getAmount();        //receiver balance update
+            receiver.setBalance(receiverBalance);             //save receiver new balance
+            accountRepository.save(receiver);
+
+            // Send receiver email
+            this.cashIN(receiverId,transaction.getAmount());
+        }
+
 
 
  public void sendTransactionEmail(Transaction transaction) {

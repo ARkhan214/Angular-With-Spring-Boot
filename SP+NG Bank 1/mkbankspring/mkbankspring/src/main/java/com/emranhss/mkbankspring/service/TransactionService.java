@@ -32,7 +32,7 @@ public class TransactionService {
         Accounts sender = accountRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Account not found!"));
 
-//        Accounts sender = transaction.getAccount();
+        System.out.println(sender);
 
         if (!sender.isAccountActiveStatus()) {
             throw new RuntimeException("Sender account is closed!");
@@ -47,7 +47,6 @@ public class TransactionService {
             System.out.println("Sender current balance: " + newBalance);
         }
 
-
         else if (transaction.getType() == TransactionType.DEPOSIT) {
             newBalance += transaction.getAmount();
 
@@ -56,37 +55,6 @@ public class TransactionService {
                 throw new RuntimeException("Insufficient balance!");
             }
             newBalance -= transaction.getAmount();
-        }
-
-        //Transfer
-        else if (transaction.getType() == TransactionType.TRANSFER) {
-
-            Long receiverId = transaction.getReceiverAccount().getId();
-            Accounts receiver = accountRepository.findById(receiverId)
-                    .orElseThrow(() -> new RuntimeException("Receiver account not found!"));
-
-
-            if (receiver == null) {
-                throw new RuntimeException("Receiver account must be provided for transfer!");
-            }
-
-            if (!receiver.isAccountActiveStatus()){
-                throw new RuntimeException("Receiver account is closed!");
-            }
-            if (transaction.getAmount() > newBalance) {
-                throw new RuntimeException("Insufficient balance!");
-            }
-            //minus amount from sender account
-            newBalance -= transaction.getAmount();
-
-            //update reciver balance
-            double receiverBalance = receiver.getBalance();   //receiver balance find
-            receiverBalance +=transaction.getAmount();        //receiver balance update
-            receiver.setBalance(receiverBalance);             //save receiver new balance
-            accountRepository.save(receiver);
-
-            // Send receiver email
-            this.cashIN(receiverId,transaction.getAmount());
         }
 
         sender.setBalance(newBalance);    //save balance after Deposit or Withdraw
@@ -101,6 +69,55 @@ public class TransactionService {
         this.sendTransactionEmail(savedTransaction);
         System.out.println("Sender current balance: " + newBalance);
         return transactionRepository.save(transaction);
+    }
+
+
+
+
+    //method for transfer
+    public Transaction onlyTransfer(Transaction transaction, Long senderId,Long receiverId ) {
+
+            Accounts sender = accountRepository.findById(senderId)
+                .orElseThrow(() -> new RuntimeException("Sender account not found!"));
+        System.out.println("Sender current balance: " + sender);
+
+        Accounts receiver = accountRepository.findById(receiverId)
+                .orElseThrow(() -> new RuntimeException("Receiver account not found!"));
+        System.out.println("Receiver current balance: " + receiver);
+
+        double newBalance = sender.getBalance();
+
+        if (transaction.getType() == TransactionType.TRANSFER) {
+
+        if (!receiver.isAccountActiveStatus()){
+            throw new RuntimeException("Receiver account is closed!");
+        }
+        if (!sender.isAccountActiveStatus()) {
+                throw new RuntimeException("Sender account is closed!");
+        }
+
+        if (transaction.getAmount() > newBalance) {
+            throw new RuntimeException("Insufficient balance!");
+        }
+
+        newBalance -= transaction.getAmount();              //minus amount from sender account
+        sender.setBalance(newBalance);                      //sender er balance save korlam
+             accountRepository.save(sender);
+
+        //update reciver balance
+        double receiverBalance = receiver.getBalance();     //receiver balance find
+        receiverBalance +=transaction.getAmount();          //receiver balance update
+        receiver.setBalance(receiverBalance);               //save receiver new balance
+        accountRepository.save(receiver);
+
+        transaction.setAccount(sender);
+        transaction.setReceiverAccount(receiver);
+        transaction.setTransactionTime(new Date());
+
+        this.cashIN(receiverId,transaction.getAmount());     // Send receiver email
+        }
+        return transactionRepository.save(transaction);
+
     }
 
 
