@@ -31,6 +31,9 @@ public class AuthService {
     @Autowired
     private TransactionService transactionService;
 
+    @Autowired
+    private EmployeeService employeeService;
+
     @Value("src/main/resources/static/images")
     private String uploadDir;
 
@@ -112,56 +115,6 @@ public class AuthService {
 
 
 
-
-
-//    private void sendTransactionEmail(Accounts accounts) {
-//        Transaction transaction = new Transaction();
-//        User user = new User();
-//
-//        String subject = "Transaction Confermation";
-//
-//        String mailText = "<!DOCTYPE html>"
-//                + "<html>"
-//                + "<head>"
-//                + "<style>"
-//                + "  body { font-family: Arial, sans-serif; line-height: 1.6; }"
-//                + "  .container { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; }"
-//                + "  .header { background-color: #4CAF50; color: white; padding: 10px; text-align: center; border-radius: 10px 10px 0 0; }"
-//                + "  .content { padding: 20px; }"
-//                + "  .footer { font-size: 0.9em; color: #777; margin-top: 20px; text-align: center; }"
-//                + "</style>"
-//                + "</head>"
-//                + "<body>"
-//                + "  <div class='container'>"
-//                + "    <div class='header'>"
-//                + "      <h2>Welcome to Our Platform</h2>"
-//                + "    </div>"
-//                + "    <div class='content'>"
-//                + "      <p>Dear " + accounts.getName() + ",</p>"
-//                + "      <p>TK "+ transaction.getAmount()+" "+ transaction.getType()+" Succefull on "+ transaction.getTransactionTime()+"</p>"
-//                + "      <br>"
-//                + "      <p> Thanks for Stay with us</p>"
-//                + "      <br>"
-//                + "    </div>"
-//                + "    <div class='footer'>"
-//                + "      <p> Sincerely,</p>"
-//                + "      <br>"
-//                + "      <p>MK Bank Ltd.</p>"
-//                + "    </div>"
-//                + "  </div>"
-//                + "</body>"
-//                + "</html>";
-//
-//        try {
-//            emailService.sendSimpleEmail(user.getEmail(), subject, mailText);
-//        } catch (MessagingException e) {
-//            throw new RuntimeException("Failed to send activation email", e);
-//        }
-//    }
-
-
-
-
     //Method for save image of file in User table
     public String saveImage(MultipartFile file, User user) {
 
@@ -187,7 +140,7 @@ public class AuthService {
 
 
 
-    //Method for save image of file in Account table
+    //Method for save image file in Account table
     public String saveImageForAccount(MultipartFile file, Accounts account) {
         Path uploadPath = Paths.get(uploadDir+"/account");
         if (!Files.exists(uploadPath)) {
@@ -244,5 +197,98 @@ public class AuthService {
 
         sendActivationEmail(savedUser);
     }
+
+
+    //Employ plus user Save
+    public void registerEmployee(User user, MultipartFile imageFile,Employee employeeData) {
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String filename = saveImage(imageFile, user);
+            String employeePhoto = saveImageForEmployee(imageFile, employeeData);
+            employeeData.setPhoto(employeePhoto);
+            user.setPhoto(filename);
+        }
+        user.setRole(Role.EMPLOYEE);
+        User savedUser = userRepository.save(user);
+
+        employeeData.setUser(savedUser);
+        employeeService.save(employeeData);
+
+//        sendActivationEmail(savedUser);
+        sendEmployeeWelcomeEmail(employeeData);
+
+    }
+
+
+    //Method for save image file in Account table
+    public String saveImageForEmployee(MultipartFile file, Employee employee) {
+        Path uploadPath = Paths.get(uploadDir+"/employee");
+
+        if (!Files.exists(uploadPath)) {
+            try {
+                Files.createDirectory(uploadPath);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        String employeeName = employee.getName();
+        String fileName=employeeName.trim().replaceAll("\\s+", "_");
+
+        String savedFileName = fileName+"_"+UUID.randomUUID().toString();
+
+        try {
+            Path filePath = uploadPath.resolve(savedFileName);
+            Files.copy(file.getInputStream(),filePath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return savedFileName;
+    }
+// mail for employee
+private void sendEmployeeWelcomeEmail(Employee employee) {
+        User user = employee.getUser();
+    String subject = "Congratulations – Welcome to MK Bank!";
+
+    String mailText = "<!DOCTYPE html>"
+            + "<html>"
+            + "<head>"
+            + "<style>"
+            + "  body { font-family: Arial, sans-serif; line-height: 1.6; }"
+            + "  .container { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; }"
+            + "  .header { background-color: #2196F3; color: white; padding: 10px; text-align: center; border-radius: 10px 10px 0 0; }"
+            + "  .content { padding: 20px; }"
+            + "  .footer { font-size: 0.9em; color: #777; margin-top: 20px; text-align: center; }"
+            + "</style>"
+            + "</head>"
+            + "<body>"
+            + "  <div class='container'>"
+            + "    <div class='header'>"
+            + "      <h2>Congratulations " + user.getName() + " 🎉</h2>"
+            + "    </div>"
+            + "    <div class='content'>"
+            + "      <p>Dear " + user.getName() + ",</p>"
+            + "      <p>We are delighted to inform you that you have been successfully added as a "+employee.getPosition()+ " of MK Bank.</p>"
+            + "      <p>Your official email is: <b>" + user.getEmail() + "</b></p>"
+            + "      <p>You can now log in to the system using your account credentials provided by the admin.</p>"
+            + "      <p>We wish you all the best in your new journey with us.</p>"
+            + "      <br>"
+            + "      <p>Best regards,<br>The HR & Admin Team</p>"
+            + "    </div>"
+            + "    <div class='footer'>"
+            + "      &copy; " + java.time.Year.now() + " MK Bank. All rights reserved."
+            + "    </div>"
+            + "  </div>"
+            + "</body>"
+            + "</html>";
+
+    try {
+        emailService.sendSimpleEmail(user.getEmail(), subject, mailText);
+    } catch (MessagingException e) {
+        throw new RuntimeException("Failed to send congratulation email", e);
+    }
+}
+
+
+
 
 }
