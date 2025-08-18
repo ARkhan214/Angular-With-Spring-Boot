@@ -15,6 +15,7 @@ public class EmailService {
         this.javaMailSender = javaMailSender;
     }
 
+    //connected with sens email
     public void sendSimpleEmail(String to,String subject,String body) throws MessagingException {
         MimeMessage message=javaMailSender.createMimeMessage();
         MimeMessageHelper helper=new MimeMessageHelper(message, true);
