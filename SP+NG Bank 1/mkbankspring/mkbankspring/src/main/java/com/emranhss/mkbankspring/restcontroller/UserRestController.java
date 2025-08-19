@@ -1,10 +1,13 @@
 package com.emranhss.mkbankspring.restcontroller;
 
+import com.emranhss.mkbankspring.dto.AuthenticationResponse;
 import com.emranhss.mkbankspring.entity.Accounts;
 import com.emranhss.mkbankspring.entity.User;
+import com.emranhss.mkbankspring.repository.TokenRepository;
 import com.emranhss.mkbankspring.service.AuthService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +25,9 @@ public class UserRestController {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private TokenRepository tokenRepository;
 
 
     //Method for only user Save,update or register (Method number -1)
@@ -65,6 +71,38 @@ public class UserRestController {
         List<User> users = authService.findAll();
         return ResponseEntity.ok(users);
 
+    }
+
+    @PostMapping("login")
+    public ResponseEntity<AuthenticationResponse>  login(@RequestBody User request){
+        return ResponseEntity.ok(authService.authenticate(request));
+
+    }
+
+    @GetMapping("/active/{id}")
+    public ResponseEntity<String> activeUser(@PathVariable("id") Long id){
+
+        String response= authService.activeUser(id);
+        return  ResponseEntity.ok(response);
+    }
+
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+        final String authHeader = request.getHeader("Authorization");
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.badRequest().body("Missing or invalid Authorization header.");
+        }
+
+        String token = authHeader.substring(7);  // Strip "Bearer "
+
+        tokenRepository.findByToken(token).ifPresent(savedToken -> {
+            savedToken.setLogout(true);  // Mark token as logged out
+            tokenRepository.save(savedToken);
+        });
+
+        return ResponseEntity.ok("Logged out successfully.");
     }
 
 }

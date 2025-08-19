@@ -69,6 +69,7 @@ mdrahimkhan107107@gmail.com
 MD Rahim Khan
 Fariha Mariam
 Sadier Rahman
+Parve
 
 <=>For Save User + Account<=>
 POST http://localhost:8085/api/account/
@@ -80,7 +81,7 @@ POST http://localhost:8085/api/account/
   "name": "MD Rahim Khan",
   "email": "mdrahimkhan107107@gmail.com",
   "password": "12345",
-  "phoneNumber": "01785995",
+  "phoneNumber": "01885995",
   "dateOfBirth": "1990-01-02"
 }
 {
@@ -88,8 +89,8 @@ POST http://localhost:8085/api/account/
   "accountActiveStatus": true,
   "accountType": "SAVINGS",
   "balance": 100000.0,
-  "nid": "0990567978",
-  "phoneNumber": "01785995",
+  "nid": "09930567978",
+  "phoneNumber": "01885995",
   "address": "Dhaka, Bangladesh",
   "dateOfBirth": "1990-01-02",
   "accountOpeningDate": "2025-08-16",
