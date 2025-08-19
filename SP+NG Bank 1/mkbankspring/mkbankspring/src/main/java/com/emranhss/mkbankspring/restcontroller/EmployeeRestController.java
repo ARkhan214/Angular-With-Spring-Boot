@@ -20,7 +20,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/employees")
-@CrossOrigin("*")
 public class EmployeeRestController {
 
     @Autowired

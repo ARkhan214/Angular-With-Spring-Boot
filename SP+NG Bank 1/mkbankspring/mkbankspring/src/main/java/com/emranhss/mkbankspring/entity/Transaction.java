@@ -37,7 +37,7 @@ public class Transaction {
     private Accounts receiverAccount;
 
 
-    @Column(length = 100)
+    @Column(length = 255)
     private String token;
 
     public Transaction() {

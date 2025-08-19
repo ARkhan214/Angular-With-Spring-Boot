@@ -1,3 +1,16 @@
+==>Stype by stype
+User Login Request (email, password) 
+        ↓
+Backend Authenticate 
+        ↓
+JWT Token Return 
+        ↓
+Frontend LocalStorage/Session এ Token Save 
+        ↓
+পরের সব Request → Authorization: Bearer <token>
+
+
+
 =>Show Transaction Filter By Transaction Type.
 GET http://localhost:8085/api/transactions/1/deposits
 GET http://localhost:8085/api/transactions/1/withdraws
@@ -70,6 +83,7 @@ MD Rahim Khan
 Fariha Mariam
 Sadier Rahman
 Parve
+Sathe Khanom
 
 <=>For Save User + Account<=>
 POST http://localhost:8085/api/account/
@@ -78,25 +92,60 @@ POST http://localhost:8085/api/account/
 
 ==>json form Add Account
 {
-  "name": "MD Rahim Khan",
-  "email": "mdrahimkhan107107@gmail.com",
+  "name": "Parve",
+  "email": "sathekhanom550@gmail.com",
   "password": "12345",
   "phoneNumber": "01885995",
-  "dateOfBirth": "1990-01-02"
+  "photo": "MD_Rahim_Khan.jpg",
+  "dateOfBirth": "1990-01-02",
+  "role": "USER",
+  "active": true,
+  "isLock": false
+}
+
+{
+  "name": "Sathe Khanom",
+  "email": "sathekhanom550@gmail.com",
+  "password": "12345",
+  "phoneNumber": "0175998800",
+  "dateOfBirth": "1990-01-02",
+  "active": true
 }
 {
-  "name": "MD Rahim Khan",
+  "name": "Sathe Khanom",
   "accountActiveStatus": true,
   "accountType": "SAVINGS",
   "balance": 100000.0,
-  "nid": "09930567978",
-  "phoneNumber": "01885995",
+  "nid": "19663056797012",
+  "phoneNumber": "0175998800",
   "address": "Dhaka, Bangladesh",
   "dateOfBirth": "1990-01-02",
   "accountOpeningDate": "2025-08-16",
   "accountClosingDate": null,
   "role": "USER"
 }
+
+
+ user {
+"name":"MD Rahim Khan",
+"email":"mdrahimkhan107107@gmail.com",
+"password":"123456",
+"phoneNumber":"017778899",
+"dateOfBirth":"1990-01-01"
+}
+                                |
+account{
+"name":"MD Rahim Khan",
+"accountType":"Savings",
+"balance":5000,
+"nid":"1234567890123",
+"phoneNumber":"017778899",
+"address":"Dhaka",
+"dateOfBirth":"1990-01-01"
+}
+                                                                                                                              |
+
+
 
 
 <==>Employee + User<==>

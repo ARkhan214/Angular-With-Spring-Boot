@@ -14,7 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/transactions/")
-@CrossOrigin("*")
 public class TransactionRestController {
 
     @Autowired
@@ -25,24 +24,25 @@ public class TransactionRestController {
 
 
     //   Method for Transaction Taka(Method Number -1)
-    @PostMapping("{accountId}")
-    public ResponseEntity<Transaction> addTransaction(
-            @RequestBody Transaction transaction,
-            @PathVariable Long accountId) {
+//    @PostMapping("{accountId}")
+//    public ResponseEntity<Transaction> addTransaction(
+//            @RequestBody Transaction transaction,
+//            @PathVariable Long accountId) {
+//
+//        Transaction savedTransaction = transactionService.addTransaction(transaction, accountId);
+//        return ResponseEntity.ok(savedTransaction);
+//    }
 
-        Transaction savedTransaction = transactionService.addTransaction(transaction, accountId);
-        return ResponseEntity.ok(savedTransaction);
-    }
-
-    @PostMapping("transfer/{senderId}/{receiverId}")
-    public ResponseEntity<Transaction> onlyTransfer(
-            @RequestBody Transaction transaction,
-            @PathVariable Long senderId,
-            @PathVariable Long receiverId
-    ){
-        Transaction savedTransaction = transactionService.onlyTransfer(transaction, senderId, receiverId);
-        return ResponseEntity.ok(savedTransaction);
-    }
+    //method for transfar monye
+//    @PostMapping("transfer/{senderId}/{receiverId}")
+//    public ResponseEntity<Transaction> onlyTransfer(
+//            @RequestBody Transaction transaction,
+//            @PathVariable Long senderId,
+//            @PathVariable Long receiverId
+//    ){
+//        Transaction savedTransaction = transactionService.onlyTransfer(transaction, senderId, receiverId);
+//        return ResponseEntity.ok(savedTransaction);
+//    }
 
     //  Get all transactions(Method Number -2)
     @GetMapping("/all")
@@ -85,7 +85,28 @@ public class TransactionRestController {
         return ResponseEntity.ok(withdraws);
     }
 
+//for transaction after add sequrity(Initial,deposit,withdraw)
+@PostMapping("/tr/{id}")
+public Transaction deposit(
+        @RequestBody Transaction transaction,
+        @PathVariable Long id,
+        @RequestHeader("Authorization") String authHeader) {
 
+    String token = authHeader.replace("Bearer ", "");  // token add
+    return transactionService.addTransaction(transaction, id, token);
+}
+
+//method transfer
+@PostMapping("/transactions/transfer/{senderId}/{receiverId}")
+public Transaction transfer(
+        @RequestBody Transaction transaction,
+        @PathVariable Long senderId,
+        @PathVariable Long receiverId,
+        @RequestHeader("Authorization") String authHeader) {
+
+    String token = authHeader.replace("Bearer ", "");
+    return transactionService.onlyTransfer(transaction, senderId, receiverId, token);
+}
 
 
 }

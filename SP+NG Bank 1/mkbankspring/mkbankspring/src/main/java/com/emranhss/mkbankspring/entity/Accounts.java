@@ -14,7 +14,7 @@ public class Accounts {
    private Long id ;
 
     private String name;
-    private boolean accountActiveStatus;
+    private boolean accountActiveStatus = true;
     private String accountType ;
     private double balance ;
 

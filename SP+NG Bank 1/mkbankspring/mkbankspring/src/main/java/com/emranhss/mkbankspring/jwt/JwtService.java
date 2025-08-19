@@ -1,5 +1,6 @@
 package com.emranhss.mkbankspring.jwt;
 
+
 import com.emranhss.mkbankspring.entity.User;
 import com.emranhss.mkbankspring.repository.TokenRepository;
 import io.jsonwebtoken.Claims;
@@ -16,6 +17,7 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
+
     @Autowired
     private TokenRepository tokenRepository;
 
@@ -58,15 +60,12 @@ public class JwtService {
 
     }
 
-
     // Extract a specific Claim from the Token Claims
     public <T> T extractClaim(String token, Function<Claims, T> resolver) {
 
         Claims claims = extractAllClaims(token);
         return resolver.apply(claims);
     }
-
-
     private Date extractExpiration(String token) {
 
         return extractClaim(token, Claims::getExpiration);
@@ -78,7 +77,6 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
 
     }
-
 
     public boolean isValid(String token, UserDetails user) {
 

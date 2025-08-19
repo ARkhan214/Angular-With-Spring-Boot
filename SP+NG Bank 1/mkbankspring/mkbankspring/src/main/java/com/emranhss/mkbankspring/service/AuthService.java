@@ -26,6 +26,7 @@ import java.util.UUID;
 @Service
 public class AuthService {
 
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -194,8 +195,10 @@ public class AuthService {
             user.setPhoto(filename);
 
         }
-
+        // Encode password before saving User
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(Role.USER);
+        user.setActive(true);
         User savedUser = userRepository.save(user);
 
 
@@ -208,7 +211,7 @@ public class AuthService {
             initialDeposit.setAmount(accountData.getBalance());
             initialDeposit.setType(TransactionType.INITIALBALANCE);
             initialDeposit.setDescription("Initial deposit");
-            transactionService.addTransaction(initialDeposit, accountData.getId());
+            transactionService.addTransaction(initialDeposit, accountData.getId(),null);
         }
 
         sendActivationEmail(savedUser);
@@ -223,7 +226,9 @@ public class AuthService {
             employeeData.setPhoto(employeePhoto);
             user.setPhoto(filename);
         }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(Role.EMPLOYEE);
+        user.setActive(true);
         User savedUser = userRepository.save(user);
 
         employeeData.setUser(savedUser);

@@ -27,7 +27,7 @@ public class TransactionService {
 
 
     // Method for Transaction Taka (connected with TransactionResCon Method Number -1)
-    public Transaction addTransaction(Transaction transaction, Long id) {
+    public Transaction addTransaction(Transaction transaction, Long id,String token) {
 
         Accounts sender = accountRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Account not found!"));
@@ -58,10 +58,12 @@ public class TransactionService {
         }
 
         sender.setBalance(newBalance);    //save balance after Deposit or Withdraw
+
         accountRepository.save(sender);
 
         transaction.setAccount(sender);
         transaction.setTransactionTime(new Date());
+        transaction.setToken(token);
 
         Transaction savedTransaction = transactionRepository.save(transaction);
 
@@ -75,7 +77,7 @@ public class TransactionService {
 
 
     //method for transfer
-    public Transaction onlyTransfer(Transaction transaction, Long senderId,Long receiverId ) {
+    public Transaction onlyTransfer(Transaction transaction, Long senderId,Long receiverId ,String token) {
 
             Accounts sender = accountRepository.findById(senderId)
                 .orElseThrow(() -> new RuntimeException("Sender account not found!"));
@@ -113,6 +115,7 @@ public class TransactionService {
         transaction.setAccount(sender);
         transaction.setReceiverAccount(receiver);
         transaction.setTransactionTime(new Date());
+        transaction.setToken(token);
 
         this.cashIN(receiverId,transaction.getAmount());     // Send receiver email
         }
