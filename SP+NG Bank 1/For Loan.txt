@@ -1,0 +1,187 @@
+Features:
+
+Token validation ✅
+
+EMI calculation ✅
+
+Repayment update ✅
+
+Premature closure ✅
+
+Audit timestamps ✅
+
+1️⃣ LoanRepository
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import java.util.List;
+
+@Repository
+public interface LoanRepository extends JpaRepository<Loan, Long> {
+
+    // Find all loans by account ID
+    List<Loan> findByAccountId(Long accountId);
+
+    // Find active loans by account ID
+    List<Loan> findByAccountIdAndStatus(Long accountId, LoanStatus status);
+}
+2️⃣ LoanService
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Calendar;
+import java.util.Date;
+
+@Service
+public class LoanService {
+
+    @Autowired
+    private LoanRepository loanRepository;
+
+    // Calculate monthly EMI
+    public double calculateEmi(double principal, double annualRate, int durationInMonths) {
+        double monthlyRate = annualRate / 12 / 100;
+        return (principal * monthlyRate * Math.pow(1 + monthlyRate, durationInMonths)) /
+               (Math.pow(1 + monthlyRate, durationInMonths) - 1);
+    }
+
+    // Calculate loan maturity date
+    public Date calculateMaturityDate(Loan loan) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(loan.getStartDate());
+        cal.add(Calendar.MONTH, loan.getDurationInMonths());
+        return cal.getTime();
+    }
+
+    // Record repayment
+    public Loan repayLoan(Long loanId, double amount) {
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new RuntimeException("Loan not found"));
+
+        if (!loan.getStatus().equals(LoanStatus.ACTIVE)) {
+            throw new RuntimeException("Cannot repay: Loan not active");
+        }
+
+        loan.setTotalPaid(loan.getTotalPaid() + amount);
+        loan.setRemainingAmount(loan.getLoanAmount() - loan.getTotalPaid());
+
+        if (loan.getRemainingAmount() <= 0) {
+            loan.setStatus(LoanStatus.CLOSED);
+            loan.setRemainingAmount(0);
+        }
+
+        loan.setUpdatedAt(new Date());
+        loan.setLastPaymentDate(new Date());
+
+        return loanRepository.save(loan);
+    }
+
+    // Premature closure (apply penalty)
+    public Loan closeLoanPrematurely(Long loanId, double penaltyRate) {
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new RuntimeException("Loan not found"));
+
+        if (!loan.getStatus().equals(LoanStatus.ACTIVE)) {
+            throw new RuntimeException("Loan not active");
+        }
+
+        // Apply penalty interest
+        double remaining = loan.getRemainingAmount();
+        double penalty = remaining * penaltyRate / 100.0;
+        loan.setRemainingAmount(remaining + penalty);
+
+        loan.setStatus(LoanStatus.CLOSED);
+        loan.setUpdatedAt(new Date());
+        loan.setLastPaymentDate(new Date());
+        loan.setMaturityDate(new Date());
+
+        return loanRepository.save(loan);
+    }
+}
+3️⃣ LoanRestController
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.Date;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/loan")
+public class LoanRestController {
+
+    @Autowired
+    private LoanService loanService;
+
+    @Autowired
+    private LoanRepository loanRepository;
+
+    @Autowired
+    private JwtService jwtService;
+
+    // Create new loan
+    @PostMapping("/create")
+    public ResponseEntity<Loan> createLoan(@RequestBody Loan loan,
+                                           @RequestHeader("Authorization") String authHeader) {
+
+        String token = authHeader.replace("Bearer ", "");
+        Long userId = jwtService.extractUserId(token);
+
+        if (!loan.getAccount().getUser().getId().equals(userId)) {
+            return ResponseEntity.status(403).build();
+        }
+
+        loan.setStatus(LoanStatus.ACTIVE);
+        loan.setEmiAmount(loanService.calculateEmi(loan.getLoanAmount(), loan.getInterestRate(), loan.getDurationInMonths()));
+        loan.setMaturityDate(loanService.calculateMaturityDate(loan));
+        loan.setCreatedAt(new Date());
+        loan.setUpdatedAt(new Date());
+
+        Loan savedLoan = loanRepository.save(loan);
+        return ResponseEntity.ok(savedLoan);
+    }
+
+    // Repay loan
+    @PostMapping("/repay/{loanId}")
+    public ResponseEntity<Loan> repayLoan(@PathVariable Long loanId,
+                                          @RequestParam double amount,
+                                          @RequestHeader("Authorization") String authHeader) {
+
+        String token = authHeader.replace("Bearer ", "");
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new RuntimeException("Loan not found"));
+
+        if (!loan.getAccount().getUser().getId().equals(jwtService.extractUserId(token))) {
+            return ResponseEntity.status(403).build();
+        }
+
+        Loan updatedLoan = loanService.repayLoan(loanId, amount);
+        return ResponseEntity.ok(updatedLoan);
+    }
+
+    // Premature closure
+    @PostMapping("/close/{loanId}")
+    public ResponseEntity<Loan> closeLoan(@PathVariable Long loanId,
+                                          @RequestParam double penaltyRate,
+                                          @RequestHeader("Authorization") String authHeader) {
+
+        String token = authHeader.replace("Bearer ", "");
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new RuntimeException("Loan not found"));
+
+        if (!loan.getAccount().getUser().getId().equals(jwtService.extractUserId(token))) {
+            return ResponseEntity.status(403).build();
+        }
+
+        Loan closedLoan = loanService.closeLoanPrematurely(loanId, penaltyRate);
+        return ResponseEntity.ok(closedLoan);
+    }
+
+    // Get all loans of logged-in user
+    @GetMapping("/my-loans")
+    public ResponseEntity<List<Loan>> getMyLoans(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        Long userId = jwtService.extractUserId(token);
+
+        List<Loan> myLoans = loanRepository.findByAccountId(userId);
+        return ResponseEntity.ok(myLoans);
+    }
+}

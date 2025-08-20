@@ -1,0 +1,136 @@
+1️⃣ FD Repository
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import java.util.List;
+
+@Repository
+public interface FixedDepositRepository extends JpaRepository<FixedDeposit, Long> {
+
+    // Optional: Find FD by account ID
+    List<FixedDeposit> findByAccountId(Long accountId);
+}
+2️⃣ FD Service
+import java.util.Date;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class FixedDepositService {
+
+    // Calculate maturity amount based on normal or premature interest
+    public double calculateMaturityAmount(FixedDeposit fd, boolean isPremature) {
+        double principal = fd.getDepositAmount();
+        double years = fd.getDurationInMonths() / 12.0;
+
+        double appliedRate = isPremature ? fd.getPrematureInterestRate() : fd.getInterestRate();
+        double interest = principal * appliedRate * years / 100.0;
+
+        return principal + interest;
+    }
+
+    // Withdraw FD (premature or normal)
+    public void withdrawFd(FixedDeposit fd, boolean isPremature) {
+        if (!fd.getStatus().equals(FdStatus.ACTIVE)) {
+            throw new RuntimeException("FD is not active");
+        }
+
+        fd.setMaturityAmount(calculateMaturityAmount(fd, isPremature));
+
+        fd.setStatus(FdStatus.WITHDRAWN);
+        fd.setUpdatedAt(new Date());
+        if (isPremature) {
+            fd.setPrematureWithdrawalDate(new Date());
+        } else {
+            fd.setMaturityDate(new Date()); // If normal withdrawal today
+        }
+    }
+
+    // Check if FD matured
+    public boolean isFdMatured(FixedDeposit fd) {
+        Date today = new Date();
+        return today.after(fd.getMaturityDate()) || today.equals(fd.getMaturityDate());
+    }
+
+    // Optional: calculate maturity date from start date + duration
+    public Date calculateMaturityDate(FixedDeposit fd) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(fd.getStartDate());
+        cal.add(Calendar.MONTH, fd.getDurationInMonths());
+        return cal.getTime();
+    }
+}
+3️⃣ FD RestController
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.Date;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/fd")
+public class FixedDepositRestController {
+
+    @Autowired
+    private FixedDepositService fdService;
+
+    @Autowired
+    private FixedDepositRepository fdRepository;
+
+    @Autowired
+    private JwtService jwtService; // Token verification
+
+    // Create new FD
+    @PostMapping("/create")
+    public ResponseEntity<FixedDeposit> createFd(
+            @RequestBody FixedDeposit fd,
+            @RequestHeader("Authorization") String authHeader) {
+
+        String token = authHeader.replace("Bearer ", "");
+        Long userId = jwtService.extractUserId(token);
+
+        if (!fd.getAccount().getUser().getId().equals(userId)) {
+            return ResponseEntity.status(403).build();
+        }
+
+        fd.setStatus(FdStatus.ACTIVE);
+        fd.setCreatedAt(new Date());
+        fd.setUpdatedAt(new Date());
+        fd.setMaturityDate(fdService.calculateMaturityDate(fd));
+
+        FixedDeposit savedFd = fdRepository.save(fd);
+        return ResponseEntity.ok(savedFd);
+    }
+
+    // Withdraw FD (can be premature)
+    @PostMapping("/withdraw/{fdId}")
+    public ResponseEntity<FixedDeposit> withdrawFd(
+            @PathVariable Long fdId,
+            @RequestHeader("Authorization") String authHeader) {
+
+        String token = authHeader.replace("Bearer ", "");
+        Long userId = jwtService.extractUserId(token);
+
+        FixedDeposit fd = fdRepository.findById(fdId)
+                .orElseThrow(() -> new RuntimeException("FD not found"));
+
+        if (!fd.getAccount().getUser().getId().equals(userId)) {
+            return ResponseEntity.status(403).build();
+        }
+
+        boolean isPremature = !fdService.isFdMatured(fd);
+        fdService.withdrawFd(fd, isPremature);
+        fdRepository.save(fd);
+
+        return ResponseEntity.ok(fd);
+    }
+
+    // Get all FDs of logged-in user
+    @GetMapping("/my-fds")
+    public ResponseEntity<List<FixedDeposit>> getMyFds(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        Long userId = jwtService.extractUserId(token);
+
+        List<FixedDeposit> myFds = fdRepository.findByAccountId(userId); // assuming accountId = userId
+        return ResponseEntity.ok(myFds);
+    }
+}

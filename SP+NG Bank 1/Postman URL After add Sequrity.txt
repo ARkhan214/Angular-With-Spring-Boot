@@ -1,0 +1,64 @@
+EMAIL:=
+farihamariam@gmail.com
+mdrahimkhan107107@gmail.com
+parvejmd4469@gmail.com/sadiar.rahman970@gmail.com/mr.t.imran11@gmail.com/halimaaktershemanto@gmail.com/sathekhanom550@gmail.com/cmrejaulkarim@gmail.com/mdrahimkhan107107@gmail.com
+
+MD Rahim Khan/Fariha Mariam/Sadier Rahman/Parve/Sathe Khanom
+
+##For Login
+POST http://localhost:8085/api/user/login
+{
+  "email": "mdrahimkhan107107@gmail.com",
+  "password": "12345"
+}
+
+##For View
+GET http://localhost:8085/api/user/1
+##For view account
+GET http://localhost:8085/api/account/1
+## For view emp
+GET http://localhost:8085/api/employees/1
+
+
+##For Save User and account
+POST http://localhost:8085/api/account/
+User
+{
+"name":"MD Rahim Khan",
+"email":"mdrahimkhan107107@gmail.com",
+"password":"12345",
+"phoneNumber":"017778899",
+"dateOfBirth":"1990-01-01"
+}
+account
+{
+"name":"MD Rahim Khan",
+"accountType":"Savings",
+"balance":5000,
+"nid":"1234567890123",
+"phoneNumber":"017778899",
+"address":"Dhaka",
+"dateOfBirth":"1990-01-01"
+}
+
+{
+  "name": "Sathe Khanom",
+  "email": "sathekhanom550@gmail.com",
+  "password": "12345",
+  "phoneNumber": "0175998800",
+  "dateOfBirth": "1990-01-02",
+  "active": true
+}
+{
+  "name": "Sathe Khanom",
+  "accountActiveStatus": true,
+  "accountType": "SAVINGS",
+  "balance": 100000.0,
+  "nid": "19663056797012",
+  "phoneNumber": "0175998800",
+  "address": "Dhaka, Bangladesh",
+  "dateOfBirth": "1990-01-02",
+  "accountOpeningDate": "2025-08-16",
+  "accountClosingDate": null,
+  "role": "USER"
+}

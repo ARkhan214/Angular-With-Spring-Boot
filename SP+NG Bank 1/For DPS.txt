@@ -1,0 +1,250 @@
+1️⃣ DpsRepository
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import java.util.List;
+
+@Repository
+public interface DpsRepository extends JpaRepository<Dps, Long> {
+
+    // Find all DPS by account ID
+    List<Dps> findByAccountId(Long accountId);
+
+    // Optional: Find active DPS by account ID
+    List<Dps> findByAccountIdAndStatus(Long accountId, DpsStatus status);
+}
+2️⃣  DpsService (Skeleton)
+import java.util.Calendar;
+import java.util.Date;
+
+public class DpsService {
+
+    // Calculate maturity amount for DPS
+    public double calculateMaturityAmount(Dps dps) {
+        // Principal = monthly installment × duration
+        double principal = dps.getMonthlyInstallment() * dps.getDurationInMonths();
+
+        // Simple interest formula: P * r * t / 100
+        double years = dps.getDurationInMonths() / 12.0;
+        double interest = principal * dps.getInterestRate() * years / 100.0;
+
+        return principal + interest;
+    }
+
+    // Deposit a monthly installment
+    public void depositMonthlyInstallment(Dps dps, double amount) {
+        if (!dps.getStatus().equals(DpsStatus.ACTIVE)) {
+            throw new RuntimeException("Cannot deposit: DPS is not active.");
+        }
+
+        // Add to total deposits made
+        int totalPaid = dps.getTotalDepositsMade() != null ? dps.getTotalDepositsMade() : 0;
+        dps.setTotalDepositsMade(totalPaid + 1);
+
+        // Optionally, update maturity amount dynamically
+        dps.setMaturityAmount(calculateMaturityAmount(dps));
+    }
+
+    // Close DPS prematurely
+    public void closeDpsPrematurely(Dps dps, Date closeDate, double penaltyRate) {
+        if (!dps.getStatus().equals(DpsStatus.ACTIVE)) {
+            throw new RuntimeException("DPS is not active.");
+        }
+
+        // Reduce interest proportionally
+        double principal = dps.getMonthlyInstallment() * dps.getTotalDepositsMade();
+        int monthsCompleted = dps.getTotalDepositsMade();
+        double years = monthsCompleted / 12.0;
+
+        double interest = principal * (dps.getInterestRate() - penaltyRate) * years / 100.0;
+        dps.setMaturityAmount(principal + interest);
+
+        dps.setStatus(DpsStatus.CLOSED);
+        dps.setUpdatedAt(new Date());
+        dps.setMaturityDate(closeDate);
+    }
+
+    // Check if DPS matured
+    public boolean isDpsMatured(Dps dps) {
+        Date today = new Date();
+        return today.after(dps.getMaturityDate()) || today.equals(dps.getMaturityDate());
+    }
+}
+
+##final DeposetService##
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Calendar;
+import java.util.Date;
+
+@Service
+public class DpsService {
+
+    @Autowired
+    private DpsRepository dpsRepository;
+
+    // Calculate maturity amount for DPS
+    public double calculateMaturityAmount(Dps dps) {
+        double principal = dps.getMonthlyInstallment() * dps.getDurationInMonths();
+        double years = dps.getDurationInMonths() / 12.0;
+        double interest = principal * dps.getInterestRate() * years / 100.0;
+        return principal + interest;
+    }
+
+    // Deposit a monthly installment
+    public Dps depositMonthlyInstallment(Long dpsId, double amount) {
+        Dps dps = dpsRepository.findById(dpsId)
+                .orElseThrow(() -> new RuntimeException("DPS not found"));
+
+        if (!dps.getStatus().equals(DpsStatus.ACTIVE)) {
+            throw new RuntimeException("Cannot deposit: DPS is not active.");
+        }
+
+        // Increment total deposits made
+        int totalPaid = dps.getTotalDepositsMade() != null ? dps.getTotalDepositsMade() : 0;
+        dps.setTotalDepositsMade(totalPaid + 1);
+
+        // Update maturity amount dynamically
+        dps.setMaturityAmount(calculateMaturityAmount(dps));
+
+        // Update timestamp
+        dps.setUpdatedAt(new Date());
+
+        return dpsRepository.save(dps);
+    }
+
+    // Close DPS prematurely
+    public Dps closeDpsPrematurely(Long dpsId, double penaltyRate) {
+        Dps dps = dpsRepository.findById(dpsId)
+                .orElseThrow(() -> new RuntimeException("DPS not found"));
+
+        if (!dps.getStatus().equals(DpsStatus.ACTIVE)) {
+            throw new RuntimeException("DPS is not active.");
+        }
+
+        // Reduce interest proportionally for premature closure
+        double principal = dps.getMonthlyInstallment() * dps.getTotalDepositsMade();
+        int monthsCompleted = dps.getTotalDepositsMade();
+        double years = monthsCompleted / 12.0;
+        double interest = principal * (dps.getInterestRate() - penaltyRate) * years / 100.0;
+
+        dps.setMaturityAmount(principal + interest);
+        dps.setStatus(DpsStatus.CLOSED);
+        dps.setUpdatedAt(new Date());
+        dps.setMaturityDate(new Date());
+
+        return dpsRepository.save(dps);
+    }
+
+    // Check if DPS matured
+    public boolean isDpsMatured(Dps dps) {
+        Date today = new Date();
+        return today.after(dps.getMaturityDate()) || today.equals(dps.getMaturityDate());
+    }
+
+    // Calculate maturity date from start date + duration
+    public Date calculateMaturityDate(Dps dps) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(dps.getStartDate());
+        cal.add(Calendar.MONTH, dps.getDurationInMonths());
+        return cal.getTime();
+    }
+}
+
+
+
+3️⃣DpsRestController
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.Date;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/dps")
+public class DpsRestController {
+
+    @Autowired
+    private DpsService dpsService;
+
+    @Autowired
+    private DpsRepository dpsRepository;
+
+    @Autowired
+    private JwtService jwtService; // Token verification service
+
+    // Create new DPS
+    @PostMapping("/create")
+    public ResponseEntity<Dps> createDps(
+            @RequestBody Dps dps,
+            @RequestHeader("Authorization") String authHeader) {
+
+        String token = authHeader.replace("Bearer ", "");
+        Long userId = jwtService.extractUserId(token);
+
+        if (!dps.getAccount().getUser().getId().equals(userId)) {
+            return ResponseEntity.status(403).build();
+        }
+
+        dps.setStatus(DpsStatus.ACTIVE);
+        dps.setCreatedAt(new Date());
+        dps.setUpdatedAt(new Date());
+        dps.setMaturityDate(dpsService.calculateMaturityDate(dps));
+
+        Dps savedDps = dpsRepository.save(dps);
+        return ResponseEntity.ok(savedDps);
+    }
+
+    // Deposit monthly installment
+    @PostMapping("/deposit/{dpsId}")
+    public ResponseEntity<Dps> depositInstallment(
+            @PathVariable Long dpsId,
+            @RequestHeader("Authorization") String authHeader) {
+
+        String token = authHeader.replace("Bearer ", "");
+        Long userId = jwtService.extractUserId(token);
+
+        Dps dps = dpsRepository.findById(dpsId)
+                .orElseThrow(() -> new RuntimeException("DPS not found"));
+
+        if (!dps.getAccount().getUser().getId().equals(userId)) {
+            return ResponseEntity.status(403).build();
+        }
+
+        Dps updatedDps = dpsService.depositMonthlyInstallment(dpsId, dps.getMonthlyInstallment());
+        return ResponseEntity.ok(updatedDps);
+    }
+
+    // Premature closure
+    @PostMapping("/close/{dpsId}")
+    public ResponseEntity<Dps> closeDpsPrematurely(
+            @PathVariable Long dpsId,
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam double penaltyRate) {
+
+        String token = authHeader.replace("Bearer ", "");
+        Long userId = jwtService.extractUserId(token);
+
+        Dps dps = dpsRepository.findById(dpsId)
+                .orElseThrow(() -> new RuntimeException("DPS not found"));
+
+        if (!dps.getAccount().getUser().getId().equals(userId)) {
+            return ResponseEntity.status(403).build();
+        }
+
+        Dps closedDps = dpsService.closeDpsPrematurely(dpsId, penaltyRate);
+        return ResponseEntity.ok(closedDps);
+    }
+
+    // Get all DPS of logged-in user
+    @GetMapping("/my-dps")
+    public ResponseEntity<List<Dps>> getMyDps(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        Long userId = jwtService.extractUserId(token);
+
+        List<Dps> myDps = dpsRepository.findByAccountId(userId);
+        return ResponseEntity.ok(myDps);
+    }
+}
+
