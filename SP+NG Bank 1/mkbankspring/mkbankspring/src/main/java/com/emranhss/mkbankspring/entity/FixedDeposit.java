@@ -16,13 +16,11 @@ public class FixedDeposit {
     @JoinColumn(name = "account_id", nullable = false)
     private Accounts account;
 
-    // Principal amount deposited
     private Double depositAmount;
 
     // Duration of FD in months
     private Integer durationInMonths;
 
-    // Normal interest rate if FD runs till maturity
     private Double interestRate;
 
     // Lower interest rate applied for premature withdrawal
@@ -43,15 +41,124 @@ public class FixedDeposit {
     @Temporal(TemporalType.DATE)
     private Date prematureWithdrawalDate;
 
-    // Status of FD (ACTIVE, CLOSED, WITHDRAWN)
     @Enumerated(EnumType.STRING)
     private FdStatus status;
 
-    // check first creat
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-
     //chack last update
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+    private Date fDLustUpdatedAt;
+
+    public FixedDeposit() {
+    }
+
+    public FixedDeposit(Long id, Accounts account, Double depositAmount, Integer durationInMonths, Double interestRate, Double prematureInterestRate, Date startDate, Date maturityDate, Double maturityAmount, Date prematureWithdrawalDate, FdStatus status, Date fDLustUpdatedAt) {
+        this.id = id;
+        this.account = account;
+        this.depositAmount = depositAmount;
+        this.durationInMonths = durationInMonths;
+        this.interestRate = interestRate;
+        this.prematureInterestRate = prematureInterestRate;
+        this.startDate = startDate;
+        this.maturityDate = maturityDate;
+        this.maturityAmount = maturityAmount;
+        this.prematureWithdrawalDate = prematureWithdrawalDate;
+        this.status = status;
+        this.fDLustUpdatedAt = fDLustUpdatedAt;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Accounts getAccount() {
+        return account;
+    }
+
+    public void setAccount(Accounts account) {
+        this.account = account;
+    }
+
+    public Double getDepositAmount() {
+        return depositAmount;
+    }
+
+    public void setDepositAmount(Double depositAmount) {
+        this.depositAmount = depositAmount;
+    }
+
+    public Integer getDurationInMonths() {
+        return durationInMonths;
+    }
+
+    public void setDurationInMonths(Integer durationInMonths) {
+        this.durationInMonths = durationInMonths;
+    }
+
+    public Double getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(Double interestRate) {
+        this.interestRate = interestRate;
+    }
+
+    public Double getPrematureInterestRate() {
+        return prematureInterestRate;
+    }
+
+    public void setPrematureInterestRate(Double prematureInterestRate) {
+        this.prematureInterestRate = prematureInterestRate;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getMaturityDate() {
+        return maturityDate;
+    }
+
+    public void setMaturityDate(Date maturityDate) {
+        this.maturityDate = maturityDate;
+    }
+
+    public Double getMaturityAmount() {
+        return maturityAmount;
+    }
+
+    public void setMaturityAmount(Double maturityAmount) {
+        this.maturityAmount = maturityAmount;
+    }
+
+    public Date getPrematureWithdrawalDate() {
+        return prematureWithdrawalDate;
+    }
+
+    public void setPrematureWithdrawalDate(Date prematureWithdrawalDate) {
+        this.prematureWithdrawalDate = prematureWithdrawalDate;
+    }
+
+    public FdStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(FdStatus status) {
+        this.status = status;
+    }
+
+    public Date getfDLustUpdatedAt() {
+        return fDLustUpdatedAt;
+    }
+
+    public void setfDLustUpdatedAt(Date fDLustUpdatedAt) {
+        this.fDLustUpdatedAt = fDLustUpdatedAt;
+    }
 }

@@ -22,14 +22,32 @@ GET http://localhost:8085/api/employees/1
 
 ##For Save User and account
 POST http://localhost:8085/api/account/
-User
+user
 {
-"name":"MD Rahim Khan",
-"email":"mdrahimkhan107107@gmail.com",
-"password":"12345",
-"phoneNumber":"017778899",
-"dateOfBirth":"1990-01-01"
+  "name": "Fariha Mariam",
+  "email": "farihamariam@gmail.com",
+  "password": "12345",
+  "phoneNumber": "1788990000",
+  "dateOfBirth": "1990-01-02",
+  "active": true
 }
+{
+  "name": "Fariha Mariam",
+  "accountType": "Savings",
+  "balance": 5000,
+  "nid": "1567890123",
+  "phoneNumber": "1788990000",
+  "address": "Dhaka",
+  "dateOfBirth": "1990-01-01",
+  "accountOpeningDate": "2025-08-16",
+  "accountClosingDate": null,
+  "role": "USER"
+}
+
+
+
+
+
 account
 {
 "name":"MD Rahim Khan",
@@ -42,20 +60,28 @@ account
 }
 
 {
-  "name": "Sathe Khanom",
-  "email": "sathekhanom550@gmail.com",
+  "name": "MD Rahim Khan",
+  "email": "mdrahimkhan107107@gmail.com",
   "password": "12345",
   "phoneNumber": "0175998800",
   "dateOfBirth": "1990-01-02",
   "active": true
 }
+User
 {
-  "name": "Sathe Khanom",
+"name":"MD Rahim Khan",
+"email":"mdrahimkhan107107@gmail.com",
+"password":"12345",
+"phoneNumber":"017778899",
+"dateOfBirth":"1990-01-01",
+}
+{
+  "name": "MD Rahim Khan",
   "accountActiveStatus": true,
   "accountType": "SAVINGS",
   "balance": 100000.0,
   "nid": "19663056797012",
-  "phoneNumber": "0175998800",
+  "phoneNumber": "017778899",
   "address": "Dhaka, Bangladesh",
   "dateOfBirth": "1990-01-02",
   "accountOpeningDate": "2025-08-16",

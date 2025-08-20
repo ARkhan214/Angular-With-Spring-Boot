@@ -15,10 +15,8 @@ public class Loan {
     @JoinColumn(name = "account_id", nullable = false)
     private Accounts account;
 
-    // Principal loan amount
     private double loanAmount;
 
-    // Annual interest rate in percentage
     private double interestRate;
 
     // Duration of loan in months
@@ -27,25 +25,20 @@ public class Loan {
     // Monthly installment (EMI)
     private double emiAmount;
 
-    // Loan type (PERSONAL, HOME, CAR, etc.)
     @Enumerated(EnumType.STRING)
     private LoanType loanType;
 
-    // Loan status (ACTIVE, CLOSED, DEFAULTED)
     @Enumerated(EnumType.STRING)
     private LoanStatus status;
 
-    // Loan start date
     @Temporal(TemporalType.DATE)
-    private Date startDate;
+    private Date loanStartDate;
 
     // Loan maturity date
     @Temporal(TemporalType.DATE)
-    private Date maturityDate;
+    private Date loanMaturityDate;
 
-    // Total amount already paid
-    private double totalPaid;
-
+    private double totalAlreadyPaidAmount;
     // Remaining amount to be paid
     private double remainingAmount;
 
@@ -56,14 +49,148 @@ public class Loan {
     @Temporal(TemporalType.DATE)
     private Date lastPaymentDate;
 
-    // Audit fields
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
     // Constructors, getters, setters
     public Loan() {
+    }
+
+    public Loan(Long id, Accounts account, double loanAmount, double interestRate, int durationInMonths, double emiAmount, LoanType loanType, LoanStatus status, Date loanStartDate, Date loanMaturityDate, double totalAlreadyPaidAmount, double remainingAmount, double penaltyRate, Date lastPaymentDate, Date updatedAt) {
+        this.id = id;
+        this.account = account;
+        this.loanAmount = loanAmount;
+        this.interestRate = interestRate;
+        this.durationInMonths = durationInMonths;
+        this.emiAmount = emiAmount;
+        this.loanType = loanType;
+        this.status = status;
+        this.loanStartDate = loanStartDate;
+        this.loanMaturityDate = loanMaturityDate;
+        this.totalAlreadyPaidAmount = totalAlreadyPaidAmount;
+        this.remainingAmount = remainingAmount;
+        this.penaltyRate = penaltyRate;
+        this.lastPaymentDate = lastPaymentDate;
+        this.updatedAt = updatedAt;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Accounts getAccount() {
+        return account;
+    }
+
+    public void setAccount(Accounts account) {
+        this.account = account;
+    }
+
+    public double getLoanAmount() {
+        return loanAmount;
+    }
+
+    public void setLoanAmount(double loanAmount) {
+        this.loanAmount = loanAmount;
+    }
+
+    public double getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(double interestRate) {
+        this.interestRate = interestRate;
+    }
+
+    public int getDurationInMonths() {
+        return durationInMonths;
+    }
+
+    public void setDurationInMonths(int durationInMonths) {
+        this.durationInMonths = durationInMonths;
+    }
+
+    public double getEmiAmount() {
+        return emiAmount;
+    }
+
+    public void setEmiAmount(double emiAmount) {
+        this.emiAmount = emiAmount;
+    }
+
+    public LoanType getLoanType() {
+        return loanType;
+    }
+
+    public void setLoanType(LoanType loanType) {
+        this.loanType = loanType;
+    }
+
+    public LoanStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(LoanStatus status) {
+        this.status = status;
+    }
+
+    public Date getLoanStartDate() {
+        return loanStartDate;
+    }
+
+    public void setLoanStartDate(Date loanStartDate) {
+        this.loanStartDate = loanStartDate;
+    }
+
+    public Date getLoanMaturityDate() {
+        return loanMaturityDate;
+    }
+
+    public void setLoanMaturityDate(Date loanMaturityDate) {
+        this.loanMaturityDate = loanMaturityDate;
+    }
+
+    public double getTotalAlreadyPaidAmount() {
+        return totalAlreadyPaidAmount;
+    }
+
+    public void setTotalAlreadyPaidAmount(double totalAlreadyPaidAmount) {
+        this.totalAlreadyPaidAmount = totalAlreadyPaidAmount;
+    }
+
+    public double getRemainingAmount() {
+        return remainingAmount;
+    }
+
+    public void setRemainingAmount(double remainingAmount) {
+        this.remainingAmount = remainingAmount;
+    }
+
+    public double getPenaltyRate() {
+        return penaltyRate;
+    }
+
+    public void setPenaltyRate(double penaltyRate) {
+        this.penaltyRate = penaltyRate;
+    }
+
+    public Date getLastPaymentDate() {
+        return lastPaymentDate;
+    }
+
+    public void setLastPaymentDate(Date lastPaymentDate) {
+        this.lastPaymentDate = lastPaymentDate;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

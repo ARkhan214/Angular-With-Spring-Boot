@@ -56,15 +56,7 @@ http://localhost:8085/api/transactions/transfer/1/2
 
 
 
-==>Only Add User(Admin)
-POST http://localhost:8085/api/user/
-{
-  "name": "Emran Mia",
-  "email": "mr.t.imran11@gmail.com",
-  "password": "12345",
-  "phoneNumber": "01785995",
-  "dateOfBirth": "1990-01-02"
-}
+
 
 
 
@@ -85,67 +77,46 @@ Sadier Rahman
 Parve
 Sathe Khanom
 
+##Final code (USER,User+Account,User+Employee)
+
+
+==>Only Add User(Admin)
+POST http://localhost:8085/api/user/
+{
+  "name": "CM REJA",
+  "email": "cmrejaulkarim@gmail.com",
+  "password": "12345",
+  "phoneNumber": "017859950",
+  "dateOfBirth": "1990-01-02"
+}
+
+
+
 <=>For Save User + Account<=>
 POST http://localhost:8085/api/account/
 
-
-
 ==>json form Add Account
 {
-  "name": "Parve",
-  "email": "sathekhanom550@gmail.com",
+  "name": "Sadier Rahman",
+  "email": "sadiar.rahman970@gmail.com",
   "password": "12345",
-  "phoneNumber": "01885995",
-  "photo": "MD_Rahim_Khan.jpg",
-  "dateOfBirth": "1990-01-02",
-  "role": "USER",
-  "active": true,
-  "isLock": false
-}
-
-{
-  "name": "Sathe Khanom",
-  "email": "sathekhanom550@gmail.com",
-  "password": "12345",
-  "phoneNumber": "0175998800",
+  "phoneNumber": "1788990001",
   "dateOfBirth": "1990-01-02",
   "active": true
 }
+
 {
-  "name": "Sathe Khanom",
-  "accountActiveStatus": true,
-  "accountType": "SAVINGS",
-  "balance": 100000.0,
-  "nid": "19663056797012",
-  "phoneNumber": "0175998800",
-  "address": "Dhaka, Bangladesh",
-  "dateOfBirth": "1990-01-02",
+  "name": "Sadier Rahman",
+  "accountType": "Savings",
+  "balance": 5000,
+  "nid": "156789012300",
+  "phoneNumber": "1788990001",
+  "address": "Dhaka",
+  "dateOfBirth": "1990-01-01",
   "accountOpeningDate": "2025-08-16",
   "accountClosingDate": null,
   "role": "USER"
 }
-
-
- user {
-"name":"MD Rahim Khan",
-"email":"mdrahimkhan107107@gmail.com",
-"password":"123456",
-"phoneNumber":"017778899",
-"dateOfBirth":"1990-01-01"
-}
-                                |
-account{
-"name":"MD Rahim Khan",
-"accountType":"Savings",
-"balance":5000,
-"nid":"1234567890123",
-"phoneNumber":"017778899",
-"address":"Dhaka",
-"dateOfBirth":"1990-01-01"
-}
-                                                                                                                              |
-
-
 
 
 <==>Employee + User<==>

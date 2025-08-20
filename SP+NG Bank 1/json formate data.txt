@@ -4,6 +4,7 @@ http://localhost:8085/api/user/
 
 farihamariam@gmail.com
 ==>json form
+user
 {
   "name": "CM Reja",
   "email": "cmrejaulkarim@gmail.com",
@@ -11,6 +12,7 @@ farihamariam@gmail.com
   "phoneNumber": "01735473348",
   "dateOfBirth": "1990-01-01"
 }
+account
 {
   "name": "CM Reja",
   "accountActiveStatus": true,
@@ -28,9 +30,24 @@ farihamariam@gmail.com
 
 
 
+  "user": 
+{
+"name": "Sadier Rahman",
+"email": "sadiar.rahman970@gmail.com",
+"password": "12345",
+"phoneNumber": "017000000",
+"dateOfBirth": "1995-05-20",
+"active": true
 
-
-
+  },
+  "employee": 
+{
+"name":"Sadier Rahman",
+"phoneNumber": "017000000",
+"position": "CASHIER",
+"salary": 35000,
+"joinDate": "2025-08-20"
+}
 
 
 

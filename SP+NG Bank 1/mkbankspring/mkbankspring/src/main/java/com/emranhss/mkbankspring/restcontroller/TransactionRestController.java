@@ -45,7 +45,7 @@ public class TransactionRestController {
 //    }
 
     //  Get all transactions(Method Number -2)
-    @GetMapping("/all")
+    @GetMapping("all")
     public ResponseEntity<List<Transaction>> getAllTransactions(){
         List<Transaction> transactions = transactionService.getAllTransactions();
         return ResponseEntity.ok(transactions);
@@ -86,7 +86,7 @@ public class TransactionRestController {
     }
 
 //for transaction after add sequrity(Initial,deposit,withdraw)
-@PostMapping("/tr/{id}")
+@PostMapping("tr/{id}")
 public Transaction deposit(
         @RequestBody Transaction transaction,
         @PathVariable Long id,
@@ -97,7 +97,7 @@ public Transaction deposit(
 }
 
 //method transfer
-@PostMapping("/transactions/transfer/{senderId}/{receiverId}")
+@PostMapping("tr/{senderId}/{receiverId}")
 public Transaction transfer(
         @RequestBody Transaction transaction,
         @PathVariable Long senderId,

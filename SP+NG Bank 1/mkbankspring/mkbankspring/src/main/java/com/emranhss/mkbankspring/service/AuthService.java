@@ -59,13 +59,15 @@ public class AuthService {
     private String uploadDir;
 
     //Method for save,update or register (connected with UserResCon Method Number -1)
+    //Save user
     public void saveOrUpdateUser(User user, MultipartFile imageFile) {
         if (imageFile != null && !imageFile.isEmpty()) {
             String fileName = saveImage(imageFile, user);
             user.setPhoto(fileName);
         }
-
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(Role.ADMIN);
+        user.setActive(true);
         userRepository.save(user);
         sendActivationEmail(user);
     }

@@ -1,10 +1,11 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Transaction } from '../model/transactions.model';
 import { forkJoin, map, Observable, switchMap, throwError } from 'rxjs';
 import { Accountsservice } from './accountsservice';
 import { Accounts } from '../model/accounts.model';
 import { environment } from '../environment/environment';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -13,11 +14,30 @@ export class Transactionsservice {
 
 
   private apiUrl = environment.springUrl + "account";
-  private transactionsUrl = environment.springUrl + "transactions/";
+  private transactionsUrl = environment.springUrl + "transactions/account";
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) { }
+
+  
+
+   private getToken(): string {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('authToken') || '';
+    }
+    return '';
+  }
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = this.getToken();
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+  }
+
+
 
   addTransactionWithBalance(transaction: Transaction): Observable<any> {
     const accountId = transaction.accountId;

@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/employees")
+@RequestMapping("/api/employees/")
 public class EmployeeRestController {
 
     @Autowired
