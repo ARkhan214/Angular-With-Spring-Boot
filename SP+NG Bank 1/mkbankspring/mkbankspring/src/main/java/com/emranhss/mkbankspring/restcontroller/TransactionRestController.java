@@ -34,7 +34,7 @@ public class TransactionRestController {
     public ResponseEntity<List<Transaction>> getTransactionsByAccount(@PathVariable Long accountId){
         Accounts account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
-        List<Transaction> transactions = transactionService.getTransactionsByAccount(account);
+        List<Transaction> transactions = transactionService.getTransactionsByAccountId(accountId);
         return ResponseEntity.ok(transactions);
     }
 
@@ -49,7 +49,7 @@ public class TransactionRestController {
     //(Method Number -5)
     //Table Relation Use kore filter kora(Transaction table er sathe Account Table er Relation k kaje lagano)
     //Method for Search Transaction by deposit
-    @GetMapping("/{accountId}/deposits")
+    @GetMapping("{accountId}/deposits")
     public ResponseEntity<List<Transaction>> getDeposits(@PathVariable Long accountId) {
         List<Transaction> deposits = transactionService.getDepositsByAccount(accountId);
         return ResponseEntity.ok(deposits);
@@ -57,7 +57,7 @@ public class TransactionRestController {
 
     //(Method Number -6)
     //Method for Search Transaction by withdraw
-    @GetMapping("/{accountId}/withdraws")
+    @GetMapping("{accountId}/withdraws")
     public ResponseEntity<List<Transaction>> getWithdraws(@PathVariable Long accountId) {
         List<Transaction> withdraws = transactionService.getWithdrawsByAccount(accountId);
         return ResponseEntity.ok(withdraws);

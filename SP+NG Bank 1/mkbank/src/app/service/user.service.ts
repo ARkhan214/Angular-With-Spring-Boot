@@ -83,7 +83,7 @@ export class UserService {
 
   //for admin dashbord
   getAllUser(): Observable<User[]> {
-    return this.http.get<User[]>(this.baseUrl);
+    return this.http.get<User[]>(`${this.baseUrl}/user/all`);
   }
 
   saveAllUser(alluser: User): Observable<any> {

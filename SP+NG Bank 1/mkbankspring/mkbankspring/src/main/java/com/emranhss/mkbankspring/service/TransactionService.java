@@ -200,7 +200,6 @@ public class TransactionService {
     }
 
 
-
     //Table Relation Use kore filter kora(Transaction table er sathe Account Table er Relation k kaje lagano)
     //Transaction Type baboher kore filter kora(connected with TransactionResCon Method Number -5)
     //Method for Search Transaction by deposit

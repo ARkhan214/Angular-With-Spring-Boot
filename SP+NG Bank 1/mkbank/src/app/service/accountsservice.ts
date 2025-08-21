@@ -115,15 +115,13 @@ findAccountByUserId(userId: number): Observable<Accounts | null> {
 
 
 
-  //for admin dashbord
-getAllAccounts() {
-  return this.http.get<Accounts[]>(this.apiUrl);
+//for admin dashbord
+getAllAccounts(): Observable<Accounts[]> {
+  return this.http.get<Accounts[]>(`${this.apiUrl}/account/all`);
 }
 
-
-registerAccount(formData: FormData): Observable<any> {
-  return this.http.post(this.apiUrl, formData);
-}
-
-
+//its working for create account on usercomponent
+  registerAccount(formData: FormData): Observable<any> {
+    return this.http.post(`${this.apiUrl}/account/`, formData);
+  }
 }

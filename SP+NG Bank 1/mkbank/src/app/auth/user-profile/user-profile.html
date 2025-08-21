@@ -1,6 +1,6 @@
 <div class="user-profile-container" *ngIf="account; else noAccount">
   <h2>Welcome, {{ account.name }}</h2>
-  <img *ngIf="account.photo" [src]="account.photo" alt="Profile Photo" class="profile-photo">
+  <img *ngIf="account.photo" [src]="'http://localhost:8085/images/account/'+account.photo" alt="Profile Photo" class="profile-photo">
 
   <div class="account-details">
     <p><strong>Account ID:</strong> {{ account.id }}</p>

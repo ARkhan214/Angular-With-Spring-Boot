@@ -83,7 +83,9 @@ Sathe Khanom
 
 
 ==>Only Add User(Admin)
-POST http://localhost:8085/api/user/
+POST http://localhost:8085/api/user/         (working)
+GET  http://localhost:8085/api/user/all      (working)
+GET  http://localhost:8085/api/user/1        (working)
 {
   "name": "CM REJA",
   "email": "cmrejaulkarim@gmail.com",
@@ -104,20 +106,20 @@ Get http://localhost:8085/api/account/1		(not working)
 
 ==>json form Add Account
 {
-  "name": "Sadier Rahman",
-  "email": "sadiar0@gmail.com",
+  "name": "Masud",
+  "email": "masud@gmail.com",
   "password": "12345",
-  "phoneNumber": "17889001",
+  "phoneNumber": "0317889001",
   "dateOfBirth": "1990-01-02",
   "active": true
 }
 
 {
-  "name": "Sadier Rahman",
+  "name": "Masud",
   "accountType": "Savings",
   "balance": 5000,
-  "nid": "15678901200",
-  "phoneNumber": "17889001",
+  "nid": "1325678901200",
+  "phoneNumber": "0317889001",
   "address": "Dhaka",
   "dateOfBirth": "1990-01-01",
   "accountOpeningDate": "2025-08-16",
@@ -142,9 +144,9 @@ POST http://localhost:8085/api/employees/
 user 
 { 
 "name":"Sathe Khanom",
-"email":"sathekhanom550@gmail.com",
+"email":"sathebom550@gmail.com",
 "password":"12345",
-"phoneNumber":"0171234566",
+"phoneNumber":"017000566",
 "dateOfBirth":"1995-05-20"
 }   
                                                                                                                             
@@ -152,8 +154,8 @@ employee
 {
 "name":"Sathe Khanom",
 "status":"ACTIVE",
-"nid":"12345608966",
-"phoneNumber":"0171234566",
+"nid":"1234560896644",
+"phoneNumber":"017000566",
 "address":"Dhaka,Bangladesh",
 "position":"CASHIER",
 "salary":25000,

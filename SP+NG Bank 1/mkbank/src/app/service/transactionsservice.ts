@@ -198,10 +198,16 @@ export class Transactionsservice {
     );
   }
   getPositiveTransactions(): Observable<Transaction[]> {
-    return this.http.get<Transaction[]>('http://localhost:8085/api/transactions/').pipe(
+    return this.http.get<Transaction[]>(`${this.apiUrl}/transactions/positive`).pipe(
       map(data => data.filter(t => t.amount > 0))
     );
   }
+
+//For Admin dashbord
+//   getPositiveTransactions(): Observable<Transaction[]> {
+//   return this.http.get<Transaction[]>(`${this.apiUrl}/transactions/positive`);
+// }
+
 
 
   getWithdrawTransactions(): Observable<Transaction[]> {

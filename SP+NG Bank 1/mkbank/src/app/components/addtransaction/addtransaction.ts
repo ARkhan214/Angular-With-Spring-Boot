@@ -40,7 +40,7 @@ export class Addtransaction {
       this.transaction.accountId = this.senderId;
       this.transaction.receiverAccountId = this.receiverId;
 
-      // ✅ Transfer call with sender & receiver IDs
+      //  Transfer call with sender & receiver IDs
       this.transactionService.transferOnly(this.transaction, this.senderId, this.receiverId, this.token)
         .subscribe({
           next: res => {
