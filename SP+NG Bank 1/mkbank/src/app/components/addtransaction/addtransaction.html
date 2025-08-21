@@ -1,67 +1,42 @@
-<div class="container mt-4">
-  <h3>Add Transaction (Manual Account ID)</h3>
 
-  <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()">
-    <!-- Account ID -->
-    <div class="mb-3">
-      <label for="accountId">Account ID</label>
-      <input
-        id="accountId"
-        type="text"
-        class="form-control"
-        formControlName="accountId"
-        placeholder="Enter Account ID"
-      />
-    </div>
+<div class="transaction-form-container">
+  <h2>Bank Transaction</h2>
 
-    <!-- Transaction Type -->
-    <div class="mb-3">
-      <label for="type">Transaction Type</label>
-      <select id="type" class="form-select" formControlName="type">
-        <option value="">-- Select --</option>
-        <option value="DEPOSIT">Deposit</option>
-        <option value="WITHDRAW">Withdraw</option>
-        <option value="TRANSFER">Transfer</option>
-      </select>
-    </div>
+  <!-- Sender Account -->
+  <div class="form-group">
+    <label for="senderId">Sender Account ID:</label>
+    <input type="number" id="senderId" [(ngModel)]="senderId" placeholder="Enter Sender Account ID" />
+  </div>
 
-    <!-- Receiver Account ID -->
-    <div class="mb-3" *ngIf="transactionForm.get('type')?.value === 'Transfer'">
-      <label for="receiverAccountId">Receiver Account ID</label>
-      <input
-        id="receiverAccountId"
-        type="text"
-        class="form-control"
-        formControlName="receiverAccountId"
-        placeholder="Enter Receiver Account ID"
-      />
-    </div>
+  <!-- Transaction Type -->
+  <div class="form-group">
+    <label for="type">Transaction Type:</label>
+    <select id="type" [(ngModel)]="transaction.type">
+      <option value="DEPOSIT">Deposit</option>
+      <option value="WITHDRAW">Withdraw</option>
+      <option value="TRANSFER">Transfer</option>
+    </select>
+  </div>
 
-    <!-- Amount -->
-    <div class="mb-3">
-      <label for="amount">Amount</label>
-      <input
-        id="amount"
-        type="number"
-        class="form-control"
-        formControlName="amount"
-        placeholder="Enter Amount"
-      />
-    </div>
+  <!-- Receiver Account (only for Transfer) -->
+  <div class="form-group" *ngIf="transaction.type === 'TRANSFER'">
+    <label for="receiverId">Receiver Account ID:</label>
+    <input type="number" id="receiverId" [(ngModel)]="receiverId" placeholder="Enter Receiver Account ID" />
+  </div>
 
-    <!-- Description -->
-    <div class="mb-3">
-      <label for="description">Description</label>
-      <textarea
-        id="description"
-        class="form-control"
-        formControlName="description"
-        placeholder="Optional Description"
-      ></textarea>
-    </div>
+  <!-- Amount -->
+  <div class="form-group">
+    <label for="amount">Amount:</label>
+    <input type="number" id="amount" [(ngModel)]="transaction.amount" placeholder="Enter Amount" />
+  </div>
 
-    <button type="submit" class="btn btn-primary" [disabled]="transactionForm.invalid">
-      Submit Transaction
-    </button>
-  </form>
+  <!-- Description -->
+  <div class="form-group">
+    <label for="description">Description:</label>
+    <textarea id="description" [(ngModel)]="transaction.description" placeholder="Enter Description"></textarea>
+  </div>
+
+  <!-- Submit Button -->
+  <button (click)="doTransaction()">Submit Transaction</button>
 </div>
+

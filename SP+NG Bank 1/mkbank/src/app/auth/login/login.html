@@ -1,21 +1,32 @@
 <section class="py-5 bg-light">
   <div class="container d-flex justify-content-center align-items-center">
-    <form (ngSubmit)="onSubmitLogin()" class="shadow p-4 rounded bg-white" style="width: 100%; max-width: 400px;">
-      <h4 class="mb-4 text-center">Login</h4>
+    <form (ngSubmit)="onSubmit()" class="shadow p-4 rounded bg-white" style="width: 100%; max-width: 400px;">
+      <h4 class="mb-4 text-center">User Login</h4>
 
+      <!-- Email Input -->
       <div class="form-outline mb-4">
-        <input [(ngModel)]="email" name="email" type="email" class="form-control" required />
         <label class="form-label">Email address</label>
+        <input [(ngModel)]="user.email" name="email" type="email" class="form-control" required />
       </div>
 
+      <!-- Password Input -->
       <div class="form-outline mb-4">
-        <input [(ngModel)]="password" name="password" type="password" class="form-control" required />
         <label class="form-label">Password</label>
+        <input [(ngModel)]="user.password" name="password" type="password" class="form-control" required />
       </div>
 
-      <div *ngIf="errorMessage" class="text-danger mb-3 text-center">{{ errorMessage }}</div>
+      <!-- Error / Success Messages -->
+      <div *ngIf="errorMessage" class="text-danger mb-3 text-center">
+        {{ errorMessage }}
+      </div>
+      <div *ngIf="successMessage" class="text-success mb-3 text-center">
+        {{ successMessage }}
+      </div>
 
-      <button type="submit" class="btn btn-primary btn-block w-100 mb-3">Login</button>
+      <!-- Submit Button -->
+      <button type="submit" class="btn btn-primary btn-block w-100 mb-3">
+        Login
+      </button>
     </form>
   </div>
 </section>

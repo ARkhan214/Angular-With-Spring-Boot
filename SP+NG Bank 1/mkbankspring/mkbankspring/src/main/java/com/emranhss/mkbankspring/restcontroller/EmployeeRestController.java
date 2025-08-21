@@ -61,8 +61,8 @@ public class EmployeeRestController {
         return employeeService.getAllEmployees();
     }
 
-    // (Method 2) find Employee by id
-    @GetMapping("/{id}")
+    // (Method 2) find Employee by id(related with EmployeeService method -3)
+    @GetMapping("{id}")
     public Employee getEmployeeById(@PathVariable Long id) {
         return employeeService.findEmployeeById(id);
     }

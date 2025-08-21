@@ -26,11 +26,10 @@ private EmployeeRepository employeeRepository;
         return employeeRepository.findAll();
     }
 
-    //find Employee by id (connected with EmployeeResCon Method Number -)
+    //find Employee by id (connected with EmployeeResCon Method Number -2)
     public Employee findEmployeeById(Long id) {
         return employeeRepository.findById(id).orElse(null);
     }
-
 
     public List<Employee> getAll() {
         return employeeRepository.findAll();

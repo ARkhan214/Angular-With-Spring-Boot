@@ -1,15 +1,17 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { User } from '../model/user.model';
 import { isPlatformBrowser } from '@angular/common';
 import { environment } from '../environment/environment';
+import { AuthResponse } from '../model/authResponse.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private baseUrl=environment.springUrl+"user/";
+  // private baseUrl=environment.springUrl+"/user/";
+  private baseUrl = environment.springUrl;
 
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser$: Observable<User | null>;
@@ -25,6 +27,20 @@ export class UserService {
     this.currentUser$ = this.currentUserSubject.asObservable();
   }
 
+  private getToken(): string {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('authToken') || '';
+    }
+    return '';
+  }
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = this.getToken();
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+  }
+
 
   private isBrowser(): boolean {
     return isPlatformBrowser(this.platformId);
@@ -36,6 +52,16 @@ export class UserService {
       localStorage.setItem('loggedInUser', JSON.stringify(user));
       this.currentUserSubject.next(user); //update observable
     }
+  }
+
+    //user Registration with Spring Boot
+  registerUser(formData: FormData): Observable<any> {
+    return this.http.post(`${this.baseUrl}/user/`, formData);
+  }
+
+  //new login after spring
+  login(user: User): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.baseUrl}/user/login`, user);
   }
 
   logout(): void {
@@ -69,7 +95,7 @@ export class UserService {
   }
 
   getUserById(id: number): Observable<User> {
-    return this.http.get<User>(`${this.baseUrl}/${id}`);
+    return this.http.get<User>(`${this.baseUrl}/account/${id}`);
   }
 
 
@@ -77,14 +103,13 @@ export class UserService {
     return this.http.put(this.baseUrl + '/' + id, user);
   }
 
-    //for admin dashbord
+  //for admin dashbord
   getAllUsers() {
     return this.http.get<User[]>('http://localhost:3000/user');
   }
 
- registerUser(formData: FormData): Observable<any> {
-  return this.http.post(this.baseUrl, formData);
-}
+
+
 
 
 }

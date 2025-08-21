@@ -28,6 +28,9 @@ import { ContactUs } from './layout/contact-us/contact-us';
 import { AdminDashboard } from './components/admin-dashboard/admin-dashboard';
 import { Sidebar } from './layout/sidebar/sidebar';
 import { OnlyAddUser } from './components/only-add-user/only-add-user';
+import { LoanComponent } from './components/loan-component/loan-component';
+import { FixedDepositComponent } from './components/fixed-deposit-component/fixed-deposit-component';
+import { DpsComponent } from './components/dps-component/dps-component';
 
 
 @NgModule({
@@ -36,7 +39,7 @@ import { OnlyAddUser } from './components/only-add-user/only-add-user';
     Home,
     Navbar,
     Sidebar,  
-    Footer, Usercomponent, Viewallusercomponent, Updateusercomponent, ViewAllAccounts, DepositComponent, WithdrawComponent, TransactionComponent, AboutBank, Addtransaction, TransactionStatement, Login, Logout, UserProfile, AdminProfile, ContactUs, AdminDashboard, OnlyAddUser,
+    Footer, Usercomponent, Viewallusercomponent, Updateusercomponent, ViewAllAccounts, DepositComponent, WithdrawComponent, TransactionComponent, AboutBank, Addtransaction, TransactionStatement, Login, Logout, UserProfile, AdminProfile, ContactUs, AdminDashboard, OnlyAddUser, LoanComponent, FixedDepositComponent, DpsComponent,
   ],
   imports: [
     BrowserModule,

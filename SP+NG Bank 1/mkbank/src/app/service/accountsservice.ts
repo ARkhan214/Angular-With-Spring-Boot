@@ -10,7 +10,7 @@ import { environment } from '../environment/environment';
 export class Accountsservice {
 
 
-  private apiUrl = environment.springUrl+"account/";
+  private apiUrl = environment.springUrl;
 
   constructor(
     private http: HttpClient
@@ -93,14 +93,15 @@ findAccountByUserId(userId: number): Observable<Accounts | null> {
   //last update Accounts[]
 
   getAllAccount(): Observable<Accounts[]> {
-    return this.http.get<Accounts[]>(this.apiUrl+"/all");
+    return this.http.get<Accounts[]>(`${this.apiUrl}/account/all`);
   }
 
 
   // view account info
-  getAllAccountById(id:number): Observable<Accounts> {
-    return this.http.get<Accounts>(this.apiUrl+"/"+id);
-  }
+  getAllAccountById(id: number): Observable<Accounts> {
+  return this.http.get<Accounts>(`${this.apiUrl}/account/${id}`);
+}
+
 
 
   updateAccount(id: number, account: Accounts): Observable<any> {

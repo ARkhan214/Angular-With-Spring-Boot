@@ -22,28 +22,6 @@ public class TransactionRestController {
     @Autowired
     private AccountRepository accountRepository;
 
-
-    //   Method for Transaction Taka(Method Number -1)
-//    @PostMapping("{accountId}")
-//    public ResponseEntity<Transaction> addTransaction(
-//            @RequestBody Transaction transaction,
-//            @PathVariable Long accountId) {
-//
-//        Transaction savedTransaction = transactionService.addTransaction(transaction, accountId);
-//        return ResponseEntity.ok(savedTransaction);
-//    }
-
-    //method for transfar monye
-//    @PostMapping("transfer/{senderId}/{receiverId}")
-//    public ResponseEntity<Transaction> onlyTransfer(
-//            @RequestBody Transaction transaction,
-//            @PathVariable Long senderId,
-//            @PathVariable Long receiverId
-//    ){
-//        Transaction savedTransaction = transactionService.onlyTransfer(transaction, senderId, receiverId);
-//        return ResponseEntity.ok(savedTransaction);
-//    }
-
     //  Get all transactions(Method Number -2)
     @GetMapping("all")
     public ResponseEntity<List<Transaction>> getAllTransactions(){

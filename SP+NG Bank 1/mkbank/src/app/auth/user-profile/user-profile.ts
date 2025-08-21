@@ -13,27 +13,58 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class UserProfile implements OnInit {
 
- 
+  accountId!: number;
   account!: Accounts;
 
   constructor(
-    private accountService: Accountsservice,
     private router: Router,
-    private cdRef: ChangeDetectorRef,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private accountService: Accountsservice
   ) { }
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (id) {
-      this.accountService.getAllAccountById(id).subscribe({
-        next: (acc: Accounts) => this.account = acc,
-        error: (err) => console.error('Account fetch error:', err)
+    //id fron rout
+    this.accountId = Number(this.route.snapshot.paramMap.get('id'));
+
+    if (this.accountId) {
+      this.accountService.  getAllAccountById(this.accountId).subscribe({
+        next: (data) => {
+          this.account = data;
+          console.log('Account fetched:', this.account);
+        },
+        error: (err) => {
+          console.error('Error fetching account:', err);
+        }
       });
     } else {
-      console.error('No account ID provided in route');
+      console.warn('No account ID provided in route');
     }
   }
+ 
+  // account!: Accounts;
+
+  // constructor(
+  //   private accountService: Accountsservice,
+  //   private router: Router,
+  //   private cdRef: ChangeDetectorRef,
+  //   private route: ActivatedRoute
+  // ) { }
+
+  // ngOnInit() {
+  //   const id = this.route.snapshot.paramMap.get('id'); // ID from route
+  //   if (!id) {
+  //     console.error('No account ID provided in route');
+  //     return;
+  //   }
+
+  //   this.accountService.getAllAccountById(+id).subscribe({
+  //     next: (data) => {
+  //       this.account = data;
+  //     },
+  //     error: (err) => console.error(err)
+  //   });
+  // }
+
 
   logout() {
     alert('You have been logged out successfully!');

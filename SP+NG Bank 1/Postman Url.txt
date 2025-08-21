@@ -11,24 +11,26 @@ Frontend LocalStorage/Session এ Token Save
 
 
 
-=>Show Transaction Filter By Transaction Type.
+=>
 GET http://localhost:8085/api/transactions/1/deposits
 GET http://localhost:8085/api/transactions/1/withdraws
 
-=>Account Details
-GET http://localhost:8085/api/account/1
+
 
 =>Show Transaction
 GET http://localhost:8085/api/transactions/all
 GET http://localhost:8085/api/transactions/account/1
 
-=>For Transaction (Deposi,withdraw)
-POST http://localhost:8085/api/transactions/1
+
+<>===<>Final Show Transaction Filter By Transaction Type.<>===<>
+Show Transaction By Deposit and withdraw
+GET http://localhost:8085/api/transactions/1/withdraws
+GET http://localhost:8085/api/transactions/1/Deposit
 
 
-
+<=>Final Transaction code<=>
 ==>deposit request
-POST http://localhost:8085/api/transactions/1
+POST http://localhost:8085/api/transactions/tr/1
 
 {
   "amount": 5000,
@@ -36,18 +38,17 @@ POST http://localhost:8085/api/transactions/1
   "description": "Cash deposit"
 }
 
-
 ==>withdraw request
-POST http://localhost:8085/api/transactions/1
+POST http://localhost:8085/api/transactions/tr/1
 
 {
-  "amount": 2000,
   "type": "WITHDRAW",
-  "description": "ATM cash withdrawal"
+  "amount": 1000.0,
+  "description": "Adding money"
 }
 
 ==>Transfer request
-http://localhost:8085/api/transactions/transfer/1/2
+POST http://localhost:8085/api/transactions/tr/1/2
 {
   "type": "TRANSFER",
   "amount": 5000.0,
@@ -95,6 +96,11 @@ POST http://localhost:8085/api/user/
 <=>For Save User + Account<=>
 POST http://localhost:8085/api/account/
 
+<=>View All Account
+Get http://localhost:8085/api/account/all
+<=>View Account By Id
+Get http://localhost:8085/api/account/1
+
 ==>json form Add Account
 {
   "name": "Sadier Rahman",
@@ -122,7 +128,7 @@ POST http://localhost:8085/api/account/
 <==>Employee + User<==>
 
 ==>সব Employee বের করা
-GET http://localhost:8085/api/employees
+GET http://localhost:8085/api/employees/
 
 ==>একজন Employee(id দিয়ে) বের করা 
 GET http://localhost:8085/api/employees/{id}
@@ -130,23 +136,23 @@ http://localhost:8085/api/employees/5
 
 
 ==>Employee add json formate
-POST http://localhost:8085/api/employees
+POST http://localhost:8085/api/employees/
 
 user 
 { 
-"name":"Halima",
-"email":"halimaaktershemanto@gmail.com",
+"name":"Sathe Khanom",
+"email":"sathekhanom550@gmail.com",
 "password":"12345",
-"phoneNumber":"01712345660",
+"phoneNumber":"0171234566",
 "dateOfBirth":"1995-05-20"
 }   
                                                                                                                             
 employee 
 {
-"name":"Halima",
+"name":"Sathe Khanom",
 "status":"ACTIVE",
-"nid":"123456089660",
-"phoneNumber":"01712345660",
+"nid":"12345608966",
+"phoneNumber":"0171234566",
 "address":"Dhaka,Bangladesh",
 "position":"CASHIER",
 "salary":25000,
@@ -291,5 +297,71 @@ public void sendTransactionEmail(Transaction transaction) {
     }
 
 
+ <div class="container mt-4">
+  <h3>Add Transaction (Manual Account ID)</h3>
 
+  <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()">
+    <!-- Account ID -->
+    <div class="mb-3">
+      <label for="accountId">Account ID</label>
+      <input
+        id="accountId"
+        type="text"
+        class="form-control"
+        formControlName="accountId"
+        placeholder="Enter Account ID"
+      />
+    </div>
+
+    <!-- Transaction Type -->
+    <div class="mb-3">
+      <label for="type">Transaction Type</label>
+      <select id="type" class="form-select" formControlName="type">
+        <option value="">-- Select --</option>
+        <option value="DEPOSIT">Deposit</option>
+        <option value="WITHDRAW">Withdraw</option>
+        <option value="TRANSFER">Transfer</option>
+      </select>
+    </div>
+
+    <!-- Receiver Account ID -->
+    <div class="mb-3" *ngIf="transactionForm.get('type')?.value === 'Transfer'">
+      <label for="receiverAccountId">Receiver Account ID</label>
+      <input
+        id="receiverAccountId"
+        type="text"
+        class="form-control"
+        formControlName="receiverAccountId"
+        placeholder="Enter Receiver Account ID"
+      />
+    </div>
+
+    <!-- Amount -->
+    <div class="mb-3">
+      <label for="amount">Amount</label>
+      <input
+        id="amount"
+        type="number"
+        class="form-control"
+        formControlName="amount"
+        placeholder="Enter Amount"
+      />
+    </div>
+
+    <!-- Description -->
+    <div class="mb-3">
+      <label for="description">Description</label>
+      <textarea
+        id="description"
+        class="form-control"
+        formControlName="description"
+        placeholder="Optional Description"
+      ></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="transactionForm.invalid">
+      Submit Transaction
+    </button>
+  </form>
+ </div>
 

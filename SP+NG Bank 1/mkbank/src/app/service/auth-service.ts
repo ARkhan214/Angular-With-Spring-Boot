@@ -12,6 +12,8 @@ import { environment } from '../environment/environment';
 export class AuthService {
 
   private baseUrl = environment.springUrl;
+  // private baseUrl='http://localhost:8085/api/user/login';
+
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser$: Observable<User | null>;
 
@@ -32,54 +34,73 @@ export class AuthService {
 
 
 
-  registration(user: User): Observable<AuthResponse> {
-    return this.http.post<User>(this.baseUrl, user).pipe(
-      map((newUser: User) => {
+login(credentials: { email: string; password: string }): Observable<AuthResponse> {
+  // this.http.post(`${environment.springUrl}/user/login`, credentials)
 
-        // create token by username and password 
-        const token = btoa(`${newUser.email}${newUser.password}`);
-        return { token, user: newUser } as AuthResponse;
-      }),
-      catchError(error => {
-        console.error('Registration error:', error);
-        throw error;
-      })
-    );
-  }
+  return this.http.post<AuthResponse>(`${this.baseUrl}/user/login`, credentials).pipe(
+    map((response: AuthResponse) => {
+      this.storeToken(response.token);
+      return response;
+    }),
+    catchError(error => {
+      console.error('Login error:', error);
+      throw error;
+    })
+  );
+}
 
 
-  login(credentials: { email: string; password: string }): Observable<AuthResponse> {
 
-    let params = new HttpParams().append('email', credentials.email);
 
-    return this.http.get<User[]>(`${this.baseUrl}`, { params }).pipe(
-      map(users => {
 
-        if (users.length > 0) {
+  // registration(user: User): Observable<AuthResponse> {
+  //   return this.http.post<User>(this.baseUrl, user).pipe(
+  //     map((newUser: User) => {
 
-          const user = users[0];
+  //       // create token by username and password 
+  //       const token = btoa(`${newUser.email}${newUser.password}`);
+  //       return { token, user: newUser } as AuthResponse;
+  //     }),
+  //     catchError(error => {
+  //       console.error('Registration error:', error);
+  //       throw error;
+  //     })
+  //   );
+  // }
 
-          if (user.password === credentials.password) {
-            const token = btoa(`${user.email}:${user.password}`);
-            this.storeToken(token);
-            this.setCurrentUser(user);
-            return { token, user } as AuthResponse;
-          } 
-          else {
-            throw new Error('Invalid password');
-          }
-        } 
-        else {
-          throw new Error('User not found');
-        }
-      }),
 
-      catchError(error => {
-        console.error('Login error:', error);
-        throw error;
-      })
-    );
-  }
+  // login(credentials: { email: string; password: string }): Observable<AuthResponse> {
+
+  //   let params = new HttpParams().append('email', credentials.email);
+
+  //   return this.http.get<User[]>(`${this.baseUrl}`, { params }).pipe(
+  //     map(users => {
+
+  //       if (users.length > 0) {
+
+  //         const user = users[0];
+
+  //         if (user.password === credentials.password) {
+  //           const token = btoa(`${user.email}:${user.password}`);
+  //           this.storeToken(token);
+  //           this.setCurrentUser(user);
+  //           return { token, user } as AuthResponse;
+  //         } 
+  //         else {
+  //           throw new Error('Invalid password');
+  //         }
+  //       } 
+  //       else {
+  //         throw new Error('User not found');
+  //       }
+  //     }),
+
+  //     catchError(error => {
+  //       console.error('Login error:', error);
+  //       throw error;
+  //     })
+  //   );
+  // }
 
 
   storeToken(token: string): void {
