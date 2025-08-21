@@ -56,7 +56,7 @@ public class AccountRestController {
     }
 
     // for account view by id (Method Number -2)
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Accounts> getAccountById(@PathVariable Long id) {
         Accounts account = accountService.findAccountById(id);
         if (account != null) {

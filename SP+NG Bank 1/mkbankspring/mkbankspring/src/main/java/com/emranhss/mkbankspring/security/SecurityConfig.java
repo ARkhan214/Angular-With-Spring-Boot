@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(req -> req
-                        .requestMatchers("/api/user/**","/api/auth/**","/api/account/", "/api/account/**","/api/user/login","/api/user/login/**","/images/**", "/api/user/active/**","/api/employees/","/api/employees/**","/api/transactions/**","/api/transactions/account/**")
+                        .requestMatchers("/api/user/**","/api/auth/**","/api/account/","/api/account/1", "/api/account/**","/api/user/login","/api/user/login/**","/images/**", "/api/user/active/**","/api/employees/","/api/employees/**","/api/transactions/**","/api/transactions/account/**")
                         .permitAll()
 //                        .requestMatchers("/api/user/all","/api/user/login","/api/auth/**","/api/transactions/**").hasRole("USER")
 //                        .requestMatchers("/api/employees/**").hasRole("EMPLOYEE")

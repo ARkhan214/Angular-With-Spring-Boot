@@ -18,8 +18,9 @@ GET http://localhost:8085/api/transactions/1/withdraws
 
 
 =>Show Transaction
-GET http://localhost:8085/api/transactions/all
-GET http://localhost:8085/api/transactions/account/1
+GET http://localhost:8085/api/transactions/all		(working)
+
+GET http://localhost:8085/api/transactions/account/1      (not working)
 
 
 <>===<>Final Show Transaction Filter By Transaction Type.<>===<>
@@ -30,7 +31,7 @@ GET http://localhost:8085/api/transactions/1/Deposit
 
 <=>Final Transaction code<=>
 ==>deposit request
-POST http://localhost:8085/api/transactions/tr/1
+POST http://localhost:8085/api/transactions/tr/1	(working)
 
 {
   "amount": 5000,
@@ -39,7 +40,7 @@ POST http://localhost:8085/api/transactions/tr/1
 }
 
 ==>withdraw request
-POST http://localhost:8085/api/transactions/tr/1
+POST http://localhost:8085/api/transactions/tr/1	(working)
 
 {
   "type": "WITHDRAW",
@@ -48,7 +49,7 @@ POST http://localhost:8085/api/transactions/tr/1
 }
 
 ==>Transfer request
-POST http://localhost:8085/api/transactions/tr/1/2
+POST http://localhost:8085/api/transactions/tr/1/2      (not working)
 {
   "type": "TRANSFER",
   "amount": 5000.0,
@@ -97,16 +98,16 @@ POST http://localhost:8085/api/user/
 POST http://localhost:8085/api/account/
 
 <=>View All Account
-Get http://localhost:8085/api/account/all
+Get http://localhost:8085/api/account/all	(working)
 <=>View Account By Id
-Get http://localhost:8085/api/account/1
+Get http://localhost:8085/api/account/1		(not working)
 
 ==>json form Add Account
 {
   "name": "Sadier Rahman",
-  "email": "sadiar.rahman970@gmail.com",
+  "email": "sadiar0@gmail.com",
   "password": "12345",
-  "phoneNumber": "1788990001",
+  "phoneNumber": "17889001",
   "dateOfBirth": "1990-01-02",
   "active": true
 }
@@ -115,8 +116,8 @@ Get http://localhost:8085/api/account/1
   "name": "Sadier Rahman",
   "accountType": "Savings",
   "balance": 5000,
-  "nid": "156789012300",
-  "phoneNumber": "1788990001",
+  "nid": "15678901200",
+  "phoneNumber": "17889001",
   "address": "Dhaka",
   "dateOfBirth": "1990-01-01",
   "accountOpeningDate": "2025-08-16",

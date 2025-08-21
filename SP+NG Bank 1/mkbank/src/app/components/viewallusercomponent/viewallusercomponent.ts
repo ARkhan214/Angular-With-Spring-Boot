@@ -38,7 +38,7 @@ export class Viewallusercomponent implements OnInit {
   this.userservice.getAllUsers().subscribe({
     next: (data) => {
       this.users = data;
-      this.filteredUser = [...data]; // ✅ Add this line
+      this.filteredUser = [...data]; //  Add this line
       this.cdr.markForCheck();
     },
     error: (err) => {

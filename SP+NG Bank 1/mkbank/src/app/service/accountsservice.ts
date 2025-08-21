@@ -75,6 +75,11 @@ openAccount(id: number): Observable<any> {
 }
 
 
+  //Sob account dekhar jonno (related with ViewAllAccounts.ts er loadData methode)
+  getAllAccount(): Observable<Accounts[]> {
+    return this.http.get<Accounts[]>(`${this.apiUrl}/account/all`);
+  }
+
   addAccount(account: Accounts): Observable<Accounts> {
     return this.http.post<Accounts>(this.apiUrl, account);
   }
@@ -90,11 +95,7 @@ findAccountByUserId(userId: number): Observable<Accounts | null> {
 }
 
 
-  //last update Accounts[]
 
-  getAllAccount(): Observable<Accounts[]> {
-    return this.http.get<Accounts[]>(`${this.apiUrl}/account/all`);
-  }
 
 
   // view account info
