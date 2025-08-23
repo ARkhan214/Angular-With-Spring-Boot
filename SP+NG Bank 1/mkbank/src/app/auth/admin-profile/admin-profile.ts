@@ -12,33 +12,55 @@ import { UserService } from '../../service/user.service';
   styleUrl: './admin-profile.css'
 })
 export class AdminProfile implements OnInit {
-adminId!: number;
-admin!:User;
+  // adminId!: number;
+  admin!: User;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private userService: UserService
+    private userService: UserService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
-    //id fron rout
-    this.adminId = Number(this.route.snapshot.paramMap.get('id'));
+    this.userService.getProfile().subscribe({
+      next: (data) => {
+        this.admin = data;
+        console.log(data);
+        this.cdr.markForCheck();
 
-    if (this.adminId) {
-      this.userService.getUserById(this.adminId).subscribe({
-        next: (data) => {
-          this.admin = data;
-          console.log('Account fetched:', this.adminId);
-        },
-        error: (err) => {
-          console.error('Error fetching account:', err);
-        }
-      });
-    } else {
-      console.warn('No account ID provided in route');
-    }
+      },
+      error: (err) => {
+        console.error('Failed to load profile', err);
+      }
+    });
   }
+
+  logout() {
+    alert('You have been logged out successfully!');
+    localStorage.removeItem('loggedInUser');
+    window.location.href = '/login';
+  }
+
+
+  // ngOnInit(): void {
+  //   //id fron rout
+  //   this.adminId = Number(this.route.snapshot.paramMap.get('id'));
+
+  //   if (this.adminId) {
+  //     this.userService.getAdminById(this.adminId).subscribe({
+  //       next: (data) => {
+  //         this.admin = data;
+  //         console.log('Account fetched:', this.adminId);
+  //       },
+  //       error: (err) => {
+  //         console.error('Error fetching account:', err);
+  //       }
+  //     });
+  //   } else {
+  //     console.warn('No account ID provided in route');
+  //   }
+  // }
 
 
 
@@ -53,13 +75,8 @@ admin!:User;
   //   if (data) {
   //     this.admin = JSON.parse(data);
   //   }
-   
+
   // }
 
-  logout() {
-    alert('You have been logged out successfully!');
-    localStorage.removeItem('loggedInUser');
-    window.location.href = '/login';
-    // this.router.navigate(['/login']);
-  }
+
 }

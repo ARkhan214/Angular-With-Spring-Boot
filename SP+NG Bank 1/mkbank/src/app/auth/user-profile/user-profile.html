@@ -1,3 +1,4 @@
+<p>User-profile works!</p>
 <div *ngIf="account" class="container py-5">
   <div class="card p-4">
     <div class="row align-items-center">
@@ -9,16 +10,15 @@
       </div>
       <div class="col-md-9">
         <div class="row mb-2">
-          <div class="col-md-6"><strong>Email:</strong> {{ account.balance }}</div>
-          <div class="col-md-6"><strong>Phone:</strong> {{ account.nid }}</div>
-          <div class="col-md-6"><strong>Address:</strong> {{ account.phoneNumber }}</div>
+          <div class="col-md-6"><strong>Balance:</strong> {{ account.balance }}</div>
+          <div class="col-md-6"><strong>NID:</strong> {{ account.nid }}</div>
+          <div class="col-md-6"><strong>Phone Number:</strong> {{ account.phoneNumber }}</div>
           <div class="col-md-6"><strong>Address:</strong> {{ account.address }}</div>
-          <div class="col-md-6"><strong>Address:</strong> {{ account.dateOfBirth }}</div>
-          <div class="col-md-6"><strong>Address:</strong> {{ account.accountOpeningDate }}</div>
-          <div class="col-md-6"><strong>Address:</strong> {{ account.accountClosingDate }}</div>
-          <div class="col-md-6"><strong>Address:</strong> {{ account.accountActiveStatus }}</div>
-          <div class="col-md-6"><strong>Address:</strong> {{ account.role }}</div>
-          <div class="col-md-6"><strong>Date of Birth:</strong> </div>
+          <div class="col-md-6"><strong>Date of Birth:</strong> {{ account.dateOfBirth }}</div>
+          <div class="col-md-6"><strong>Account Opening Date:</strong> {{ account.accountOpeningDate }}</div>
+          <div class="col-md-6"><strong>Account Closing Date:</strong> {{ account.accountClosingDate }}</div>
+          <div class="col-md-6"><strong>Account Statuas:</strong> {{ account.accountActiveStatus }}</div>
+          <div class="col-md-6"><strong>Role:</strong> {{ account.role }}</div>
         </div>
       </div>
     </div>

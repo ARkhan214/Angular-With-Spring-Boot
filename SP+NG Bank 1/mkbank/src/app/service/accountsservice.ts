@@ -93,13 +93,18 @@ export class Accountsservice {
 
 
   getProfile(): Observable<Accounts> {
+
+    console.log(localStorage.getItem('authToken')+"333333333333333333333333333");
+
     let headers = new HttpHeaders();
 
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem('authToken');
+      console.log(localStorage.getItem('authToken')+"555555555555555555555555555555");
+
       if (token) {
         headers = headers.set('Authorization', 'Bearer ' + token);
-        console.log(headers);
+        console.log('Authorization Header:', headers.get('Authorization')+"6666666666666666666666666666666");
       }
     }
 

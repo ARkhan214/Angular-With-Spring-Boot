@@ -11,7 +11,7 @@ import { Footer } from './layout/footer/footer';
 import { Usercomponent } from './components/usercomponent/usercomponent';
 import { Viewallusercomponent } from './components/viewallusercomponent/viewallusercomponent';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withFetch } from '@angular/common/http';
 import { Updateusercomponent } from './components/updateusercomponent/updateusercomponent';
 import { ViewAllAccounts } from './components/view-all-accounts/view-all-accounts';
 import { DepositComponent } from './components/deposit-component/deposit-component';
@@ -31,6 +31,9 @@ import { OnlyAddUser } from './components/only-add-user/only-add-user';
 import { LoanComponent } from './components/loan-component/loan-component';
 import { FixedDepositComponent } from './components/fixed-deposit-component/fixed-deposit-component';
 import { DpsComponent } from './components/dps-component/dps-component';
+import { AccountHolderProfile } from './auth/account-holder-profile/account-holder-profile';
+import { EmployeeProfile } from './auth/employee-profile/employee-profile';
+import { AuthInterceptor } from './service/auth.interceptor';
 
 
 @NgModule({
@@ -39,7 +42,7 @@ import { DpsComponent } from './components/dps-component/dps-component';
     Home,
     Navbar,
     Sidebar,  
-    Footer, Usercomponent, Viewallusercomponent, Updateusercomponent, ViewAllAccounts, DepositComponent, WithdrawComponent, TransactionComponent, AboutBank, Addtransaction, TransactionStatement, Login, Logout, UserProfile, AdminProfile, ContactUs, AdminDashboard, OnlyAddUser, LoanComponent, FixedDepositComponent, DpsComponent,
+    Footer, Usercomponent, Viewallusercomponent, Updateusercomponent, ViewAllAccounts, DepositComponent, WithdrawComponent, TransactionComponent, AboutBank, Addtransaction, TransactionStatement, Login, Logout, UserProfile, AdminProfile, ContactUs, AdminDashboard, OnlyAddUser, LoanComponent, FixedDepositComponent, DpsComponent, AccountHolderProfile, EmployeeProfile,
   ],
   imports: [
     BrowserModule,
@@ -55,7 +58,8 @@ import { DpsComponent } from './components/dps-component/dps-component';
     provideClientHydration(withEventReplay()),
 
     // notun project neyar por eta likhte hobe
-    provideHttpClient(withFetch())
+    provideHttpClient(withFetch()),
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
   ],
   bootstrap: [App]
 })

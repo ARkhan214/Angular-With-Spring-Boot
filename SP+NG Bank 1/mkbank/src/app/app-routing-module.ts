@@ -18,6 +18,8 @@ import { ContactUs } from './layout/contact-us/contact-us';
 import { UserGuard } from './guards/user-guard';
 import { AdminDashboard } from './components/admin-dashboard/admin-dashboard';
 import { OnlyAddUser } from './components/only-add-user/only-add-user';
+import { AccountHolderProfile } from './auth/account-holder-profile/account-holder-profile';
+import { EmployeeProfile } from './auth/employee-profile/employee-profile';
 
 
 
@@ -36,6 +38,8 @@ const routes: Routes = [
   {path:'trst',component:TransactionStatement},
   {path:'login',component:Login},
   {path: 'user-profile', component: UserProfile},
+  {path: 'account-profile', component: AccountHolderProfile},
+  {path: 'employee-profile', component: EmployeeProfile},
   {path: 'admin-profile', component: AdminProfile},
   {path: 'contact', component: ContactUs},
   {path: 'admindash', component: AdminDashboard},

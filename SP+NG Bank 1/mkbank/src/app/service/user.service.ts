@@ -54,7 +54,7 @@ export class UserService {
     }
   }
 
-    //user Registration with Spring Boot
+  //user Registration with Spring Boot
   registerUser(formData: FormData): Observable<any> {
     return this.http.post(`${this.baseUrl}/user/`, formData);
   }
@@ -101,6 +101,21 @@ export class UserService {
   getUserById(id: number): Observable<User> {
     return this.http.get<User>(`${this.baseUrl}/account/${id}`);
   }
+  
+  
+  getProfile(): Observable<User> {
+      let headers = new HttpHeaders();
+  
+      if (isPlatformBrowser(this.platformId)) {
+        const token = localStorage.getItem('authToken');
+        if (token) {
+          headers = headers.set('Authorization', 'Bearer ' + token);
+          console.log(headers);
+        }
+      }
+  
+      return this.http.get<User>(`${environment.springUrl}/User/profile`, { headers });
+    }
 
 
   updateUser(id: number, user: User): Observable<any> {

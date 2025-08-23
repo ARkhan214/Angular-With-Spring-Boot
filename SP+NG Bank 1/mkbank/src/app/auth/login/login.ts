@@ -29,7 +29,7 @@ onSubmit() {
       console.log("Login successful:", response);
 
       //Save Token in localStorage
-      localStorage.setItem('token', response.token);
+      localStorage.setItem('authToken', response.token);
 
       this.successMessage = response.message;
       this.errorMessage = '';
@@ -46,7 +46,7 @@ onSubmit() {
       } else if(role === 'EMPLOYEE') {
         this.router.navigate(['/admindash']);
       } else if(role === 'USER') {
-        this.router.navigate([`/user-profile/${accountId}`]);
+        this.router.navigate([`/account-profile/`]);
 
       } else {
         this.router.navigate(['/']);

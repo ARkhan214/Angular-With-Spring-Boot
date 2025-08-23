@@ -1,3 +1,48 @@
+.requestMatchers(
+   "/images/**",
+   "/api/user/**",
+   "/api/transactions/*/deposits",
+   "/api/transactions/*/withdraws",
+   "/api/auth/**",
+   "/api/account/",
+   "/api/account/all",
+   "/api/account/**",
+   "/api/user/login",
+   "/api/user/login/**",
+   "/images/**",
+   "/api/user/active/**",
+   "/api/employees/",
+   "/api/employees/**",
+   "/api/transactions/**",   // <-- ❌ সব transaction permitAll() করে দিচ্ছো
+   "/api/transactions/account/**"
+).permitAll()
+
+
+
+
+.authorizeHttpRequests(req -> req
+        // Public endpoints
+        .requestMatchers(
+            "/images/**",
+            "/api/auth/**",
+            "/api/user/login",
+            "/api/user/register",
+            "/api/user/active/**"
+        ).permitAll()
+
+        // Protected endpoints
+        .requestMatchers("/api/account/**").authenticated()
+        .requestMatchers("/api/transactions/**").authenticated()
+        .requestMatchers("/api/employees/**").hasRole("EMPLOYEE")
+
+        // Any other requests
+        .anyRequest().authenticated()
+)
+
+
+
+
+
 ==>Stype by stype
 User Login Request (email, password) 
         ↓
