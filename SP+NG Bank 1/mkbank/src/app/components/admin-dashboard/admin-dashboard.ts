@@ -35,7 +35,7 @@ export class AdminDashboard implements OnInit {
     });
 
     //  Total Users
-    this.userService.getAllUser().subscribe({
+    this.userService.getAllUsers().subscribe({
       next: (user) => {
         this.totalUsers = user.length;
          this.cdr.markForCheck();

@@ -1,0 +1,110 @@
+
+AccountDTO getAccountDTO(Long id);
+List<AccountDTO> getAllAccountsDTO();
+AccountDTO createAccount(Account account);
+AccountDTO updateAccount(Long id, Account account);
+void deleteAccount(Long id);
+
+
+package com.emranhss.mkbankspring.dto;
+
+import com.emranhss.mkbankspring.entity.Role;
+import java.util.Date;
+import java.util.List;
+
+public class AccountDTO {
+    private Long id;
+    private String name;
+    private boolean accountActiveStatus;
+    private String accountType;
+    private double balance;
+    private String nid;
+    private String phoneNumber;
+    private String address;
+    private String photo;
+    private Date dateOfBirth;
+    private Date accountOpeningDate;
+    private Date accountClosingDate;
+    private Role role;
+    private UserDTO user;
+    private List<TransactionDTO> transactions;
+
+    public AccountDTO() {}
+
+    // getters & setters
+}
+
+
+
+UserDTO getUserDTO(Long id);
+List<UserDTO> getAllUsersDTO();
+
+
+
+
+package com.emranhss.mkbankspring.dto;
+
+import com.emranhss.mkbankspring.entity.Role;
+import java.util.Date;
+
+public class UserDTO {
+    private Long id;
+    private String name;
+    private String email;
+    private String phoneNumber;
+    private String photo;
+    private Date dateOfBirth;
+    private Role role;
+
+    public UserDTO() {}
+    public UserDTO(Long id, String name, String email, String phoneNumber, String photo, Date dateOfBirth, Role role) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.photo = photo;
+        this.dateOfBirth = dateOfBirth;
+        this.role = role;
+    }
+
+    // getters & setters
+}
+
+
+
+TransactionDTO getTransactionDTO(Long id);
+List<TransactionDTO> getAllTransactionsDTO();
+TransactionDTO addTransaction(Transaction transaction);
+TransactionDTO transfer(Transaction transaction, Long senderId, Long receiverId);
+
+
+
+
+package com.emranhss.mkbankspring.dto;
+
+import com.emranhss.mkbankspring.entity.TransactionType;
+import java.util.Date;
+
+public class TransactionDTO {
+    private Long id;
+    private TransactionType type;
+    private double amount;
+    private Date transactionTime;
+    private String description;
+    private Long accountId;          // Sender account ID
+    private Long receiverAccountId;  // Receiver account ID
+
+    public TransactionDTO() {}
+    public TransactionDTO(Long id, TransactionType type, double amount, Date transactionTime,
+                          String description, Long accountId, Long receiverAccountId) {
+        this.id = id;
+        this.type = type;
+        this.amount = amount;
+        this.transactionTime = transactionTime;
+        this.description = description;
+        this.accountId = accountId;
+        this.receiverAccountId = receiverAccountId;
+    }
+
+    // getters & setters
+}

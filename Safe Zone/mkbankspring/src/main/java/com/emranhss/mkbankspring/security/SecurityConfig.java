@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("/images/**",
-                                "/api/user/**","/api/transactions/*/deposits","/api/transactions/*/withdraws","/api/auth/**","/api/account/","/api/account/1", "/api/account/**","/api/user/login","/api/user/login/**","/images/**", "/api/user/active/**","/api/employees/","/api/employees/**","/api/transactions/**","/api/transactions/account/**")
+                                "/api/user/**","/api/transactions/*/deposits","/api/transactions/*/withdraws","/api/auth/**","/api/account/","/api/account/all", "/api/account/**","/api/user/login","/api/user/login/**","/images/**", "/api/user/active/**","/api/employees/","/api/employees/**","/api/transactions/**","/api/transactions/account/**")
                         .permitAll()
 //                        .requestMatchers("/api/user/all","/api/user/login","/api/auth/**","/api/transactions/**").hasRole("USER")
 //                        .requestMatchers("/api/employees/**").hasRole("EMPLOYEE")

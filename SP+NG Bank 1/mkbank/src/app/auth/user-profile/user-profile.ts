@@ -19,27 +19,42 @@ export class UserProfile implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private accountService: Accountsservice
+    private accountService: Accountsservice,
+    private cdr:ChangeDetectorRef
   ) { }
 
-  ngOnInit(): void {
-    //id fron rout
-    this.accountId = Number(this.route.snapshot.paramMap.get('id'));
+    ngOnInit(): void {
+    this.accountService.getProfile().subscribe({
+      next: (data) => {
+        this.account = data;
+        console.log(data);
+        this.cdr.markForCheck();
 
-    if (this.accountId) {
-      this.accountService.  getAllAccountById(this.accountId).subscribe({
-        next: (data) => {
-          this.account = data;
-          console.log('Account fetched:', this.account);
-        },
-        error: (err) => {
-          console.error('Error fetching account:', err);
-        }
-      });
-    } else {
-      console.warn('No account ID provided in route');
-    }
+      },
+      error: (err) => {
+        console.error('Failed to load profile', err);
+      }
+    });
   }
+
+  // ngOnInit(): void {
+  //   //id fron rout
+  //   this.accountId = Number(this.route.snapshot.paramMap.get('id'));
+
+  //   if (this.accountId) {
+  //     this.accountService.  getAllAccountById(this.accountId).subscribe({
+  //       next: (data) => {
+  //         this.account = data;
+  //         console.log('Account fetched:', this.account);
+  //       },
+  //       error: (err) => {
+  //         console.error('Error fetching account:', err);
+  //       }
+  //     });
+  //   } else {
+  //     console.warn('No account ID provided in route');
+  //   }
+  // }
  
   // account!: Accounts;
 

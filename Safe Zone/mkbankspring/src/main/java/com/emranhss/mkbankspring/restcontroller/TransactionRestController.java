@@ -54,7 +54,7 @@ public class TransactionRestController {
 
     //for delete transaction by id(Method Number -4)
     @DeleteMapping("{id}")
-    public void deleteTransactionByAccountId(Long accountId) {
+    public void deleteTransactionByAccountId(@PathVariable Long accountId) {
 
         transactionService.deleteTransactionByAccountId(accountId);
     }
@@ -102,7 +102,7 @@ public class TransactionRestController {
 
 
 //method transfer
-    @PostMapping("tr/{receiverId}")
+    @PostMapping("tr/transfer/{receiverId}")
     public Transaction transfer(
             @RequestBody Transaction transaction,
             @PathVariable Long receiverId,

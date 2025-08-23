@@ -39,4 +39,9 @@ public class AccountService {
     public void delete(Long id) {
         accountRepository.deleteById(id);
     }
+
+    public Accounts getProfileByUserId(Long userId) {
+        return accountRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+    }
 }

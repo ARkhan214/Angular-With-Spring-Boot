@@ -2,6 +2,7 @@ package com.emranhss.mkbankspring.restcontroller;
 
 import com.emranhss.mkbankspring.entity.Accounts;
 import com.emranhss.mkbankspring.entity.User;
+import com.emranhss.mkbankspring.repository.UserRepository;
 import com.emranhss.mkbankspring.service.AccountService;
 import com.emranhss.mkbankspring.service.AuthService;
 import com.emranhss.mkbankspring.service.UserService;
@@ -10,12 +11,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/account/")
@@ -23,6 +26,9 @@ public class AccountRestController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private AuthService authService;
@@ -56,7 +62,7 @@ public class AccountRestController {
     }
 
     // for account view by id (Method Number -2)
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<Accounts> getAccountById(@PathVariable Long id) {
         Accounts account = accountService.findAccountById(id);
         if (account != null) {
@@ -67,9 +73,10 @@ public class AccountRestController {
     }
 
     //for all account view (Method Number -3)
-    @GetMapping("all")
-    public List<Accounts>  getAllAccounts() {
-        return accountService.getAll();
+    @GetMapping("/all")
+    public ResponseEntity<List<Accounts>>getAllAccounts() {
+        List<Accounts> accounts=accountService.getAll();
+        return ResponseEntity.ok(accounts);
     }
 
 
@@ -91,6 +98,17 @@ public class AccountRestController {
         Accounts updated = accountService.save(existing);
 
         return ResponseEntity.ok(updated);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> getProfile(Authentication authentication) {
+        System.out.println("Authenticated User: " + authentication.getName());
+        System.out.println("Authorities: " + authentication.getAuthorities());
+        String email = authentication.getName();
+        Optional<User> user =userRepository.findByEmail(email);
+        Accounts accounts = accountService.getProfileByUserId(user.get().getId());
+        return ResponseEntity.ok(accounts);
+
     }
 
 

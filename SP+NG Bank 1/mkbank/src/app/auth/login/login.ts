@@ -46,7 +46,8 @@ onSubmit() {
       } else if(role === 'EMPLOYEE') {
         this.router.navigate(['/admindash']);
       } else if(role === 'USER') {
-        this.router.navigate(['/user-profile/:id']);
+        this.router.navigate([`/user-profile/${accountId}`]);
+
       } else {
         this.router.navigate(['/']);
       }

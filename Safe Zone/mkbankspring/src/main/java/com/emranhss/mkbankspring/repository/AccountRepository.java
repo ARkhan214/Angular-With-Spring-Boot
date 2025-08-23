@@ -4,6 +4,7 @@ import com.emranhss.mkbankspring.entity.Accounts;
 import com.emranhss.mkbankspring.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -15,7 +16,10 @@ public interface AccountRepository extends JpaRepository<Accounts,Long> {
     //(connected with AccountResCon Method Number -2)
     Optional<Accounts> findById(Long id);
 
+    Optional<Accounts> findByUserId(Long userId);
 
+    @Query("SELECT ac FROM Accounts ac WHERE ac.user.email = :email")
+    Optional<Accounts> findByUserEmail(@Param("email") String email);
 
     // Option 2: Directly return account id
     @Query("SELECT a FROM Accounts a WHERE a.user = :user")

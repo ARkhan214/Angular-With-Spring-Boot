@@ -1,5 +1,7 @@
 package com.emranhss.mkbankspring.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
@@ -44,6 +46,8 @@ public class Accounts {
 
 
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @JsonIgnore
+//    @JsonBackReference
     private List<Transaction> transactions;
 
     public Accounts() {
@@ -96,7 +100,7 @@ public class Accounts {
     }
 
     public void setAccountType(String accountType) {
-        this.accountType = accountType;
+        this.accountType = accountType != null ? accountType.toUpperCase() : null;
     }
 
     public double getBalance() {

@@ -49,7 +49,11 @@ POST http://localhost:8085/api/transactions/tr/1	(working)
 }
 
 ==>Transfer request
-POST http://localhost:8085/api/transactions/tr/1/2      (not working)
+Sender id ==> 	Authorization-->Bearer Token--->
+Authorization-->Bearer Token--->{J ID theke Transfer hobe tar Login token}
+Receiver id-->	http://localhost:8085/api/transactions/tr/transfer/3
+
+Body
 {
   "type": "TRANSFER",
   "amount": 5000.0,
@@ -57,7 +61,19 @@ POST http://localhost:8085/api/transactions/tr/1/2      (not working)
 }
 
 
+{Eta kaj kortise}
+URL কী হবে?
 
+http://localhost:8085/api/account/profile
+
+Method: GET
+
+URL: http://localhost:8085/api/account/profile
+
+Headers:
+
+Authorization: Bearer <your_jwt_token>
+(কারণ তুমি Spring Security + JWT ব্যবহার করছো, নাহলে authentication.getName() null হবে।)
 
 
 
@@ -102,7 +118,7 @@ POST http://localhost:8085/api/account/
 <=>View All Account
 Get http://localhost:8085/api/account/all	(working)
 <=>View Account By Id
-Get http://localhost:8085/api/account/1		(not working)
+Get http://localhost:8085/api/account/1	        (working)
 
 ==>json form Add Account
 {
@@ -165,6 +181,82 @@ employee
 "role": "EMPLOYEE"
  }
                                                                                                                                                                                                                                  
+
+User profile .html
+<div class="user-profile-container" *ngIf="account; else noAccount">
+  <h2>Welcome, {{ account.name }}</h2>
+  <img *ngIf="account.photo" [src]="'http://localhost:8085/images/account/'+account.photo" alt="Profile Photo" class="profile-photo">
+
+  <div class="account-details">
+    <p><strong>Account ID:</strong> {{ account.id }}</p>
+    <p><strong>Account Type:</strong> {{ account.accountType }}</p>
+    <p><strong>Balance:</strong> {{ account.balance | currency:'BDT' }}</p>
+    <p><strong>NID:</strong> {{ account.nid }}</p>
+    <p><strong>Phone Number:</strong> {{ account.phoneNumber }}</p>
+    <p><strong>Address:</strong> {{ account.address }}</p>
+    <p><strong>Date of Birth:</strong> {{ account.dateOfBirth | date:'dd-MM-yyyy' }}</p>
+    <p><strong>Account Opening Date:</strong> {{ account.accountOpeningDate | date:'dd-MM-yyyy' }}</p>
+    <p *ngIf="account.accountClosingDate"><strong>Account Closing Date:</strong> {{ account.accountClosingDate | date:'dd-MM-yyyy' }}</p>
+    <p><strong>Account Status:</strong> {{ account.accountActiveStatus ? 'Active' : 'Inactive' }}</p>
+    <p><strong>Role:</strong> {{ account.role }}</p>
+  </div>
+
+  <div class="profile-actions">
+    <button (click)="viewStatement()">View Statement</button>
+    <button (click)="logout()">Logout</button>
+  </div>
+</div>
+
+<ng-template #noAccount>
+  <p>No account information available.</p>
+</ng-template>
+
+<style>
+.user-profile-container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #fafafa;
+}
+
+.profile-photo {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+}
+
+.account-details p {
+  margin: 5px 0;
+}
+
+.profile-actions {
+  margin-top: 20px;
+}
+
+.profile-actions button {
+  margin-right: 10px;
+  padding: 8px 16px;
+  border: none;
+  background-color: #1976d2;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.profile-actions button:hover {
+  background-color: #115293;
+}
+</style>
+
+
+
+
+
+
+
 
 
 
