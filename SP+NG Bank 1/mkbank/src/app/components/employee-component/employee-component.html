@@ -87,7 +87,7 @@
                     <option [value]="Position.SENIOR_OFFICER">SENIOR_OFFICER</option>
                     <option [value]="Position.OFFICER">OFFICER</option>
                     <option [value]="Position.TELLER">OFFICER</option>
-                    <option [value]="Position.INTERN">OFFICER</option>
+                    <option [value]="Position.INTERN">INTERN</option>
                 </select>
             </div>
 
@@ -103,14 +103,10 @@
             </div>
 
             <div class="col-md-6">
-                <label for="dateOfBirthEmployee" class="form-label">Date of Birth (Employee)</label>
-                <input type="date" id="dateOfBirthEmployee" formControlName="dateOfBirth" class="form-control" />
-            </div>
-
-            <div class="col-md-6">
                 <label for="retirementDate" class="form-label">Retirement Date</label>
                 <!-- template -->
-                <input type="date" [value]="employee.retirementDate | date:'yyyy-MM-dd'" readonly>
+                <input type="date" formControlName="retirementDate" class="form-control" readonly>
+
 
             </div>
         </div>

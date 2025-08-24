@@ -43,7 +43,7 @@ export class EmployeeComponent implements OnInit {
       photo: [''],
 
       //Employee Part
-      status: ['', EmployeeStatus.ACTIVE],
+      status: [EmployeeStatus.ACTIVE,Validators.required],
       nid: ['', Validators.required],
       address: ['', Validators.required],
       position: [''],
