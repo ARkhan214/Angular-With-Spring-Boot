@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../../service/user.service';
 import { Router } from '@angular/router';
 import { User } from '../../model/user.model';
+import { Role } from '../../model/role.model';
 
 @Component({
   selector: 'app-only-add-user',
@@ -52,7 +53,7 @@ this.userAccountForm = this.formbuilder.group({
           password: formValues.password,
           phoneNumber: formValues.phoneNumber,
           dateOfBirth: formValues.dateOfBirth,
-          role: formValues.role,
+          role:Role.ADMIN,
           photo: formValues.photo
         };
 
@@ -65,13 +66,13 @@ this.userAccountForm = this.formbuilder.group({
   
         this.userService.registerUser(formData).subscribe({
           next: () => {
-            alert('User saved successfully!');
+            alert('Admin Saved Successfully!');
             this.userAccountForm.reset();
             this.selectedFile = null;
           },
           error: (err) => {
             console.error(err);
-            alert('Failed to save user.');
+            alert('Failed to Save Admin.');
           }
         });
       }

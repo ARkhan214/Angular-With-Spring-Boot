@@ -17,8 +17,8 @@ export class AccountHolderProfile implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private accountService: Accountsservice,
-    private cdr: ChangeDetectorRef,
-    private authService: AuthService
+    private authService: AuthService,
+     private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
@@ -35,7 +35,9 @@ export class AccountHolderProfile implements OnInit {
     });
   }
 
-
+  encodeURL(fileName: string): string {
+    return encodeURIComponent(fileName);
+  }
 
 
 logout() {

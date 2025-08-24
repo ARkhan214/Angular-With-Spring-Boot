@@ -5,6 +5,7 @@ import { Transaction } from '../../model/transactions.model';
 import { Accountsservice } from '../../service/accountsservice';
 import { Accounts } from '../../model/accounts.model';
 import { User } from '../../model/user.model';
+import { TransactionType } from '../../model/transactionType.model';
 
 @Component({
   selector: 'app-addtransaction',
@@ -29,8 +30,10 @@ export class Addtransaction {
     private cdRef: ChangeDetectorRef
   ) { }
 
+  transactionType=TransactionType;
+
   doTransaction() {
-    if (this.transaction.type === 'TRANSFER') {
+    if (this.transaction.type === this.transactionType.TRANSFER) {
       if (!this.receiverId) {
         alert("Receiver Account ID is required for transfer!");
         return;

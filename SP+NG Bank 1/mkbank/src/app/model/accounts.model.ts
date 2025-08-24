@@ -1,3 +1,5 @@
+import { Role } from "./role.model";
+
 export class Accounts{
 
 
@@ -14,5 +16,5 @@ export class Accounts{
     dateOfBirth?:Date;
     accountOpeningDate?:Date;
     accountClosingDate?:Date;
-    role !:string;
+    role !:Role;
 }

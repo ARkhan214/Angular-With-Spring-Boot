@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
@@ -234,9 +235,15 @@ public class AuthService {
         User savedUser = userRepository.save(user);
 
         employeeData.setUser(savedUser);
+
+        if (employeeData.getDateOfJoining() != null) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(employeeData.getDateOfJoining());
+            cal.add(Calendar.YEAR,30); //joining date theke 30 year.
+            employeeData.setRetirementDate(cal.getTime());
+        }
         employeeService.save(employeeData);
 
-//        sendActivationEmail(savedUser);
         sendEmployeeWelcomeEmail(employeeData);
 
     }

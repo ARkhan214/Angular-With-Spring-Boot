@@ -1,64 +1,29 @@
-<p>Admin-profile works!</p>
-<div class="admin-profile-container" *ngIf="admin; else noAdmin">
-  <h2>Welcome, {{ admin.name }}</h2>
-  <img *ngIf="admin.photo" [src]="admin.photo" alt="Admin Photo" class="profile-photo">
+<p class="text-center text-primary fw-bold fs-4 mb-4">👤Admin Profile</p>
+<button (click)="logout()" class="btn btn-danger mb-3">Logout</button>
 
-  <div class="admin-details">
-    <p><strong>ID:</strong> {{ admin.id }}</p>
-    <p><strong>Name:</strong> {{ admin.name }}</p>
-    <p><strong>Email:</strong> {{ admin.email }}</p>
-    <p><strong>Phone Number:</strong> {{ admin.phoneNumber }}</p>
-    <p><strong>Date of Birth:</strong> {{ admin.dateOfBirth | date:'dd-MM-yyyy' }}</p>
-    <p><strong>Role:</strong> {{ admin.role }}</p>
-  </div>
+<div *ngIf="admin" class="container py-4">
+  <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+    <div class="row g-0">
 
-  <div class="profile-actions">
-    <button (click)="logout()">Logout</button>
+      <!-- Left side: Profile -->
+      <div class="col-md-4 bg-light d-flex flex-column align-items-center justify-content-center p-4">
+        <img [src]="'http://localhost:8085/images/user/' + admin.photo" 
+             alt="Profile Image" 
+             class="rounded-circle border border-3 border-primary shadow-sm mb-3"
+             style="height: 160px; width: 160px; object-fit: cover;">
+        <h4 class="fw-bold text-dark">{{ admin.name }}</h4>
+        <p class="text-muted mb-1">Admin ID: {{ admin.id }}</p>
+
+      </div>
+
+      <!-- Right side: Account Details -->
+      <div class="col-md-8 p-4">
+        <h5 class="fw-bold mb-3 border-bottom pb-2">📋 Account Information</h5>
+        <div class="row gy-3">      
+          <div class="col-sm-6"><strong>📞 Phone Number:</strong> {{ admin.phoneNumber }}</div>          
+          <div class="col-sm-6"><strong>🎂 Date Of Birth:</strong> {{ admin.dateOfBirth | date:'dd MMM yyyy' }}</div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
-
-<ng-template #noAdmin>
-  <p>No admin data available.</p>
-</ng-template>
-
-<style>
-.admin-profile-container {
-  max-width: 600px;
-  margin: 20px auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background-color: #f5f5f5;
-  text-align: center;
-}
-
-.profile-photo {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  margin-bottom: 15px;
-  object-fit: cover;
-}
-
-.admin-details p {
-  margin: 5px 0;
-  text-align: left;
-}
-
-.profile-actions {
-  margin-top: 20px;
-}
-
-.profile-actions button {
-  padding: 8px 16px;
-  border: none;
-  background-color: #d32f2f;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.profile-actions button:hover {
-  background-color: #9a0007;
-}
-</style>

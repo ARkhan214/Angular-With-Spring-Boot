@@ -20,6 +20,7 @@ import { AdminDashboard } from './components/admin-dashboard/admin-dashboard';
 import { OnlyAddUser } from './components/only-add-user/only-add-user';
 import { AccountHolderProfile } from './auth/account-holder-profile/account-holder-profile';
 import { EmployeeProfile } from './auth/employee-profile/employee-profile';
+import { EmployeeComponent } from './components/employee-component/employee-component';
 
 
 
@@ -27,6 +28,7 @@ import { EmployeeProfile } from './auth/employee-profile/employee-profile';
 const routes: Routes = [
   {path:'',component:Home},
   {path:'adduser',component:Usercomponent},
+  {path:'addemployee',component:EmployeeComponent},
   {path:'viewalluser',component:Viewallusercomponent},
   {path:'updateuser/:id',component:Updateusercomponent},
   {path:'viewallaccount',component:ViewAllAccounts},

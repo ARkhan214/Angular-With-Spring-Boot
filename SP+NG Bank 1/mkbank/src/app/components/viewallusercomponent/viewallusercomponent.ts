@@ -12,18 +12,12 @@ import { Accounts } from '../../model/accounts.model';
   styleUrl: './viewallusercomponent.css'
 })
 export class Viewallusercomponent implements OnInit {
- users:User[]=[];
-  // user:User = new User();
-  // user: any;
+  users: User[] = [];
   filteredUser: User[] = [];
   searchUserId: number | null = null;
 
   constructor(
     private userservice: UserService,
-
-    //last update
-    // private accountService:Accountsservice,
-    
     private router: Router,
     private cdr: ChangeDetectorRef
   ) { }
@@ -35,32 +29,32 @@ export class Viewallusercomponent implements OnInit {
 
 
   loadData(): void {
-  this.userservice.getAllUsers().subscribe({
-    next: (data) => {
-      this.users = data;
-      this.filteredUser = [...data]; //  Add this line
-      this.cdr.markForCheck();
-    },
-    error: (err) => {
-      console.error('Error loading users:', err);
-    }
-  });
-}
-
-
-   
-filterUser(): void {
-  if (this.searchUserId === null) {
-    this.filteredUser = [...this.users]; // reset
-  } else {
-    this.filteredUser = this.users.filter(acc =>
-      acc.id === this.searchUserId
-    );
+    this.userservice.getAllUsers().subscribe({
+      next: (data) => {
+        this.users = data;
+        this.filteredUser = [...data]; //  Add this line
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('Error loading users:', err);
+      }
+    });
   }
-  this.cdr.markForCheck();
-}
 
-  
+
+
+  filterUser(): void {
+    if (this.searchUserId === null) {
+      this.filteredUser = [...this.users]; // reset
+    } else {
+      this.filteredUser = this.users.filter(acc =>
+        acc.id === this.searchUserId
+      );
+    }
+    this.cdr.markForCheck();
+  }
+
+
 
   deleteUser(id: number): void {
 
@@ -69,7 +63,7 @@ filterUser(): void {
 
     this.userservice.deleteUser(id).subscribe({
       next: () => {
-        
+
         console.log('User deleted');
         this.loadData();
         this.cdr.markForCheck();

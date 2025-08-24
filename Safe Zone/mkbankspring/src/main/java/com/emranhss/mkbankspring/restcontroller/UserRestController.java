@@ -4,6 +4,7 @@ import com.emranhss.mkbankspring.dto.AuthenticationResponse;
 import com.emranhss.mkbankspring.entity.Accounts;
 import com.emranhss.mkbankspring.entity.User;
 import com.emranhss.mkbankspring.repository.TokenRepository;
+import com.emranhss.mkbankspring.repository.UserRepository;
 import com.emranhss.mkbankspring.service.AuthService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,12 +12,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/user/")
@@ -27,6 +30,9 @@ public class UserRestController {
 
     @Autowired
     private TokenRepository tokenRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
 
     //Method for only user Save,update or register (Method number -1)
@@ -102,6 +108,20 @@ public class UserRestController {
         });
 
         return ResponseEntity.ok("Logged out successfully.");
+    }
+
+
+//for admin profile
+    @GetMapping("/profile")
+    public ResponseEntity<?> getProfile(Authentication authentication) {
+
+        System.out.println("Authenticated User: " + authentication.getName());
+        System.out.println("Authorities: " + authentication.getAuthorities());
+        String email = authentication.getName();
+        Optional<User> user =userRepository.findByEmail(email);
+        User userEntity = user.orElseThrow(() -> new RuntimeException("User not found")); // safe check
+        User user1 = authService.findById(userEntity.getId());
+        return ResponseEntity.ok(user1);
     }
 
 }

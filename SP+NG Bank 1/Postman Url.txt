@@ -133,6 +133,8 @@ halimaaktershemanto@gmail.com
 sathekhanom550@gmail.com
 cmrejaulkarim@gmail.com
 mdrahimkhan107107@gmail.com
+rimunna322@gmail.com 
+mdatiqulislam59@gmail.com
 
 MD Rahim Khan
 Fariha Mariam
@@ -142,6 +144,7 @@ Sathe Khanom
 
 ##Final code (USER,User+Account,User+Employee)
 
+admin view ==>http://localhost:8085/api/user/profile
 
 ==>Only Add User(Admin)
 POST http://localhost:8085/api/user/         (working)

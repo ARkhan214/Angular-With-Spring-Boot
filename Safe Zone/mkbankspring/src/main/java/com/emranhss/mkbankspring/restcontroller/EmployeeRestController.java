@@ -4,6 +4,7 @@ import com.emranhss.mkbankspring.entity.Accounts;
 import com.emranhss.mkbankspring.entity.Employee;
 import com.emranhss.mkbankspring.entity.User;
 import com.emranhss.mkbankspring.repository.EmployeeRepository;
+import com.emranhss.mkbankspring.repository.UserRepository;
 import com.emranhss.mkbankspring.service.AuthService;
 import com.emranhss.mkbankspring.service.EmployeeService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,12 +12,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/employees/")
@@ -28,6 +31,8 @@ public class EmployeeRestController {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private UserRepository userRepository;
 
     // for employee save or update or registration (Method Number -1)
     @PostMapping("")
@@ -56,9 +61,10 @@ public class EmployeeRestController {
 
 
     // (Method 1) find all Employee
-    @GetMapping
-    public List<Employee> getAllEmployees() {
-        return employeeService.getAllEmployees();
+    @GetMapping("all")
+    public ResponseEntity<List<Employee>> getAllEmployees() {
+        List<Employee> employees = employeeService.getAllEmployees();
+        return ResponseEntity.ok(employees);
     }
 
     // (Method 2) find Employee by id(related with EmployeeService method -3)
@@ -67,5 +73,16 @@ public class EmployeeRestController {
         return employeeService.findEmployeeById(id);
     }
 
+    @GetMapping("/profile")
+    public ResponseEntity<?> getProfile(Authentication authentication) {
+
+        System.out.println("Authenticated User: " + authentication.getName());
+        System.out.println("Authorities: " + authentication.getAuthorities());
+        String email = authentication.getName();
+        Optional<User> user =userRepository.findByEmail(email);
+        Employee employee = employeeService.findEmployeeById(user.get().getId());
+        return ResponseEntity.ok(employee);
+
+    }
 
     }

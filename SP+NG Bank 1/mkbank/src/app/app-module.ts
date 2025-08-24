@@ -34,6 +34,7 @@ import { DpsComponent } from './components/dps-component/dps-component';
 import { AccountHolderProfile } from './auth/account-holder-profile/account-holder-profile';
 import { EmployeeProfile } from './auth/employee-profile/employee-profile';
 import { AuthInterceptor } from './service/auth.interceptor';
+import { EmployeeComponent } from './components/employee-component/employee-component';
 
 
 @NgModule({
@@ -42,7 +43,7 @@ import { AuthInterceptor } from './service/auth.interceptor';
     Home,
     Navbar,
     Sidebar,  
-    Footer, Usercomponent, Viewallusercomponent, Updateusercomponent, ViewAllAccounts, DepositComponent, WithdrawComponent, TransactionComponent, AboutBank, Addtransaction, TransactionStatement, Login, Logout, UserProfile, AdminProfile, ContactUs, AdminDashboard, OnlyAddUser, LoanComponent, FixedDepositComponent, DpsComponent, AccountHolderProfile, EmployeeProfile,
+    Footer, Usercomponent, Viewallusercomponent, Updateusercomponent, ViewAllAccounts, DepositComponent, WithdrawComponent, TransactionComponent, AboutBank, Addtransaction, TransactionStatement, Login, Logout, UserProfile, AdminProfile, ContactUs, AdminDashboard, OnlyAddUser, LoanComponent, FixedDepositComponent, DpsComponent, AccountHolderProfile, EmployeeProfile, EmployeeComponent,
   ],
   imports: [
     BrowserModule,

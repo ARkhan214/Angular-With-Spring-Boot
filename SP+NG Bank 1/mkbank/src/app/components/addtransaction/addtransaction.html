@@ -9,14 +9,16 @@
   </div>
 
   <!-- Transaction Type -->
-  <div class="form-group">
-    <label for="type">Transaction Type:</label>
-    <select id="type" [(ngModel)]="transaction.type">
-      <option value="DEPOSIT">Deposit</option>
-      <option value="WITHDRAW">Withdraw</option>
-      <option value="TRANSFER">Transfer</option>
-    </select>
-  </div>
+<!-- Transaction Type -->
+<div class="form-group">
+  <label for="type">Transaction Type:</label>
+  <select id="type" [(ngModel)]="transaction.type">
+    <option [ngValue]="transactionType.DEPOSIT">Deposit</option>
+    <option [ngValue]="transactionType.WITHDRAW">Withdraw</option>
+    <option [ngValue]="transactionType.TRANSFER">Transfer</option>
+  </select>
+</div>
+
 
   <!-- Receiver Account (only for Transfer) -->
   <div class="form-group" *ngIf="transaction.type === 'TRANSFER'">

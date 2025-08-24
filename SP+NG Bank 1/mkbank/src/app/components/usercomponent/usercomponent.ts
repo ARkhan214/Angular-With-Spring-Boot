@@ -6,6 +6,7 @@ import { User } from '../../model/user.model';
 import { Accounts } from '../../model/accounts.model';
 import { Accountsservice } from '../../service/accountsservice';
 import { Transactionsservice } from '../../service/transactionsservice';
+import { Role } from '../../model/role.model';
 
 @Component({
   selector: 'app-usercomponent',
@@ -34,7 +35,7 @@ export class Usercomponent implements OnInit {
       password: ['', Validators.required],
       phoneNumber: ['', Validators.required],
       dateOfBirth: ['', Validators.required],
-      role: ['USER'],
+      role: [''],
       photo: [''],
 
       // Account fields
@@ -64,7 +65,7 @@ export class Usercomponent implements OnInit {
         password: formValues.password,
         phoneNumber: formValues.phoneNumber,
         dateOfBirth: formValues.dateOfBirth,
-        role: formValues.role,
+        role: Role.USER,
         photo: formValues.photo
       };
 
@@ -80,7 +81,7 @@ export class Usercomponent implements OnInit {
         dateOfBirth: formValues.dateOfBirth,
         accountOpeningDate: formValues.accountOpeningDate,
         accountClosingDate: formValues.accountClosingDate,
-        role:userObj.role
+        role:Role.USER
       };
 
       const formData = new FormData();
