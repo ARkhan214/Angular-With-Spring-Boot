@@ -13,31 +13,46 @@ import { isPlatformBrowser } from '@angular/common';
 export class Transactionsservice {
 
 
-  private apiUrl = environment.springUrl + "/account";
+  // private apiUrl = environment.springUrl + "/account";
   // private transactionsUrl = environment.springUrl + "transactions/account";
-  private baseUrl = 'http://localhost:8085/api/transactions';
+  // private baseUrl = 'http://localhost:8085/api/transactions';
+
+ private baseUrl = environment.springUrl + '/transactions';  // backend API base
 
   constructor(
     private http: HttpClient,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
+  // ======================================
   // Deposit / Withdraw / InitialBalance
-  makeTransaction(transaction: Transaction, accountId: number, token: string): Observable<Transaction> {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  // ======================================
+  makeTransaction(transaction: Transaction): Observable<Transaction> {
+    const headers = this.getAuthHeaders();
+
+    // accountId backend automatically token theke nibe, so path e id lagbe na
     return this.http.post<Transaction>(
-      `${this.baseUrl}/tr/${accountId}`,
+      `${this.baseUrl}/add`,
       transaction,
       { headers }
     );
-  }
+  } 
 
 
-  // Get transactions by accountId
-  getTransactionsByAccount(accountId: number): Observable<Transaction[]> {
-    return this.http.get<Transaction[]>(`${this.baseUrl}/account/${accountId}`);
-  }
+  // Deposit / Withdraw / InitialBalance
+  // makeTransaction(transaction: Transaction, accountId: number, token: string): Observable<Transaction> {
+  //   const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  //   return this.http.post<Transaction>(
+  //     `${this.baseUrl}/tr/${accountId}`,
+  //     transaction,
+  //     { headers }
+  //   );
+  // }
 
+
+
+
+  //Authorization Header Meaking from JWT Token(eta jodio age silo :Last update)
   private getToken(): string {
     if (isPlatformBrowser(this.platformId)) {
       return localStorage.getItem('authToken') || '';
@@ -45,24 +60,47 @@ export class Transactionsservice {
     return '';
   }
 
+  // ======================================
   private getAuthHeaders(): HttpHeaders {
     const token = this.getToken();
     return new HttpHeaders({
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     });
   }
-  transferOnly(transaction: Transaction, senderId: number, receiverId: number, token: string): Observable<Transaction> {
-  const headers = new HttpHeaders({
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
-  });
 
-  return this.http.post<Transaction>(
-    `${this.baseUrl}/tr/${senderId}/${receiverId}`,
-    transaction,
-    { headers }
-  );
-}
+  // private getAuthHeaders(): HttpHeaders {
+  //   const token = this.getToken();
+  //   return new HttpHeaders({
+  //     'Authorization': `Bearer ${token}`
+  //   });
+  // }
+
+
+  // Transfer (Last update)
+  // ======================================
+  transfer(transaction: Transaction, receiverId: number): Observable<Transaction> {
+    const headers = this.getAuthHeaders();
+    return this.http.post<Transaction>(
+      `${this.baseUrl}/tr/transfer/${receiverId}`,
+      transaction,
+      { headers }
+    );
+  }
+
+
+  //   transferOnly(transaction: Transaction, senderId: number, receiverId: number, token: string): Observable<Transaction> {
+  //   const headers = new HttpHeaders({
+  //     'Content-Type': 'application/json',
+  //     'Authorization': `Bearer ${token}`
+  //   });
+
+  //   return this.http.post<Transaction>(
+  //     `${this.baseUrl}/tr/${senderId}/${receiverId}`,
+  //     transaction,
+  //     { headers }
+  //   );
+  // }
 
 
   // makeTransaction(transaction: Transaction, accountId: number, token: string): Observable<Transaction> {
@@ -185,6 +223,20 @@ export class Transactionsservice {
   //   );
   // }
 
+  // Account Transaction list(last update)
+  // ======================================
+  getTransactionsByAccount(accountId: number): Observable<Transaction[]> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<Transaction[]>(
+      `${this.baseUrl}/account/${accountId}`,
+      { headers }
+    );
+  }
+
+    // Get transactions by accountId
+  // getTransactionsByAccount(accountId: number): Observable<Transaction[]> {
+  //   return this.http.get<Transaction[]>(`${this.baseUrl}/account/${accountId}`);
+  // }
 
   getTransactionsByAccountId(accountId: number): Observable<Transaction[]> {
     // JSON server supports ?accountId=XYZ
@@ -192,29 +244,48 @@ export class Transactionsservice {
     return this.http.get<Transaction[]>('http://localhost:8085/api/transactions/', { params });
   }
 
+  // ======================================
+  // All Transaction (Admin Dashboard )
+  // ======================================
   getAllTransactions(): Observable<Transaction[]> {
-    return this.http.get<Transaction[]>('http://localhost:8085/api/transactions/').pipe(
-      map(data => data.filter(t => t.amount > 0)) // only positive amount
-    );
+    const headers = this.getAuthHeaders();
+    return this.http.get<Transaction[]>(`${this.baseUrl}`, { headers });
   }
+
+  // ======================================
+  // Withdraw & Transfer only
+  // ======================================
+  getWithdrawTransactions(): Observable<Transaction[]> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<Transaction[]>(`${this.baseUrl}`, { headers });
+  }
+
+  // getAllTransactions(): Observable<Transaction[]> {
+  //   return this.http.get<Transaction[]>('http://localhost:8085/api/transactions/').pipe(
+  //     map(data => data.filter(t => t.amount > 0)) // only positive amount
+  //   );
+  // }
+
+
+  // getWithdrawTransactions(): Observable<Transaction[]> {
+  //   return this.http.get<Transaction[]>('http://localhost:8085/api/transactions/').pipe(
+  //     map(data => data.filter(t => t.type === 'WITHDRAW' || t.type === 'TRANSFER'))
+  //   );
+  // }
+
+
   getPositiveTransactions(): Observable<Transaction[]> {
-    return this.http.get<Transaction[]>(`${this.apiUrl}/transactions/positive`).pipe(
+    return this.http.get<Transaction[]>(`${this.baseUrl}/positive`).pipe(
       map(data => data.filter(t => t.amount > 0))
     );
   }
 
-//For Admin dashbord
-//   getPositiveTransactions(): Observable<Transaction[]> {
-//   return this.http.get<Transaction[]>(`${this.apiUrl}/transactions/positive`);
-// }
+  //For Admin dashbord
+  //   getPositiveTransactions(): Observable<Transaction[]> {
+  //   return this.http.get<Transaction[]>(`${this.apiUrl}/transactions/positive`);
+  // }
 
 
-
-  getWithdrawTransactions(): Observable<Transaction[]> {
-    return this.http.get<Transaction[]>('http://localhost:8085/api/transactions/').pipe(
-      map(data => data.filter(t => t.type === 'WITHDRAW' || t.type === 'TRANSFER'))
-    );
-  }
 
 
 

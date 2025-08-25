@@ -30,6 +30,54 @@ public class TransactionRestController {
     @Autowired
     private UserRepository userRepository;
 
+    //for transaction after add sequrity(Initial,deposit,withdraw)
+    @PostMapping("tr/{id}")
+    public Transaction deposit(
+            @RequestBody Transaction transaction,
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String authHeader) {
+
+        String token = authHeader.replace("Bearer ", "");  // token add
+        return transactionService.addTransaction(transaction, id, token);
+    }
+
+    @PostMapping("add")
+    public Transaction addTransaction(
+            @RequestBody Transaction transaction,
+            Authentication authentication) {
+
+        String token = (String) authentication.getCredentials(); // raw JWT token
+        String username = authentication.getName();
+        Optional<User> user = userRepository.findByEmail(username);
+        User u = user.orElseThrow(() -> new RuntimeException("User not found with email: " + username));
+
+        Accounts sender = accountRepository.findAccountByUser(u)
+                .orElseThrow(() -> new RuntimeException("Account not found for user: " + username));
+
+        return transactionService.addTransaction(transaction, sender.getId(), token);
+    }
+
+
+    //method transfer
+    @PostMapping("tr/transfer/{receiverId}")
+    public Transaction transfer(
+            @RequestBody Transaction transaction,
+            @PathVariable Long receiverId,
+            Authentication authentication) {
+
+        String token = (String) authentication.getCredentials();  // raw JWT token
+        String username = authentication.getName();
+        Optional<User> user = userRepository.findByEmail(username);
+        User u = user.orElseThrow(() -> new RuntimeException("User not found with email: " + username));
+        Accounts sender = accountRepository.findAccountByUser(u)
+                .orElseThrow(() -> new RuntimeException("Account not found for user: " + username));
+
+
+        return transactionService.onlyTransfer(transaction, sender.getId(), receiverId, token);
+    }
+
+
+
     //  Get all transactions(Method Number -2)
     @GetMapping("all")
     public ResponseEntity<List<Transaction>> getAllTransactions() {
@@ -76,48 +124,5 @@ public class TransactionRestController {
         List<Transaction> withdraws = transactionService.getWithdrawsByAccount(accountId);
         return ResponseEntity.ok(withdraws);
     }
-
-    //for transaction after add sequrity(Initial,deposit,withdraw)
-    @PostMapping("tr/{id}")
-    public Transaction deposit(
-            @RequestBody Transaction transaction,
-            @PathVariable Long id,
-            @RequestHeader("Authorization") String authHeader) {
-
-        String token = authHeader.replace("Bearer ", "");  // token add
-        return transactionService.addTransaction(transaction, id, token);
-    }
-
-    /// /method transfer
-//@PostMapping("tr/{senderId}/{receiverId}")
-//public Transaction transfer(
-//        @RequestBody Transaction transaction,
-//        @PathVariable Long senderId,
-//        @PathVariable Long receiverId,
-//        @RequestHeader("Authorization") String authHeader) {
-//
-//    String token = authHeader.replace("Bearer ", "");
-//    return transactionService.onlyTransfer(transaction, senderId, receiverId, token);
-//}
-
-
-//method transfer
-    @PostMapping("tr/transfer/{receiverId}")
-    public Transaction transfer(
-            @RequestBody Transaction transaction,
-            @PathVariable Long receiverId,
-            Authentication authentication) {
-
-        String token = (String) authentication.getCredentials();  // raw JWT token
-        String username = authentication.getName();
-        Optional<User> user = userRepository.findByEmail(username);
-        User u = user.orElseThrow(() -> new RuntimeException("User not found with email: " + username));
-        Accounts sender = accountRepository.findAccountByUser(u)
-                .orElseThrow(() -> new RuntimeException("Account not found for user: " + username));
-
-
-        return transactionService.onlyTransfer(transaction, sender.getId(), receiverId, token);
-    }
-
 
 }

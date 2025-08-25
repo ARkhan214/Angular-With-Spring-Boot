@@ -98,6 +98,10 @@ Sender id ==> 	Authorization-->Bearer Token--->
 Authorization-->Bearer Token--->{J ID theke Transfer hobe tar Login token}
 Receiver id-->	http://localhost:8085/api/transactions/tr/transfer/3
 
+==>DEPOSIT & WITHDRAW
+POST http://localhost:8085/api/transactions/add
+
+
 Body
 {
   "type": "TRANSFER",
@@ -110,7 +114,7 @@ Body
 URL কী হবে?
 
 http://localhost:8085/api/account/profile
-
+s
 Method: GET
 
 URL: http://localhost:8085/api/account/profile

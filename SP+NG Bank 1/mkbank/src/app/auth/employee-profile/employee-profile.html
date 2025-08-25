@@ -2,7 +2,7 @@
 
 <div class="admin-profile-container" *ngIf="employee; else noAdmin">
   <h2>Welcome, {{ employee.name }}</h2>
-  <img *ngIf="employee.photo" [src]="employee.photo" alt="Admin Photo" class="profile-photo">
+  <img *ngIf="employee.photo" [src]="'http://localhost:8085/images/employee/'+employee.photo" alt="Employee Photo" class="profile-photo">
 
   <div class="admin-details">
     <p><strong>ID:</strong> {{ employee.id }}</p>

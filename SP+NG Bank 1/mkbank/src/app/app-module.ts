@@ -35,6 +35,7 @@ import { AccountHolderProfile } from './auth/account-holder-profile/account-hold
 import { EmployeeProfile } from './auth/employee-profile/employee-profile';
 import { AuthInterceptor } from './service/auth.interceptor';
 import { EmployeeComponent } from './components/employee-component/employee-component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 
 @NgModule({
@@ -42,15 +43,39 @@ import { EmployeeComponent } from './components/employee-component/employee-comp
     App,
     Home,
     Navbar,
-    Sidebar,  
-    Footer, Usercomponent, Viewallusercomponent, Updateusercomponent, ViewAllAccounts, DepositComponent, WithdrawComponent, TransactionComponent, AboutBank, Addtransaction, TransactionStatement, Login, Logout, UserProfile, AdminProfile, ContactUs, AdminDashboard, OnlyAddUser, LoanComponent, FixedDepositComponent, DpsComponent, AccountHolderProfile, EmployeeProfile, EmployeeComponent,
+    Sidebar,
+    Footer,
+    Usercomponent,
+    Viewallusercomponent,
+    Updateusercomponent,
+    ViewAllAccounts,
+    DepositComponent,
+    WithdrawComponent,
+    TransactionComponent,
+    AboutBank,
+    Addtransaction,
+    TransactionStatement,
+    Login,
+    Logout,
+    UserProfile,
+    AdminProfile,
+    ContactUs,
+    AdminDashboard,
+    OnlyAddUser,
+    LoanComponent,
+    FixedDepositComponent,
+    DpsComponent,
+    AccountHolderProfile,
+    EmployeeProfile,
+    EmployeeComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     // notun project neyar por eta likhte hobe
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatSnackBarModule
 
   ],
   providers: [

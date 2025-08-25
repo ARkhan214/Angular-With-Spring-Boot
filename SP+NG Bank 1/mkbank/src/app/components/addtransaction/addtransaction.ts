@@ -15,81 +15,131 @@ import { TransactionType } from '../../model/transactionType.model';
 })
 export class Addtransaction {
 
-  account!: Accounts;
-  transactionForm!: FormGroup;
-
-  transaction: Transaction = new Transaction();
-  senderId!: number;
-  receiverId?: number;
-  token: string = localStorage.getItem('token') || '';
+transactionForm!: FormGroup;
+  transactionType = TransactionType;
+  token: string = localStorage.getItem('authToken') || '';
 
   constructor(
     private fb: FormBuilder,
     private transactionService: Transactionsservice,
-    private accountService: Accountsservice,
     private cdRef: ChangeDetectorRef
-  ) { }
+  ) {}
 
-  transactionType=TransactionType;
+  ngOnInit(): void {
+    // Reactive Form 
+    this.transactionForm = this.fb.group({
+      type: ['', Validators.required],
+      amount: [0, [Validators.required, Validators.min(1)]],
+      description: [''],
+      receiverId: ['']  //For Transfer 
+    });
 
+    // browser refresh form value vanish hobe na
+    const savedForm = localStorage.getItem('transactionForm');
+    if (savedForm) {
+      this.transactionForm.setValue(JSON.parse(savedForm));
+    }
+
+    // form value changes localStorage এ save
+    this.transactionForm.valueChanges.subscribe(val => {
+      localStorage.setItem('transactionForm', JSON.stringify(val));
+    });
+  }
+
+  // Submit handler
   doTransaction() {
-    if (this.transaction.type === this.transactionType.TRANSFER) {
-      if (!this.receiverId) {
-        alert("Receiver Account ID is required for transfer!");
+    if (this.transactionForm.invalid) {
+      alert('Form is invalid! Please fill all required fields.');
+      return;
+    }
+
+    const formValue = this.transactionForm.value;
+
+    // Transaction Object
+    const transaction: Transaction = {
+      type: formValue.type,
+      amount: formValue.amount,
+      description: formValue.description,
+      transactionTime: new Date(),  // backend optional, safe way
+      accountId: 0 // backend automatically accountId token থেকে handle করবে
+    };
+
+    // Transfer হলে receiverId check
+    if (formValue.type === this.transactionType.TRANSFER) {
+      if (!formValue.receiverId) {
+        alert('Receiver Account ID is required for Transfer!');
         return;
       }
 
-      // Set account IDs
-      this.transaction.accountId = this.senderId;
-      this.transaction.receiverAccountId = this.receiverId;
+      transaction.receiverAccountId = formValue.receiverId;
 
-      //  Transfer call with sender & receiver IDs
-      this.transactionService.transferOnly(this.transaction, this.senderId, this.receiverId, this.token)
-        .subscribe({
-          next: res => {
-            console.log("Transfer success: ", res);
-            alert("Transfer Successful!");
-            this.resetForm();
-          },
-          error: err => {
-            console.error("Transfer failed: ", err);
-            alert(err.message || "Transfer Failed!");
-          }
-        });
+      // Transfer service call
+      this.transactionService.transfer(transaction, formValue.receiverId).subscribe({
+        next: res => {
+          alert('Transfer Successful!');
+          this.resetForm();
+        },
+        error: err => {
+          console.error('Transfer failed:', err);
+          alert(err.error?.message || 'Transfer Failed!');
+        }
+      });
 
     } else {
       // Deposit / Withdraw
-      this.transaction.accountId = this.senderId;
-
-      this.transactionService.makeTransaction(this.transaction, this.senderId, this.token)
-        .subscribe({
-          next: res => {
-            console.log("Transaction success: ", res);
-            alert("Transaction Successful!");
-            this.resetForm();
-          },
-          error: err => {
-            console.error("Transaction failed: ", err);
-            alert(err.message || "Transaction Failed!");
-          }
-        });
+      this.transactionService.makeTransaction(transaction).subscribe({
+        next: res => {
+          alert('Transaction Successful!');
+          this.resetForm();
+        },
+        error: err => {
+          console.error('Transaction failed:', err);
+          alert(err.error?.message || 'Transaction Failed!');
+        }
+      });
     }
   }
 
+  // Form reset & localStorage clear
   resetForm() {
-    this.transaction = new Transaction();
-    this.senderId = 0;
-    this.receiverId = undefined;
+    this.transactionForm.reset({ type: '', amount: 0, description: '', receiverId: '' });
+    localStorage.removeItem('transactionForm');
   }
 
 
 
 
 
+  // account!: Accounts;
+  // transactionForm!: FormGroup;
+
+  // transaction: Transaction = new Transaction();
+  // senderId!: number;
+  // receiverId?: number;
+  // token: string = localStorage.getItem('token') || '';
+
+  // constructor(
+  //   private fb: FormBuilder,
+  //   private transactionService: Transactionsservice,
+  //   private accountService: Accountsservice,
+  //   private cdRef: ChangeDetectorRef
+  // ) { }
+
+  // transactionType=TransactionType;
 
   // doTransaction() {
-  //   if (this.transaction.type === 'TRANSFER' && this.receiverId) {
-  //     this.transactionService.transfer(this.transaction, this.senderId, this.receiverId, this.token)
+  //   if (this.transaction.type === this.transactionType.TRANSFER) {
+  //     if (!this.receiverId) {
+  //       alert("Receiver Account ID is required for transfer!");
+  //       return;
+  //     }
+
+  //     // Set account IDs
+  //     this.transaction.accountId = this.senderId;
+  //     this.transaction.receiverAccountId = this.receiverId;
+
+  //     //  Transfer call with sender & receiver IDs
+  //     this.transactionService.transferOnly(this.transaction, this.senderId, this.receiverId, this.token)
   //       .subscribe({
   //         next: res => {
   //           console.log("Transfer success: ", res);
@@ -98,10 +148,14 @@ export class Addtransaction {
   //         },
   //         error: err => {
   //           console.error("Transfer failed: ", err);
-  //           alert("Transfer Failed!");
+  //           alert(err.message || "Transfer Failed!");
   //         }
   //       });
+
   //   } else {
+  //     // Deposit / Withdraw
+  //     this.transaction.accountId = this.senderId;
+
   //     this.transactionService.makeTransaction(this.transaction, this.senderId, this.token)
   //       .subscribe({
   //         next: res => {
@@ -111,85 +165,17 @@ export class Addtransaction {
   //         },
   //         error: err => {
   //           console.error("Transaction failed: ", err);
-  //           alert("Transaction Failed!");
+  //           alert(err.message || "Transaction Failed!");
   //         }
   //       });
   //   }
   // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-//   ngOnInit(): void {
-//   this.transactionForm = this.fb.group({
-//     accountId: ['', Validators.required],
-//     receiverAccountId: [''],
-//     type: ['', Validators.required],
-//     amount: [0, [Validators.required, Validators.min(1)]],
-//     description: ['']
-//   });
-
-//     this.accountService.getAllAccountById(this.account.id!).subscribe({
-//     next: (account) => {
-//       if (account) {
-//         this.account = account;
-//         this.transactionForm.patchValue({ accountId: this.account.id });
-//       }
-//     },
-//     error: (err) => console.error(err)
-//   });
-//   }
-
-
-
-
-// onSubmit(): void {
-//   //form validation check
-//   if (this.transactionForm.invalid) {
-//     console.warn('Transaction form is invalid!');
-//     return;
-//   }
-
-// // Create a Transaction object from the form
-//   const transaction: Transaction = {
-//     type: this.transactionForm.value.type,
-//     amount: this.transactionForm.value.amount,
-//     description: this.transactionForm.value.description,
-//     transactionTime: new Date(),
-//     accountId: this.transactionForm.value.accountId,
-//     receiverAccountId: this.transactionForm.value.receiverAccountId
-//   };
-
-//   this.transactionService.addTransaction(transaction).subscribe({
-//     next: (res) => {
-//       console.log('Transaction successful:', res);
-      
-//       //reset form after Success
-//       this.transactionForm.reset({
-//         accountId: this.account?.id || '',
-//         receiverAccountId: '',
-//         type: '',
-//         amount: 0,
-//         description: ''
-//       });
-//     },
-//     error: (err) => {
-//       console.error('Transaction failed:', err);
-//       alert(err.message || 'Transaction failed!');
-//     }
-//   });
-// }
-
-
+  // resetForm() {
+  //   this.transaction = new Transaction();
+  //   this.senderId = 0;
+  //   this.receiverId = undefined;
+  // }
 
 
 }

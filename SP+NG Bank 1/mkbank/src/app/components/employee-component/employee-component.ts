@@ -28,7 +28,7 @@ export class EmployeeComponent implements OnInit {
   constructor(
     private userService: UserService,
     private employeeService: EmployeeService,
-    private formbuilder: FormBuilder,
+    private formbuilder: FormBuilder
   ) { }
 
   ngOnInit(): void {
@@ -87,18 +87,18 @@ export class EmployeeComponent implements OnInit {
         dateOfJoining: formValues.dateOfJoining,
         dateOfBirth: formValues.dateOfBirth,
         retirementDate: formValues.retirementDate,
-        role: Role.USER,
+        role: Role.EMPLOYEE,
         user: userObj
       };
 
 
-
-      const formData = new FormData();
-      formData.append('user', JSON.stringify(userObj));
-      formData.append('account', JSON.stringify(employeeObj));
-      if (this.selectedFile) {
-        formData.append('photo', this.selectedFile, this.selectedFile.name);
-      }
+      //Using Blob
+    const formData = new FormData();
+    formData.append('user', new Blob([JSON.stringify(userObj)], { type: 'application/json' }));
+    formData.append('employee', new Blob([JSON.stringify(employeeObj)], { type: 'application/json' }));
+    if (this.selectedFile) {
+      formData.append('photo', this.selectedFile, this.selectedFile.name);
+    }
 
       this.employeeService.registerEmployee(formData).subscribe({
         next: () => {
