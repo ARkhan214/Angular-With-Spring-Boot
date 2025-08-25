@@ -46,7 +46,10 @@ public class TransactionRestController {
             @RequestBody Transaction transaction,
             Authentication authentication) {
 
+        System.out.println(authentication+"44444444444444444444444444444");
         String token = (String) authentication.getCredentials(); // raw JWT token
+        System.out.println(token+"3333333333333333333333");
+
         String username = authentication.getName();
         Optional<User> user = userRepository.findByEmail(username);
         User u = user.orElseThrow(() -> new RuntimeException("User not found with email: " + username));

@@ -11,6 +11,7 @@ import { AuthService } from '../../service/auth-service';
   styleUrl: './account-holder-profile.css'
 })
 export class AccountHolderProfile implements OnInit {
+
   account!: Accounts;
 
   constructor(
@@ -18,14 +19,14 @@ export class AccountHolderProfile implements OnInit {
     private route: ActivatedRoute,
     private accountService: Accountsservice,
     private authService: AuthService,
-     private cdr: ChangeDetectorRef,
+    private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
     this.accountService.getProfile().subscribe({
       next: (data) => {
         this.account = data;
-        console.log(data);
+        console.log(data + "Kichu Ashe Na");
         this.cdr.markForCheck();
 
       },
@@ -40,7 +41,7 @@ export class AccountHolderProfile implements OnInit {
   }
 
 
-logout() {
+  logout() {
     this.authService.logout();
   }
 

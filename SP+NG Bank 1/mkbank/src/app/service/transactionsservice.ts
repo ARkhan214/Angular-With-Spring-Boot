@@ -27,16 +27,21 @@ export class Transactionsservice {
   // ======================================
   // Deposit / Withdraw / InitialBalance
   // ======================================
-  makeTransaction(transaction: Transaction): Observable<Transaction> {
-    const headers = this.getAuthHeaders();
+makeTransaction(transaction: Transaction): Observable<Transaction> {
+  const headers = this.getAuthHeaders();
 
+  if (isPlatformBrowser(this.platformId)) {
     // accountId backend automatically token theke nibe, so path e id lagbe na
     return this.http.post<Transaction>(
       `${this.baseUrl}/add`,
       transaction,
       { headers }
     );
-  } 
+  }
+
+  // If not browser (SSR), return a safe fallback
+  return throwError(() => new Error('localStorage not available in this environment'));
+}
 
 
   // Deposit / Withdraw / InitialBalance
@@ -79,7 +84,8 @@ export class Transactionsservice {
 
   // Transfer (Last update)
   // ======================================
-  transfer(transaction: Transaction, receiverId: number): Observable<Transaction> {
+transfer(transaction: Transaction, receiverId: number): Observable<Transaction> {
+  if (isPlatformBrowser(this.platformId)) {
     const headers = this.getAuthHeaders();
     return this.http.post<Transaction>(
       `${this.baseUrl}/tr/transfer/${receiverId}`,
@@ -87,6 +93,10 @@ export class Transactionsservice {
       { headers }
     );
   }
+
+  return throwError(() => new Error('Transfer not available in this environment (SSR)'));
+}
+
 
 
   //   transferOnly(transaction: Transaction, senderId: number, receiverId: number, token: string): Observable<Transaction> {

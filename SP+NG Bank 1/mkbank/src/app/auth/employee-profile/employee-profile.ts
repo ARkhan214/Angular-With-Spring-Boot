@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { User } from '../../model/user.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../service/user.service';
+import { AuthService } from '../../service/auth-service';
 
 @Component({
   selector: 'app-employee-profile',
@@ -16,6 +17,7 @@ employee!: User;
     private router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
+    private authService:AuthService,
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -34,8 +36,11 @@ employee!: User;
   }
 
   logout() {
-    alert('You have been logged out successfully!');
-    localStorage.removeItem('loggedInUser');
-    window.location.href = '/login';
+    this.authService.logout();
   }
+  // logout() {
+  //   alert('You have been logged out successfully!');
+  //   localStorage.removeItem('loggedInUser');
+  //   window.location.href = '/login';
+  // }
 }

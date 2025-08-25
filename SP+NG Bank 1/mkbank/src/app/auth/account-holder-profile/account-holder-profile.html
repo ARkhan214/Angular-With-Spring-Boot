@@ -1,5 +1,5 @@
 <p class="text-center text-primary fw-bold fs-4 mb-4">👤 Account Holder Profile</p>
-<button (click)="logout()" class="btn btn-danger mb-3">Logout</button>
+
 
 <div *ngIf="account" class="container py-4">
   <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
@@ -46,6 +46,7 @@
             </span>
           </div>
         </div>
+        <div><button (click)="logout()" class="btn btn-danger mb-3">Logout</button></div>
       </div>
     </div>
   </div>

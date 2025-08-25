@@ -20,6 +20,19 @@ export class Accountsservice {
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
+    private getToken(): string {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('authToken') || '';
+    }
+    return '';
+  }
+
+    private getAuthHeaders(): HttpHeaders {
+    const token = this.getToken();
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+  }
 
 
   // new method for close part

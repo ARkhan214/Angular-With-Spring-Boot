@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Input, PLATFORM_ID } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Transactionsservice } from '../../service/transactionsservice';
 import { Transaction } from '../../model/transactions.model';
@@ -6,6 +6,7 @@ import { Accountsservice } from '../../service/accountsservice';
 import { Accounts } from '../../model/accounts.model';
 import { User } from '../../model/user.model';
 import { TransactionType } from '../../model/transactionType.model';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-addtransaction',
@@ -15,15 +16,16 @@ import { TransactionType } from '../../model/transactionType.model';
 })
 export class Addtransaction {
 
-transactionForm!: FormGroup;
+  transactionForm!: FormGroup;
   transactionType = TransactionType;
   token: string = localStorage.getItem('authToken') || '';
 
   constructor(
     private fb: FormBuilder,
     private transactionService: Transactionsservice,
-    private cdRef: ChangeDetectorRef
-  ) {}
+    private cdRef: ChangeDetectorRef,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
 
   ngOnInit(): void {
     // Reactive Form 
@@ -34,16 +36,16 @@ transactionForm!: FormGroup;
       receiverId: ['']  //For Transfer 
     });
 
-    // browser refresh form value vanish hobe na
-    const savedForm = localStorage.getItem('transactionForm');
-    if (savedForm) {
-      this.transactionForm.setValue(JSON.parse(savedForm));
-    }
+    if (isPlatformBrowser(this.platformId)) {
+      const savedForm = localStorage.getItem('transactionForm');
+      if (savedForm) {
+        this.transactionForm.patchValue(JSON.parse(savedForm));
+      }
 
-    // form value changes localStorage এ save
-    this.transactionForm.valueChanges.subscribe(val => {
-      localStorage.setItem('transactionForm', JSON.stringify(val));
-    });
+      this.transactionForm.valueChanges.subscribe(val => {
+        localStorage.setItem('transactionForm', JSON.stringify(val));
+      });
+    }
   }
 
   // Submit handler
@@ -102,9 +104,21 @@ transactionForm!: FormGroup;
 
   // Form reset & localStorage clear
   resetForm() {
-    this.transactionForm.reset({ type: '', amount: 0, description: '', receiverId: '' });
+    this.transactionForm.reset({
+      type: '',
+      amount: 0,
+      description: '',
+      receiverId: ''
+    });
     localStorage.removeItem('transactionForm');
   }
+
+
+  // Form reset & localStorage clear
+  // resetForm() {
+  //   this.transactionForm.reset({ type: '', amount: 0, description: '', receiverId: '' });
+  //   localStorage.removeItem('transactionForm');
+  // }
 
 
 

@@ -113,7 +113,7 @@ public class UserRestController {
 
 //for admin profile
     @GetMapping("/profile")
-    public ResponseEntity<?> getProfile(Authentication authentication) {
+    public ResponseEntity<?> getProfileForAdmin(Authentication authentication) {
 
         System.out.println("Authenticated User: " + authentication.getName());
         System.out.println("Authorities: " + authentication.getAuthorities());

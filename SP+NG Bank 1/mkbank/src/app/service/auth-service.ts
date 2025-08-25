@@ -105,6 +105,7 @@ export class AuthService {
 
   logout(): void {
     if (this.isBrowser()) {
+      alert('You have been logged out successfully!');
       localStorage.removeItem('userRole');
       localStorage.removeItem('authToken');
       this.userRoleSubject.next(null);

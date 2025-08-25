@@ -62,7 +62,11 @@ public class TransactionService {
 
         transaction.setAccount(sender);
         transaction.setTransactionTime(new Date());
+        System.out.println(token+"111111111111111111111111111111111111");
+
         transaction.setToken(token);
+
+        System.out.println(token+"2222222222222222222222222");
 
         Transaction savedTransaction = transactionRepository.save(transaction);
 

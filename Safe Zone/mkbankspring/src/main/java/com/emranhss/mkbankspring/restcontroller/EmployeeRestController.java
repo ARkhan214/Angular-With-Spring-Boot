@@ -74,7 +74,7 @@ public class EmployeeRestController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<?> getProfile(Authentication authentication) {
+    public ResponseEntity<?> getProfileForEmployee(Authentication authentication) {
 
         System.out.println("Authenticated User: " + authentication.getName());
         System.out.println("Authorities: " + authentication.getAuthorities());

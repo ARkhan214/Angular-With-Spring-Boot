@@ -21,7 +21,11 @@ user: Partial<User> = {
   errorMessage: string = '';
   successMessage: string = '';
 
-  constructor(private userService: UserService, private router: Router,private authService:AuthService) {}
+  constructor(
+    private userService: UserService,
+     private router: Router,
+     private authService:AuthService
+    ) {}
 
 onSubmit() {
   this.userService.login(this.user as User).subscribe({
@@ -46,7 +50,7 @@ onSubmit() {
       } else if(role === 'EMPLOYEE') {
         this.router.navigate(['/employee-profile']);
       } else if(role === 'USER') {
-        this.router.navigate([`/account-profile/`]);
+        this.router.navigate(['/account-profile']);
 
       } else {
         this.router.navigate(['/']);
