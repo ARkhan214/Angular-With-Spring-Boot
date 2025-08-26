@@ -40,7 +40,7 @@ public class TransactionRestController {
         String token = authHeader.replace("Bearer ", "");  // token add
         return transactionService.addTransaction(transaction, id, token);
     }
-
+    // Deposit / Withdraw / InitialBalance(Using for open account + depo+with)
     @PostMapping("add")
     public Transaction addTransaction(
             @RequestBody Transaction transaction,
@@ -61,7 +61,7 @@ public class TransactionRestController {
     }
 
 
-    //method transfer
+    //method transfer(Using for Transfer money From Account)
     @PostMapping("tr/transfer/{receiverId}")
     public Transaction transfer(
             @RequestBody Transaction transaction,
@@ -79,6 +79,21 @@ public class TransactionRestController {
         return transactionService.onlyTransfer(transaction, sender.getId(), receiverId, token);
     }
 
+    // method transfer
+@PostMapping("tr/{senderId}/{receiverId}")
+public Transaction transfer(
+        @RequestBody Transaction transaction,
+        @PathVariable Long senderId,
+        @PathVariable Long receiverId,
+        @RequestHeader("Authorization") String authHeader) {
+
+    String token = authHeader.replace("Bearer ", "");
+    return transactionService.onlyTransfer(transaction, senderId, receiverId, token);
+}
+
+
+
+
 
 
     //  Get all transactions(Method Number -2)
@@ -93,6 +108,12 @@ public class TransactionRestController {
     public ResponseEntity<List<Transaction>> getPositiveTransactions() {
         return ResponseEntity.ok(transactionService.getPositiveTransactions());
     }
+    //For Admin dashbord
+    @GetMapping("negative")
+    public ResponseEntity<List<Transaction>> getNegativeTransactions() {
+        return ResponseEntity.ok(transactionService.getNegativeTransactions());
+    }
+
 
     //  Get transactions by account ID(Method Number -3)
     @GetMapping("account/{accountId}")
@@ -103,12 +124,6 @@ public class TransactionRestController {
         return ResponseEntity.ok(transactions);
     }
 
-    //for delete transaction by id(Method Number -4)
-    @DeleteMapping("{id}")
-    public void deleteTransactionByAccountId(@PathVariable Long accountId) {
-
-        transactionService.deleteTransactionByAccountId(accountId);
-    }
 
 
     //(Method Number -5)
@@ -127,5 +142,35 @@ public class TransactionRestController {
         List<Transaction> withdraws = transactionService.getWithdrawsByAccount(accountId);
         return ResponseEntity.ok(withdraws);
     }
+
+
+    //for delete transaction by id(Method Number -4)
+    @DeleteMapping("{id}")
+    public void deleteTransactionByAccountId(@PathVariable Long accountId) {
+
+        transactionService.deleteTransactionByAccountId(accountId);
+    }
+
+
+    //For Transaction Statement
+//     Find statement by Account Id
+//    @GetMapping("/account/{accountId}")
+//    public ResponseEntity<List<Transaction>> getTransactionsByAccountId(@PathVariable Long accountId) {
+//        List<Transaction> transactions = transactionService.getTransactionsByAccountId(accountId);
+//        return ResponseEntity.ok(transactions);
+//    }
+
+    // Find statement Account Id + Date Range
+//    @GetMapping("/account/{accountId}/filter")
+//    public ResponseEntity<List<Transaction>> getTransactionsByAccountAndDate(
+//            @PathVariable Long accountId,
+//            @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+//            @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+//
+//        List<Transaction> transactions =
+//                transactionService.getTransactionsByAccountIdAndDateRange(accountId, startDate, endDate);
+//
+//        return ResponseEntity.ok(transactions);
+//    }
 
 }

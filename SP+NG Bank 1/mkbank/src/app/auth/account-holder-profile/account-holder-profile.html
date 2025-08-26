@@ -1,7 +1,6 @@
-<p class="text-center text-primary fw-bold fs-4 mb-4">👤 Account Holder Profile</p>
+<p class="text-center text-primary fw-bold fs-4 mb-4"><h4 class="text-center">👤 Account Holder Profile</h4>
 
-
-<div *ngIf="account" class="container py-4">
+<div *ngIf="account && account.role === 'USER'; else noAccount" class="container py-4">
   <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
     <div class="row g-0">
 
@@ -51,3 +50,7 @@
     </div>
   </div>
 </div>
+
+<ng-template #noAccount>
+  <p>No account holder data available.</p>
+</ng-template>

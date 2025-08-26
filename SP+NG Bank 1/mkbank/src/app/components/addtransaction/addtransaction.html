@@ -1,48 +1,50 @@
 <div class="transaction-form-container">
-  <h2 class="form-title">Bank Transaction</h2>
+  <h2 class="text-center text-primary mb-4">💸 Bank Transaction</h2>
 
-  <form [formGroup]="transactionForm" (ngSubmit)="doTransaction()" class="transaction-form">
+  <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()" class="transaction-form">
 
     <!-- Transaction Type -->
-    <div class="form-group">
-      <label for="type">Transaction Type:</label>
-      <select id="type" formControlName="type">
+    <div class="form-group mb-3">
+      <label>Transaction Type</label>
+      <select formControlName="type" class="form-select">
         <option [ngValue]="transactionType.DEPOSIT">Deposit</option>
         <option [ngValue]="transactionType.WITHDRAW">Withdraw</option>
         <option [ngValue]="transactionType.TRANSFER">Transfer</option>
       </select>
-      <div class="error" *ngIf="transactionForm.get('type')?.invalid && transactionForm.get('type')?.touched">
-        Transaction Type is required.
+      <div *ngIf="transactionForm.get('type')?.invalid && transactionForm.get('type')?.touched" class="text-danger">
+        Transaction type is required.
       </div>
     </div>
 
-    <!-- Receiver Account (only for Transfer) -->
-    <div class="form-group" *ngIf="transactionForm.get('type')?.value === transactionType.TRANSFER">
-      <label for="receiverId">Receiver Account ID:</label>
-      <input type="number" id="receiverId" formControlName="receiverId" placeholder="Enter Receiver Account ID">
-      <div class="error" *ngIf="transactionForm.get('receiverId')?.invalid && transactionForm.get('receiverId')?.touched">
+    <!-- Receiver Account -->
+    <div class="form-group mb-3" *ngIf="transactionForm.get('type')?.value === transactionType.TRANSFER">
+      <label>Receiver Account ID</label>
+      <input type="number" formControlName="receiverId" class="form-control" placeholder="Enter Receiver Account ID">
+      <div *ngIf="transactionForm.get('receiverId')?.invalid && transactionForm.get('receiverId')?.touched" class="text-danger">
         Receiver Account ID is required for transfer.
       </div>
     </div>
 
     <!-- Amount -->
-    <div class="form-group">
-      <label for="amount">Amount:</label>
-      <input type="number" id="amount" formControlName="amount" placeholder="Enter Amount">
-      <div class="error" *ngIf="transactionForm.get('amount')?.invalid && transactionForm.get('amount')?.touched">
+    <div class="form-group mb-3">
+      <label>Amount</label>
+      <input type="number" formControlName="amount" class="form-control" placeholder="Enter Amount">
+      <div *ngIf="transactionForm.get('amount')?.invalid && transactionForm.get('amount')?.touched" class="text-danger">
         Amount must be greater than 0.
       </div>
     </div>
 
     <!-- Description -->
-    <div class="form-group">
-      <label for="description">Description:</label>
-      <textarea id="description" formControlName="description" placeholder="Enter Description"></textarea>
+    <div class="form-group mb-3">
+      <label>Description</label>
+      <textarea formControlName="description" class="form-control" rows="3" placeholder="Optional"></textarea>
     </div>
 
-    <!-- Submit Button -->
-    <button type="submit" [disabled]="transactionForm.invalid">Submit Transaction</button>
-    <button type="button" (click)="resetForm()">Reset</button>
+    <!-- Buttons -->
+    <div class="d-flex justify-content-between">
+      <button type="submit" class="btn btn-success" [disabled]="transactionForm.invalid">Submit</button>
+      <button type="button" class="btn btn-secondary" (click)="resetForm()">Reset</button>
+    </div>
 
   </form>
 </div>

@@ -12,11 +12,6 @@ import { isPlatformBrowser } from '@angular/common';
 })
 export class Transactionsservice {
 
-
-  // private apiUrl = environment.springUrl + "/account";
-  // private transactionsUrl = environment.springUrl + "transactions/account";
-  // private baseUrl = 'http://localhost:8085/api/transactions';
-
  private baseUrl = environment.springUrl + '/transactions';  // backend API base
 
   constructor(
@@ -248,11 +243,20 @@ transfer(transaction: Transaction, receiverId: number): Observable<Transaction> 
   //   return this.http.get<Transaction[]>(`${this.baseUrl}/account/${accountId}`);
   // }
 
+
+  //its working 
   getTransactionsByAccountId(accountId: number): Observable<Transaction[]> {
     // JSON server supports ?accountId=XYZ
     const params = new HttpParams().set('accountId', accountId);
-    return this.http.get<Transaction[]>('http://localhost:8085/api/transactions/', { params });
+    return this.http.get<Transaction[]>( `${this.baseUrl}/account/${accountId}`, { params });
   }
+
+  //demmo
+  getTransactionsByAccountIdAndDateRange(accountId: number, start: string, end: string): Observable<Transaction[]> {
+  return this.http.get<Transaction[]>(
+    `${this.baseUrl}/account/${accountId}/filter?startDate=${start}&endDate=${end}`
+  );
+}
 
   // ======================================
   // All Transaction (Admin Dashboard )
@@ -263,7 +267,7 @@ transfer(transaction: Transaction, receiverId: number): Observable<Transaction> 
   }
 
   // ======================================
-  // Withdraw & Transfer only
+  // Withdraw & Transfer only(for admin Dashbord it's working)
   // ======================================
   getWithdrawTransactions(): Observable<Transaction[]> {
     const headers = this.getAuthHeaders();
@@ -292,7 +296,7 @@ transfer(transaction: Transaction, receiverId: number): Observable<Transaction> 
 
   //For Admin dashbord
   //   getPositiveTransactions(): Observable<Transaction[]> {
-  //   return this.http.get<Transaction[]>(`${this.apiUrl}/transactions/positive`);
+  //   return this.http.get<Transaction[]>(`${this.baseUrl}/transactions/positive`);
   // }
 
 

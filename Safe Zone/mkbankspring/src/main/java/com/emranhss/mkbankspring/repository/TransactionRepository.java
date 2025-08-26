@@ -20,8 +20,12 @@ public interface TransactionRepository extends JpaRepository<Transaction,Long> {
 
     List<Transaction> findByAccount(Accounts account);
 
-    // Get transactions by account ID
+    // Get transactions by account ID (for tr statement)
     List<Transaction> findByAccountId(Long accountId);
+
+    // find transaction by accountId + date (for tr statement)
+    List<Transaction> findByAccount_IdAndTransactionTimeBetween(
+            Long accountId, Date startDate, Date endDate);
 
     // Get transactions by account ID (newest first)
     List<Transaction> findByAccountIdOrderByTransactionTimeDesc(Long accountId);
@@ -41,5 +45,9 @@ public interface TransactionRepository extends JpaRepository<Transaction,Long> {
 
     //For Admin dashbord
     List<Transaction> findByAmountGreaterThan(double amount);
+
+    //For Admin dashbord
+    List<Transaction> findByAmountLessThan(double amount);
+
 
 }

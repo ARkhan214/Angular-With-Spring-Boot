@@ -1,0 +1,179 @@
+
+
+====>addtransaction.ts
+
+
+import { ChangeDetectorRef, Component, Inject, Input, PLATFORM_ID } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Transactionsservice } from '../../service/transactionsservice';
+import { Transaction } from '../../model/transactions.model';
+import { Accountsservice } from '../../service/accountsservice';
+import { Accounts } from '../../model/accounts.model';
+import { User } from '../../model/user.model';
+import { TransactionType } from '../../model/transactionType.model';
+import { isPlatformBrowser } from '@angular/common';
+
+@Component({
+  selector: 'app-addtransaction',
+  standalone: false,
+  templateUrl: './addtransaction.html',
+  styleUrl: './addtransaction.css'
+})
+export class Addtransaction {
+
+  transactionForm!: FormGroup;
+  transactionType = TransactionType;
+  token: string = localStorage.getItem('authToken') || '';
+
+  constructor(
+    private fb: FormBuilder,
+    private transactionService: Transactionsservice,
+    private cdRef: ChangeDetectorRef,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
+
+  ngOnInit(): void {
+    // Reactive Form 
+    this.transactionForm = this.fb.group({
+      type: ['', Validators.required],
+      amount: [0, [Validators.required, Validators.min(1)]],
+      description: [''],
+      receiverId: ['']  //For Transfer 
+    });
+
+    if (isPlatformBrowser(this.platformId)) {
+      const savedForm = localStorage.getItem('transactionForm');
+      if (savedForm) {
+        this.transactionForm.patchValue(JSON.parse(savedForm));
+      }
+
+      this.transactionForm.valueChanges.subscribe(val => {
+        localStorage.setItem('transactionForm', JSON.stringify(val));
+      });
+    }
+  }
+
+  // Submit handler
+  doTransaction() {
+    if (this.transactionForm.invalid) {
+      alert('Form is invalid! Please fill all required fields.');
+      return;
+    }
+
+    const formValue = this.transactionForm.value;
+
+    // Transaction Object
+    const transaction: Transaction = {
+      type: formValue.type,
+      amount: formValue.amount,
+      description: formValue.description,
+      transactionTime: new Date(),  // backend optional, safe way
+      accountId: 0 // backend automatically accountId token থেকে handle করবে
+    };
+
+    // If Transfer check receiverId
+    if (formValue.type === this.transactionType.TRANSFER) {
+      if (!formValue.receiverId) {
+        alert('Receiver Account ID is required for Transfer!');
+        return;
+      }
+
+      transaction.receiverAccountId = formValue.receiverId;
+
+      // Transfer service call
+      this.transactionService.transfer(transaction, formValue.receiverId).subscribe({
+        next: res => {
+          alert('Transfer Successful!');
+          this.resetForm();
+        },
+        error: err => {
+          console.error('Transfer failed:', err);
+          alert(err.error?.message || 'Transfer Failed!');
+        }
+      });
+
+    } else {
+      // Deposit / Withdraw
+      this.transactionService.makeTransaction(transaction).subscribe({
+        next: res => {
+          alert('Transaction Successful!');
+          this.resetForm();
+        },
+        error: err => {
+          console.error('Transaction failed:', err);
+          alert(err.error?.message || 'Transaction Failed!');
+        }
+      });
+    }
+  }
+
+  // Form reset & localStorage clear
+  resetForm() {
+    this.transactionForm.reset({
+      type: '',
+      amount: 0,
+      description: '',
+      receiverId: ''
+    });
+    localStorage.removeItem('transactionForm');
+  }
+
+
+}
+
+
+
+
+
+
+
+==>addtransaction.html form.
+
+<div class="transaction-form-container">
+  <h2 class="form-title">Bank Transaction</h2>
+
+  <form [formGroup]="transactionForm" (ngSubmit)="doTransaction()" class="transaction-form">
+
+    <!-- Transaction Type -->
+    <div class="form-group">
+      <label for="type">Transaction Type:</label>
+      <select id="type" formControlName="type">
+        <option [ngValue]="transactionType.DEPOSIT">Deposit</option>
+        <option [ngValue]="transactionType.WITHDRAW">Withdraw</option>
+        <option [ngValue]="transactionType.TRANSFER">Transfer</option>
+      </select>
+      <div class="error" *ngIf="transactionForm.get('type')?.invalid && transactionForm.get('type')?.touched">
+        Transaction Type is required.
+      </div>
+    </div>
+
+    <!-- Receiver Account (only for Transfer) -->
+    <div class="form-group" *ngIf="transactionForm.get('type')?.value === transactionType.TRANSFER">
+      <label for="receiverId">Receiver Account ID:</label>
+      <input type="number" id="receiverId" formControlName="receiverId" placeholder="Enter Receiver Account ID">
+      <div class="error" *ngIf="transactionForm.get('receiverId')?.invalid && transactionForm.get('receiverId')?.touched">
+        Receiver Account ID is required for transfer.
+      </div>
+    </div>
+
+    <!-- Amount -->
+    <div class="form-group">
+      <label for="amount">Amount:</label>
+      <input type="number" id="amount" formControlName="amount" placeholder="Enter Amount">
+      <div class="error" *ngIf="transactionForm.get('amount')?.invalid && transactionForm.get('amount')?.touched">
+        Amount must be greater than 0.
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label for="description">Description:</label>
+      <textarea id="description" formControlName="description" placeholder="Enter Description"></textarea>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" [disabled]="transactionForm.invalid">Submit Transaction</button>
+    <button type="button" (click)="resetForm()">Reset</button>
+
+  </form>
+</div>

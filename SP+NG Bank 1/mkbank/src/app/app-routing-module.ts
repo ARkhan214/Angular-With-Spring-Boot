@@ -21,6 +21,7 @@ import { OnlyAddUser } from './components/only-add-user/only-add-user';
 import { AccountHolderProfile } from './auth/account-holder-profile/account-holder-profile';
 import { EmployeeProfile } from './auth/employee-profile/employee-profile';
 import { EmployeeComponent } from './components/employee-component/employee-component';
+import { Logout } from './auth/logout/logout';
 
 
 
@@ -39,6 +40,7 @@ const routes: Routes = [
   {path:'addtr',component:Addtransaction},
   {path:'trst',component:TransactionStatement},
   {path:'login',component:Login},
+  {path:'logout',component:Logout},
   {path: 'user-profile', component: UserProfile},
   {path: 'account-profile', component: AccountHolderProfile},
   {path: 'employee-profile', component: EmployeeProfile},

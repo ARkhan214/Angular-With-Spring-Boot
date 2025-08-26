@@ -26,7 +26,7 @@ export class AdminDashboard implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    //  Total Accounts
+    //  Total Accounts(its working)
     this.accountService.getAllAccounts().subscribe({
       next: (accounts) => {
         this.totalAccounts = accounts.length;
@@ -34,7 +34,7 @@ export class AdminDashboard implements OnInit {
       }
     });
 
-    //  Total Users
+    //  Total Users(its working)
     this.userService.getAllUsers().subscribe({
       next: (user) => {
         this.totalUsers = user.length;
@@ -42,7 +42,7 @@ export class AdminDashboard implements OnInit {
       }
     });
 
-    //  Total Deposit (positive)
+    //  Total Deposit (positive)(its working)
     this.transactionService.getPositiveTransactions().subscribe({
       next: (transactions) => {
         this.totalDeposit = transactions
@@ -55,7 +55,7 @@ export class AdminDashboard implements OnInit {
     //  Total Withdraw (negative)
    this.transactionService.getWithdrawTransactions().subscribe({
   next: (transactions) => {
-    console.log('Withdraw Transactions:', transactions); // এখন দেখতে পাবে
+    console.log('Withdraw Transactions:', transactions);
     this.totalWithdraw = transactions
       .map(t => t.amount) // positive value
       .reduce((acc, curr) => acc + curr, 0);

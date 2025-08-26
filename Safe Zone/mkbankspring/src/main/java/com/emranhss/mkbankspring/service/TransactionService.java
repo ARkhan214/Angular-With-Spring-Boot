@@ -184,6 +184,11 @@ public class TransactionService {
         return transactionRepository.findByAmountGreaterThan(0.0);
     }
 
+    //For Admin dashbord
+    public List<Transaction> getNegativeTransactions() {
+        return transactionRepository.findByAmountLessThan(0.0);
+    }
+
 
     // Email method inside TransactionService
     //method for receiver cashIn notification
@@ -238,10 +243,19 @@ public class TransactionService {
 
 
 
-    // Get transactions by accountId
+
+
+    // Get transactions by accountId(for tr statement)
     public List<Transaction> getTransactionsByAccountId(Long accountId){
         return transactionRepository.findByAccountId(accountId);
     }
+
+    // find transaction by accountId + date(for tr statement)
+    public List<Transaction> getTransactionsByAccountIdAndDateRange(Long accountId, Date start, Date end) {
+        return transactionRepository.findByAccount_IdAndTransactionTimeBetween(accountId, start, end);
+    }
+
+
 
 
 
@@ -249,8 +263,6 @@ public class TransactionService {
     public void deleteTransactionByAccountId(Long accountId) {
         transactionRepository.deleteByAccountId(accountId);
     }
-
-
 
 
     // Get transactions by Accounts object (connected with TransactionResCon Method Number -3)
