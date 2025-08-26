@@ -1,3 +1,9 @@
+Employee Part(fdsfds)
+postman a authorization token lagbe.
+POST http://localhost:8085/api/transactions/tr/2/3               eta diea employee transaction(TRANSFER) korbe.
+POST http://localhost:8085/api/transactions/tr/1		 eta diea employee transaction(DEPOSIT WITHDRAW) korbe.
+
+
 .requestMatchers(
    "/images/**",
    "/api/user/**",

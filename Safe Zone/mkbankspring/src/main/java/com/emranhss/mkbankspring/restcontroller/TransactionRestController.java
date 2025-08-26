@@ -30,16 +30,6 @@ public class TransactionRestController {
     @Autowired
     private UserRepository userRepository;
 
-    //for transaction after add sequrity(Initial,deposit,withdraw)
-    @PostMapping("tr/{id}")
-    public Transaction deposit(
-            @RequestBody Transaction transaction,
-            @PathVariable Long id,
-            @RequestHeader("Authorization") String authHeader) {
-
-        String token = authHeader.replace("Bearer ", "");  // token add
-        return transactionService.addTransaction(transaction, id, token);
-    }
     // Deposit / Withdraw / InitialBalance(Using for open account + depo+with)
     @PostMapping("add")
     public Transaction addTransaction(
@@ -79,7 +69,22 @@ public class TransactionRestController {
         return transactionService.onlyTransfer(transaction, sender.getId(), receiverId, token);
     }
 
-    // method transfer
+
+
+
+    //for transaction after add sequrity(Initial,deposit,withdraw)
+    @PostMapping("tr/{id}")
+    public Transaction deposit(
+            @RequestBody Transaction transaction,
+            @PathVariable Long id,
+            @RequestHeader("Authorization") String authHeader) {
+
+        String token = authHeader.replace("Bearer ", "");  // token add
+        return transactionService.addTransaction(transaction, id, token);
+    }
+
+
+    // method transfer(Employee login kore Transfer korte parbe j kono account er moddhe)
 @PostMapping("tr/{senderId}/{receiverId}")
 public Transaction transfer(
         @RequestBody Transaction transaction,

@@ -46,6 +46,7 @@ public class JwtService {
         return Jwts
                 .builder()
                 .setSubject(user.getEmail()) // Set Email as Subject
+                .claim("id", user.getId())   //  User ID claim(new add)
                 .claim("role", user.getRole()) // Add user Role to Payload
                 .setIssuedAt(new Date(System.currentTimeMillis())) // Set Token issue ime
                 .setExpiration(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000)) // Set Token Expire Time

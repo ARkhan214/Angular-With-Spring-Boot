@@ -22,6 +22,7 @@ import { AccountHolderProfile } from './auth/account-holder-profile/account-hold
 import { EmployeeProfile } from './auth/employee-profile/employee-profile';
 import { EmployeeComponent } from './components/employee-component/employee-component';
 import { Logout } from './auth/logout/logout';
+import { EmployeeTransaction } from './components/employee-transaction/employee-transaction';
 
 
 
@@ -38,6 +39,7 @@ const routes: Routes = [
   {path:'about',component:AboutBank},
   {path:'transaction',component:TransactionComponent},
   {path:'addtr',component:Addtransaction},
+  {path:'emptr',component:EmployeeTransaction},
   {path:'trst',component:TransactionStatement},
   {path:'login',component:Login},
   {path:'logout',component:Logout},

@@ -119,20 +119,14 @@ export class UserService {
 
   getProfile(): Observable<User> {
 
-    console.log(localStorage.getItem('authToken')+"333333333333333333333333333");
-
     let headers = new HttpHeaders();
 
     if (isPlatformBrowser(this.platformId)) {
-      const token = localStorage.getItem('authToken');
-      console.log(localStorage.getItem('authToken')+"555555555555555555555555555555");
-
+      const token = localStorage.getItem('authToken');      
       if (token) {
         headers = headers.set('Authorization', 'Bearer ' + token);
-        console.log('Authorization Header:', headers.get('Authorization')+"6666666666666666666666666666666");
       }
     }
-
     return this.http.get<User>(`${environment.springUrl}/user/profile`, { headers });
   }
 

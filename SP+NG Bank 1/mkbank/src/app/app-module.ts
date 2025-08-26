@@ -36,6 +36,7 @@ import { EmployeeProfile } from './auth/employee-profile/employee-profile';
 import { AuthInterceptor } from './service/auth.interceptor';
 import { EmployeeComponent } from './components/employee-component/employee-component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { EmployeeTransaction } from './components/employee-transaction/employee-transaction';
 
 
 @NgModule({
@@ -68,6 +69,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     AccountHolderProfile,
     EmployeeProfile,
     EmployeeComponent,
+    EmployeeTransaction,
   ],
   imports: [
     BrowserModule,

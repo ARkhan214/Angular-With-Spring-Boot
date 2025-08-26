@@ -38,6 +38,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/images/**",
                                 "/api/user/**",
+                                "/api/user/profile",
                                 "/api/transactions/*/deposits",
                                 "/api/transactions/*/withdraws",
                                 "/api/auth/**","/api/account/",
