@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { EmployeeTransactionService } from '../../service/employee-transaction-service';
 import { Transaction } from '../../model/transactions.model';
 import { TransactionType } from '../../model/transactionType.model';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-employee-transaction',
@@ -26,13 +27,26 @@ export class EmployeeTransaction implements OnInit {
   successMessage: string = '';
   errorMessage: string = '';
 
-  constructor(private transactionService: EmployeeTransactionService) { }
+  constructor(
+    private transactionService: EmployeeTransactionService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
 
-  ngOnInit() {
-    const storedAccountId = localStorage.getItem('accountId');
-    if (storedAccountId) {
-      this.accountId = Number(storedAccountId);
-      this.senderId = Number(storedAccountId); // senderId একই accountId ধরে নিচ্ছি
+  // ngOnInit() {
+  //   const storedAccountId = localStorage.getItem('accountId');
+  //   if (storedAccountId) {
+  //     this.accountId = Number(storedAccountId);
+  //     this.senderId = Number(storedAccountId); // senderId একই accountId ধরে নিচ্ছি
+  //   }
+  // }
+
+    ngOnInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      const storedAccountId = localStorage.getItem('accountId');
+      if (storedAccountId) {
+        this.accountId = Number(storedAccountId);
+        this.senderId = Number(storedAccountId);
+      }
     }
   }
 
@@ -50,6 +64,7 @@ export class EmployeeTransaction implements OnInit {
           this.transaction.amount = 0;
           this.transaction.description = '';
           this.transaction.type = undefined;
+          
         },
         error: (err) => {
           console.error(err);

@@ -47,7 +47,7 @@ public class JwtService {
                 .builder()
                 .setSubject(user.getEmail()) // Set Email as Subject
                 .claim("id", user.getId())   //  User ID claim(new add)
-                .claim("role", user.getRole()) // Add user Role to Payload
+                .claim("role", user.getRole().name()) // Add user Role to Payload
                 .setIssuedAt(new Date(System.currentTimeMillis())) // Set Token issue ime
                 .setExpiration(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000)) // Set Token Expire Time
                 .signWith(getSigningKey()) // Sign the Token with Secreat key

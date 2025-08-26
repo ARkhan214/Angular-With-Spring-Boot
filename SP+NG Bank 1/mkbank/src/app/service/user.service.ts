@@ -10,7 +10,7 @@ import { AuthResponse } from '../model/authResponse.model';
   providedIn: 'root'
 })
 export class UserService {
-  // private baseUrl=environment.springUrl+"/user/";
+  
   private baseUrl = environment.springUrl;
 
   private currentUserSubject: BehaviorSubject<User | null>;
@@ -103,19 +103,7 @@ export class UserService {
   }
   
   
-  // getProfile(): Observable<User> {
-  //     let headers = new HttpHeaders();
-  
-  //     if (isPlatformBrowser(this.platformId)) {
-  //       const token = localStorage.getItem('authToken');
-  //       if (token) {
-  //         headers = headers.set('Authorization', 'Bearer ' + token);
-  //         console.log(headers);
-  //       }
-  //     }
-  
-  //     return this.http.get<User>(`${environment.springUrl}/User/profile`, { headers });
-  //   }
+
 
   getProfile(): Observable<User> {
 

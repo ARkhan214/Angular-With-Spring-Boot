@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../service/user.service';
+import { AuthService } from '../../service/auth-service';
+import { Role } from '../../model/role.model';
 
 @Component({
   selector: 'app-sidebar',
@@ -8,7 +10,48 @@ import { UserService } from '../../service/user.service';
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css'
 })
-export class Sidebar {
+export class Sidebar implements OnInit{
+
+
+    userRole: string | null = null;
+
+  constructor(
+    private authService: AuthService,
+    private userService:UserService
+  ) {}
+
+  //   ngOnInit(): void {
+  //   this.userService.currentUser$.subscribe(user=>{
+  //     this.userRole = user?.role || '';
+  //   })
+  // }
+
+  // ngOnInit(): void {
+  //   this.userRole = this.authService.getUserRole();
+  //   console.log('Sidebar loaded with role:', this.userRole);
+  // }
+
+  ngOnInit(): void {
+  // Subscribe to userRole from AuthService
+  this.authService.userRole$.subscribe(role => {
+    this.userRole = role;
+    console.log('Sidebar loaded with role:', this.userRole);
+  });
+}
+
+
+  isAdmin(): boolean {
+    return this.userRole === Role.ADMIN;
+  }
+
+  isUser(): boolean {
+    return this.userRole === Role.USER;
+  }
+
+  isEmployee(): boolean {
+    return this.userRole === Role.EMPLOYEE;
+  }
+
 
   //    userType: string = '';
 

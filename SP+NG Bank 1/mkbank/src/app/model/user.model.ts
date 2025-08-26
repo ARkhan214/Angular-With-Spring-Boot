@@ -1,3 +1,5 @@
+import { Role } from "./role.model";
+
 export class User{
 
     id?:number;
@@ -6,7 +8,7 @@ export class User{
     password!:string;
     phoneNumber!:string;
     dateOfBirth!:Date;
-    role !:string;
+    role !:Role;
     photo?: string;  
     
 }

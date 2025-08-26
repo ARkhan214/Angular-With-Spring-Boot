@@ -11,7 +11,6 @@ import { isPlatformBrowser } from '@angular/common';
 })
 export class Accountsservice {
 
-
   private apiUrl = environment.springUrl;
 
   constructor(

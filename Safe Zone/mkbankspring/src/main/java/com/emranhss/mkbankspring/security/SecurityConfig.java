@@ -41,21 +41,24 @@ public class SecurityConfig {
                                 "/api/user/profile",
                                 "/api/transactions/*/deposits",
                                 "/api/transactions/*/withdraws",
-                                "/api/auth/**","/api/account/",
+                                "/api/auth/**",
                                 "/api/account/all",
                                 "/api/account/**",
                                 "/api/user/login",
                                 "/api/user/login/**",
                                 "/images/**",
                                 "/api/user/active/**",
+                                "/api/transactions/account/**",
+                                "/api/transactions/**",
+                                "/api/account/",
                                 "/api/employees/",
                                 "/api/employees/**",
                                 "/api/transactions/**",
-                                "/api/transactions/account/**"
+                                "/api/transactions/tr/**"
                         )
                         .permitAll()
-//                        .requestMatchers("/api/user/all","/api/user/login","/api/auth/**","/api/transactions/**").hasRole("USER")
-//                        .requestMatchers("/api/employees/**").hasRole("EMPLOYEE")
+//                        .requestMatchers("/api/transactions/**","/api/account/").hasRole("USER")
+//                        .requestMatchers("/api/employees/","/api/employees/**","/api/transactions/**","/api/transactions/tr/**").hasRole("EMPLOYEE")
                         .anyRequest().authenticated()
                 )
                 .userDetailsService(userService)

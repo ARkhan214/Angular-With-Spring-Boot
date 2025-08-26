@@ -177,3 +177,151 @@ export class Addtransaction {
 
   </form>
 </div>
+
+
+
+
+
+
+EMP TRANSACTION ts
+
+import { Component, OnInit } from '@angular/core';
+import { EmployeeTransactionService } from '../../service/employee-transaction-service';
+import { Transaction } from '../../model/transactions.model';
+import { TransactionType } from '../../model/transactionType.model';
+
+@Component({
+  selector: 'app-employee-transaction',
+  standalone: false,
+  templateUrl: './employee-transaction.html',
+  styleUrl: './employee-transaction.css'
+})
+export class EmployeeTransaction implements OnInit {
+
+  transactionType = TransactionType;
+
+  transaction: Partial<Transaction> = {
+    amount: 0,
+    description: ''
+    
+  };
+
+  accountId: number = 0;      // Deposit
+  senderId: number = 0;       // Transfer
+  receiverId: number = 0;     // Transfer
+
+  successMessage: string = '';
+  errorMessage: string = '';
+
+  constructor(private transactionService: EmployeeTransactionService) { }
+
+  ngOnInit() {
+    const storedAccountId = localStorage.getItem('accountId');
+    if (storedAccountId) {
+      this.accountId = Number(storedAccountId);
+      this.senderId = Number(storedAccountId); // senderId একই accountId ধরে নিচ্ছি
+    }
+  }
+
+  deposit() {
+    if (!this.accountId || !this.transaction.amount || !this.transaction.type) {
+      this.errorMessage = 'Account ID, Amount, and Type are required!';
+      return;
+    }
+
+    this.transactionService.deposit(this.transaction as Transaction, this.accountId)
+      .subscribe({
+        next: (res) => {
+          this.successMessage = `Deposit successful: ${res.amount}`;
+          this.errorMessage = '';
+          this.transaction.amount = 0;
+          this.transaction.description = '';
+          this.transaction.type = undefined;
+        },
+        error: (err) => {
+          console.error(err);
+          this.errorMessage = 'Deposit failed!';
+          this.successMessage = '';
+        }
+      });
+  }
+
+  transfer() {
+    if (!this.senderId || !this.receiverId || !this.transaction.amount || !this.transaction.type) {
+      this.errorMessage = 'Sender, Receiver, Amount, and Type are required!';
+      return;
+    }
+
+    this.transactionService.transfer(this.transaction as Transaction, this.senderId, this.receiverId)
+      .subscribe({
+        next: (res) => {
+          this.successMessage = `Transfer successful: ${res.amount}`;
+          this.errorMessage = '';
+          this.transaction.amount = 0;
+          this.transaction.description = '';
+          this.transaction.type = undefined;
+        },
+        error: (err) => {
+          console.error(err);
+          this.errorMessage = 'Transfer failed!';
+          this.successMessage = '';
+        }
+      });
+  }
+}
+
+
+
+
+html
+<div class="transaction-form">
+
+  <h3>Deposit / Transfer Transaction</h3>
+
+  <!-- Success & Error Messages -->
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <!-- Transaction Form -->
+  <form (ngSubmit)="transaction.type === transactionType.TRANSFER ? transfer() : deposit()">
+
+    <!-- Account ID / Sender ID -->
+    <div *ngIf="transaction.type !== transactionType.TRANSFER">
+      <label>Account ID:</label>
+      <input type="number" [(ngModel)]="accountId" name="accountId" required>
+    </div>
+
+    <div *ngIf="transaction.type === transactionType.TRANSFER">
+      <label>Sender ID:</label>
+      <input type="number" [(ngModel)]="senderId" name="senderId" required>
+    </div>
+
+    <!-- Receiver ID (Only for Transfer) -->
+    <div *ngIf="transaction.type === transactionType.TRANSFER">
+      <label>Receiver ID:</label>
+      <input type="number" [(ngModel)]="receiverId" name="receiverId" required>
+    </div>
+
+    <!-- Amount -->
+    <label>Amount:</label>
+    <input type="number" [(ngModel)]="transaction.amount" name="amount" required>
+
+    <!-- Description -->
+    <label>Description:</label>
+    <input type="text" [(ngModel)]="transaction.description" name="description">
+
+    <!-- Transaction Type -->
+    <label>Type:</label>
+    <select [(ngModel)]="transaction.type" name="type" required>
+      <option [ngValue]="transactionType.DEPOSIT">Deposit</option>
+      <option [ngValue]="transactionType.WITHDRAW">Withdraw</option>
+      <option [ngValue]="transactionType.TRANSFER">Transfer</option>
+    </select>
+
+    <!-- Submit Button -->
+    <button type="submit">
+      {{ transaction.type === transactionType.TRANSFER ? 'Transfer' : 'Deposit/Withdraw' }}
+    </button>
+
+  </form>
+</div>
