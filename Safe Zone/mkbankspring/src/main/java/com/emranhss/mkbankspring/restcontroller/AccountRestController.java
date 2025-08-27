@@ -1,5 +1,6 @@
 package com.emranhss.mkbankspring.restcontroller;
 
+import com.emranhss.mkbankspring.dto.AccountsDTO;
 import com.emranhss.mkbankspring.entity.Accounts;
 import com.emranhss.mkbankspring.entity.User;
 import com.emranhss.mkbankspring.repository.UserRepository;
@@ -99,19 +100,25 @@ public class AccountRestController {
 
         return ResponseEntity.ok(updated);
     }
+//
+//    @GetMapping("/profile")
+//    public ResponseEntity<?> getProfile(Authentication authentication) {
+//
+//        System.out.println("Authenticated User: " + authentication.getName());
+//        System.out.println("Authorities: " + authentication.getAuthorities());
+//        String email = authentication.getName();
+//        Optional<User> user =userRepository.findByEmail(email);
+//        Accounts accounts = accountService.getProfileByUserId(user.get().getId());
+//        return ResponseEntity.ok(accounts);
+//
+//    }
 
-    @GetMapping("/profile")
-    public ResponseEntity<?> getProfile(Authentication authentication) {
 
-        System.out.println("Authenticated User: " + authentication.getName());
-        System.out.println("Authorities: " + authentication.getAuthorities());
-        String email = authentication.getName();
-        Optional<User> user =userRepository.findByEmail(email);
-        Accounts accounts = accountService.getProfileByUserId(user.get().getId());
-        return ResponseEntity.ok(accounts);
 
+    @GetMapping("profile")
+    public AccountsDTO getProfile(Authentication authentication) {
+        return accountService.getProfileByEmail(authentication.getName());
     }
-
 
 
 

@@ -1,5 +1,6 @@
 package com.emranhss.mkbankspring.service;
 
+import com.emranhss.mkbankspring.dto.AccountsDTO;
 import com.emranhss.mkbankspring.entity.Accounts;
 import com.emranhss.mkbankspring.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,10 +41,34 @@ public class AccountService {
         accountRepository.deleteById(id);
     }
 
-    public Accounts getProfileByUserId(Long userId) {
-        return accountRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
+//    public Accounts getProfileByUserId(Long userId) {
+//        return accountRepository.findByUserId(userId)
+//                .orElseThrow(() -> new RuntimeException("Account not found"));
+//    }
+
+
+    // Profile method (returns DTO)
+    public AccountsDTO getProfileByEmail(String email) {
+        Accounts account = findAccountByEmail(email);
+
+        AccountsDTO dto = new AccountsDTO();
+        dto.setId(account.getId());
+        dto.setName(account.getName());
+        dto.setAccountActiveStatus(account.isAccountActiveStatus());
+        dto.setAccountType(account.getAccountType());
+        dto.setBalance(account.getBalance());
+        dto.setNid(account.getNid());
+        dto.setPhoneNumber(account.getPhoneNumber());
+        dto.setAddress(account.getAddress());
+        dto.setPhoto(account.getPhoto());
+        dto.setDateOfBirth(account.getDateOfBirth());
+        dto.setAccountOpeningDate(account.getAccountOpeningDate());
+        dto.setAccountClosingDate(account.getAccountClosingDate());
+        dto.setRole(account.getRole() != null ? account.getRole().name() : null);
+
+        return dto;
     }
+
 
 
     // Find Account by Email

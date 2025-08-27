@@ -3,6 +3,8 @@ import { User } from '../../model/user.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../service/user.service';
 import { AuthService } from '../../service/auth-service';
+import { EmployeeService } from '../../service/employee-service';
+import { Employee } from '../../model/employee.model';
 
 @Component({
   selector: 'app-employee-profile',
@@ -11,18 +13,18 @@ import { AuthService } from '../../service/auth-service';
   styleUrl: './employee-profile.css'
 })
 export class EmployeeProfile {
-employee!: User;
+employee!: Employee;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private userService: UserService,
     private authService:AuthService,
+    private employeeService:EmployeeService,
     private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
-    this.userService.getProfile().subscribe({
+    this.employeeService.getProfile().subscribe({
       next: (data) => {
         this.employee = data;
         console.log(data);

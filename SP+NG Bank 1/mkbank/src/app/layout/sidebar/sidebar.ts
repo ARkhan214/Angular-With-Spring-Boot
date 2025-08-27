@@ -10,15 +10,15 @@ import { Role } from '../../model/role.model';
   templateUrl: './sidebar.html',
   styleUrl: './sidebar.css'
 })
-export class Sidebar implements OnInit{
+export class Sidebar implements OnInit {
 
 
-    userRole: string | null = null;
+  userRole: string | null = null;
 
   constructor(
     private authService: AuthService,
-    private userService:UserService
-  ) {}
+    private userService: UserService
+  ) { }
 
   //   ngOnInit(): void {
   //   this.userService.currentUser$.subscribe(user=>{
@@ -32,12 +32,18 @@ export class Sidebar implements OnInit{
   // }
 
   ngOnInit(): void {
-  // Subscribe to userRole from AuthService
-  this.authService.userRole$.subscribe(role => {
-    this.userRole = role;
-    console.log('Sidebar loaded with role:', this.userRole);
-  });
-}
+    // Subscribe to userRole from AuthService
+    this.authService.userRole$.subscribe(role => {
+      this.userRole = role;
+      console.log('Sidebar loaded with role:', this.userRole);
+    });
+  }
+
+
+
+  logout() {
+    this.authService.logout();
+  }
 
 
   isAdmin(): boolean {

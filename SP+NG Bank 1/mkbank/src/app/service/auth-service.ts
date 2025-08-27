@@ -122,7 +122,7 @@ export class AuthService {
       localStorage.removeItem('authToken');
       this.userRoleSubject.next(null);
     }
-    this.router.navigate(['/login']);
+    this.router.navigate(['/']);
   }
 
 
