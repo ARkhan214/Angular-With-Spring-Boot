@@ -44,4 +44,17 @@ public class AccountService {
         return accountRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
     }
+
+
+    // Find Account by Email
+    public Accounts findAccountByEmail(String email) {
+        return accountRepository.findByUserEmail(email)
+                .orElseThrow(() -> new RuntimeException("Account not found for user with email: " + email));
+    }
+
+    // Find Account Id by Email
+    public Long findAccountIdByEmail(String email) {
+        Accounts account = findAccountByEmail(email);
+        return account.getId();
+    }
 }

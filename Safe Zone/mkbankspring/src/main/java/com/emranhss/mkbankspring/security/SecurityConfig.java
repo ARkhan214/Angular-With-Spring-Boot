@@ -38,7 +38,6 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/images/**",
                                 "/api/user/**",
-                                "/api/user/profile",
                                 "/api/transactions/*/deposits",
                                 "/api/transactions/*/withdraws",
                                 "/api/auth/**",
@@ -57,6 +56,7 @@ public class SecurityConfig {
                                 "/api/transactions/tr/**"
                         )
                         .permitAll()
+                                .requestMatchers("/api/user/profile").authenticated()
 //                        .requestMatchers("/api/transactions/**","/api/account/").hasRole("USER")
 //                        .requestMatchers("/api/employees/","/api/employees/**","/api/transactions/**","/api/transactions/tr/**").hasRole("EMPLOYEE")
                         .anyRequest().authenticated()

@@ -1,5 +1,5 @@
 <p class="text-center text-primary fw-bold fs-4 mb-4"><h4 class="text-center">👤 Account Holder Profile</h4>
-
+      <div><button (click)="logout()" class="btn btn-danger mb-3">Logout</button></div>
 <div *ngIf="account && account.role === 'USER'; else noAccount" class="container py-4">
   <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
     <div class="row g-0">
