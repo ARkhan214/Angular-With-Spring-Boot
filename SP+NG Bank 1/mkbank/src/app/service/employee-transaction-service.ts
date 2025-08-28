@@ -20,7 +20,7 @@ export class EmployeeTransactionService {
 
 
   // Deposit / Add Transaction
-  deposit(transaction: Transaction, accountId: number): Observable<Transaction> {
+  depositAndWithdrawHandel(transaction: Transaction, accountId: number): Observable<Transaction> {
     let headers = new HttpHeaders();
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem('authToken');
@@ -32,6 +32,20 @@ export class EmployeeTransactionService {
     return this.http.post<Transaction>(`${this.baseUrl}/tr/${accountId}`, transaction, { headers });
   }
 
+
+  // withdraw(transaction: Transaction, accountId: number): Observable<Transaction> {
+  //   let headers = new HttpHeaders();
+  //   if (isPlatformBrowser(this.platformId)) {
+  //     const token = localStorage.getItem('authToken');
+  //     if (token) {
+  //       headers = headers.set('Authorization', 'Bearer ' + token);
+  //     }
+  //   }
+
+  //   return this.http.post<Transaction>(`${this.baseUrl}/tr/${accountId}`, transaction, { headers });
+  // }
+
+
   // Transfer Transaction (Employee can transfer between accounts)
   transfer(transaction: Transaction, senderId: number, receiverId: number): Observable<Transaction> {
     let headers = new HttpHeaders();
@@ -42,11 +56,7 @@ export class EmployeeTransactionService {
       }
     }
 
-    return this.http.post<Transaction>(
-      `${this.baseUrl}/tr/${senderId}/${receiverId}`,
-      transaction,
-      { headers }
-    );
+    return this.http.post<Transaction>(`${this.baseUrl}/tr/${senderId}/${receiverId}`,transaction,{ headers });
   }
 
 }

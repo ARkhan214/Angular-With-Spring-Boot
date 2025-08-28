@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { ChangeDetectorRef, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { WithdrawService } from '../../service/withdraw.service';
 import { Accountsservice } from '../../service/accountsservice';
 import { Withdraw } from '../../model/withdraw.model';
 import { Transactionsservice } from '../../service/transactionsservice';
 import { Transaction } from '../../model/transactions.model';
+import { TransactionType } from '../../model/transactionType.model';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-withdraw-component',
@@ -13,81 +15,91 @@ import { Transaction } from '../../model/transactions.model';
   styleUrl: './withdraw-component.css'
 })
 export class WithdrawComponent implements OnInit {
+
+
+  formGroup !: FormGroup;
+  transactionType = TransactionType;
+  token: string = '';
+
+  constructor(
+    private fb: FormBuilder,
+    private transactionService: Transactionsservice,
+    private cdRef: ChangeDetectorRef,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
+
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
+    // Browser-only token fetch
+    if (isPlatformBrowser(this.platformId)) {
+      this.token = localStorage.getItem('authToken') || '';
+    }
+
+    // Reactive form setup
+    this.formGroup = this.fb.group({
+      type: ['', Validators.required],
+      amount: [0, [Validators.required, Validators.min(1)]],
+      description: ['']
+    });
+
+    // Load saved form data from localStorage
+    if (isPlatformBrowser(this.platformId)) {
+      const savedForm = localStorage.getItem('transactionForm');
+      if (savedForm) {
+        this.formGroup.patchValue(JSON.parse(savedForm));
+      }
+
+      // Auto-save form on changes
+      this.formGroup.valueChanges.subscribe(val => {
+        localStorage.setItem('transactionForm', JSON.stringify(val));
+      });
+    }
   }
 
-  // formGroup !: FormGroup;
+  // Submit handler
+  onSubmit() {
+    if (this.formGroup.invalid) {
+      alert('Form is invalid! Please fill all required fields.');
+      return;
+    }
 
-  // constructor(
-  //   private formBuilder: FormBuilder,
-  //   private withdrawService: WithdrawService,
-  //   private transactionService: Transactionsservice,
-  //   private accountService: Accountsservice
-  // ) { }
+    const formValue = this.formGroup.value;
 
-  // ngOnInit(): void {
-  //   this.formGroup = this.formBuilder.group({
-  //     accountId: [''],
-  //     accountName: [''],  //last update for show name in transaction table
-  //     amount: [''],
-  //     transactionDate: [new Date()],
-  //     transactionId: [''],
-  //     description: ['']
-  //   })
-  // }
+    // Build transaction object
+    const transaction: Transaction = {
+      type: formValue.type,
+      amount: formValue.amount,
+      description: formValue.description,
+      transactionTime: new Date(),
+      accountId: 0 // backend will handle accountId from token
+    };
+    
+      // Only For Withdraw
+    if(formValue.type === this.transactionType.WITHDRAW) {
+    
+      this.transactionService.makeTransaction(transaction).subscribe({
+        next: res => {
+          alert('Transaction Successful!');
+          this.resetForm();
+        },
+        error: err => {
+          console.error('Transaction failed:', err);
+          alert(err.error?.message || 'Transaction Failed!');
+        }
+      });
+    }
+  }
 
-  // withdraw(): void {
-  //   const withdrawData: Withdraw = this.formGroup.value;
-  //   const accountName = this.formGroup.value.accountName;  //last update for show name in transaction table
-
-  //   this.accountService.withdrawFromAccount(withdrawData.accountId, withdrawData.amount,).subscribe({
-  //     next: () => {
-
-  //       this.withdrawService.saveWithdraw(withdrawData).subscribe({
-  //         next: () => {
-
-  //           // Transaction log  start
-  //           const txn: Transaction = {
-  //             id: '',
-  //             accountId: withdrawData.accountId,
-  //             accountName: accountName,   //last update for show name in transaction table
-  //             type: 'Withdraw',
-  //             amount: withdrawData.amount,
-  //             transactiontime: new Date()
-  //           };
-
-  //           this.transactionService.logTransaction(txn).subscribe({
-  //             next: () => {
-  //               console.log('Transaction logged.');
-  //               alert('Withdraw Successful and Transaction Logged');
-  //               this.formGroup.reset();
-  //             },
-  //             error: () => {
-  //               console.error('Transaction log failed.');
-  //               alert('Withdraw success but transaction logging failed.');
-  //             }
-  //           });
-  //           // Transaction log  end
-
-
-  //           // alert('Withdraw Successful');
-  //           // this.formGroup.reset();
-
-
-  //         },
-  //         error: (err) => {
-  //           console.error('Withdraw save failed:', err);
-  //           alert('Withdraw save failed!');
-  //         }
-  //       });
-  //     },
-  //     error: (err) => {
-  //       console.error('Account withdraw failed:', err);
-  //       alert(err.message || 'Withdraw failed from account');
-  //     }
-  //   });
-  // }
+  // Reset form + clear localStorage
+  resetForm() {
+    this.formGroup.reset({
+      type: '',
+      amount: 0,
+      description: ''
+    });
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('transactionForm');
+    }
+  }
 
 
 

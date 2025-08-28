@@ -68,47 +68,4 @@ onSubmit() {
   }
 
 
-
-
-  // onSubmit() {
-  //   this.userService.login(this.user as User).subscribe({
-  //     next: (response: AuthResponse) => {
-  //       console.log("Login successful:", response);
-
-  //       //Save Token in localStorage
-  //       localStorage.setItem('authToken', response.token);
-
-  //       this.successMessage = response.message;
-  //       this.errorMessage = '';
-
-  //       // Find role by decode JWT Token
-  //       const payload = JSON.parse(atob(response.token.split('.')[1]));
-  //       const role: Role = payload.role as Role;
-  //       const accountId = payload.id;
-  //       console.log("Account id " + accountId);
-
-  //       // Update AuthService with enum role
-  //       this.authService.setUserRole(role);
-
-  //       // Redirect By Role
-  //       if (role === Role.ADMIN) {
-  //         this.router.navigate(['/admin-profile']);
-  //       } else if (role === Role.EMPLOYEE) {
-  //         this.router.navigate(['/employee-profile']);
-  //       } else if (role === Role.USER) {
-  //         this.router.navigate(['/account-profile']);
-
-  //       } else {
-  //         this.router.navigate(['/']);
-  //       }
-  //     },
-  //     error: (err) => {
-  //       console.error("Login failed:", err);
-  //       this.errorMessage = "Invalid email or password!";
-  //       this.successMessage = '';
-  //     }
-  //   });
-  // }
-
-
 }

@@ -1,5 +1,4 @@
 <p><h4 class="text-center">Employee-profile</h4>
- <button (click)="logout()">Logout</button>
 <div class="admin-profile-container" *ngIf="employee && employee.role === 'EMPLOYEE'; else noEmployee">
   <h2>Welcome, {{ employee.name }}</h2>
   <img *ngIf="employee.photo" [src]="'http://localhost:8085/images/employee/'+employee.photo" alt="Employee Photo" class="profile-photo">

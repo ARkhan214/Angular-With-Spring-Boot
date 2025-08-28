@@ -98,6 +98,8 @@ export class Accountsservice {
     return this.http.get<Accounts[]>(`${this.apiUrl}/account/all`);
   }
 
+
+
   // view account info
   getAllAccountById(id: number): Observable<Accounts> {
     return this.http.get<Accounts>(`${this.apiUrl}/account/${id}`);

@@ -1,31 +1,61 @@
-<section class="py-5 bg-light">
+<section class="py-5" 
+         style="min-height:100vh; display:flex; align-items:center; justify-content:center; 
+                background:linear-gradient(135deg,#eaebef,#a169d9);">
   <div class="container d-flex justify-content-center align-items-center">
-    <form (ngSubmit)="onSubmit()" class="shadow p-4 rounded bg-white" style="width: 100%; max-width: 400px;">
-      <h4 class="mb-4 text-center">User Login</h4>
+    <form (ngSubmit)="onSubmit()" 
+          class="p-5 rounded-5 shadow-lg" 
+          style="width: 100%; max-width: 550px;
+                 background: rgba(255, 255, 255, 0.15);
+                 backdrop-filter: blur(15px);
+                 border: 1px solid rgba(255, 255, 255, 0.25);
+                 box-shadow: 0 12px 40px rgba(0,0,0,0.3);">
+      
+      <!-- Title -->
+      <h3 class="mb-4 text-center fw-bold" 
+          style="color:#fff; letter-spacing:1px; font-size:28px;">
+        🔐 Welcome Back  
+      </h3>
+      <p class="text-center mb-4" style="color:#e0e0e0;">
+        Please login to continue to your account
+      </p>
 
       <!-- Email Input -->
       <div class="form-outline mb-4">
-        <label class="form-label">Email address</label>
-        <input [(ngModel)]="user.email" name="email" type="email" class="form-control" required />
+        <label class="form-label fw-semibold" style="color:#fff;">Email address</label>
+        <input [(ngModel)]="user.email" 
+               name="email" 
+               type="email" 
+               class="form-control rounded-4 shadow-sm" 
+               style="border:none; background:rgba(255,255,255,0.25); color:#fff; padding:14px;" 
+               placeholder="Enter your email" required />
       </div>
 
       <!-- Password Input -->
       <div class="form-outline mb-4">
-        <label class="form-label">Password</label>
-        <input [(ngModel)]="user.password" name="password" type="password" class="form-control" required />
+        <label class="form-label fw-semibold" style="color:#fff;">Password</label>
+        <input [(ngModel)]="user.password" 
+               name="password" 
+               type="password" 
+               class="form-control rounded-4 shadow-sm" 
+               style="border:none; background:rgba(255,255,255,0.25); color:#fff; padding:14px;" 
+               placeholder="Enter your password" required />
       </div>
 
       <!-- Error / Success Messages -->
-      <div *ngIf="errorMessage" class="text-danger mb-3 text-center">
+      <div *ngIf="errorMessage" class="mb-3 text-center fw-semibold" style="color:#ffb3b3;">
         {{ errorMessage }}
       </div>
-      <div *ngIf="successMessage" class="text-success mb-3 text-center">
+      <div *ngIf="successMessage" class="mb-3 text-center fw-semibold" style="color:#b3ffcc;">
         {{ successMessage }}
       </div>
 
       <!-- Submit Button -->
-      <button type="submit" class="btn btn-primary btn-block w-100 mb-3">
-        Login
+      <button type="submit" 
+              class="btn w-100 fw-bold shadow-lg" 
+              style="padding:14px; border-radius:40px; font-size:18px; letter-spacing:0.5px; 
+                     background:linear-gradient(135deg,#100c0c,#dd2476); 
+                     color:#fff; border:none; transition:all 0.3s;">
+        🚀 Login
       </button>
     </form>
   </div>

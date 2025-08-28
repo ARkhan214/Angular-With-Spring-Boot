@@ -86,10 +86,10 @@
             </li>
 
 
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link text-success fw-semibold" routerLink="/addtr"><i
                         class="fa fa-exchange me-1 text-success"></i>Transaction</a>
-            </li>
+            </li> -->
 
         </div>
 
@@ -98,15 +98,14 @@
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
                 style="color: #fff;">
                 <i class="fas fa-tools" style="color: #34d399;"></i>
-                <span style="margin-left: 10px;">Payment</span>
+                <span style="margin-left: 10px;">Utilities Bill:</span>
             </a>
             <div id="collapseUtilities" class="collapse">
                 <div class="bg-light py-2 collapse-inner rounded">
-                    <h6 class="collapse-header text-dark">Utilities Bill:</h6>
-                    <a class="collapse-item" href="utilities-color.html">Electric Bill</a>
-                    <a class="collapse-item" href="utilities-border.html">Water Bill</a>
-                    <a class="collapse-item" href="utilities-animation.html">Gas Bill</a>
-                    <a class="collapse-item" href="utilities-other.html">Education</a>
+                    <a class="collapse-item" href="#">Electric Bill</a>
+                    <a class="collapse-item" href="#">Water Bill</a>
+                    <a class="collapse-item" href="#">Gas Bill</a>
+                    <a class="collapse-item" href="#">Education</a>
                 </div>
             </div>
         </li>
@@ -122,9 +121,7 @@
             </a>
             <div id="collapseTwo" class="collapse">
                 <div class="bg-light py-2 collapse-inner rounded">
-                    <h6 class="collapse-header text-dark">Savings</h6>
-                    <a class="collapse-item" routerLink="/addtr">Deposit</a>
-                    <a class="collapse-item" routerLink="/addtr">Withdwaw</a>
+                    <a class="collapse-item" routerLink="/withdraw">Withdwaw</a>
                     <a class="collapse-item" routerLink="/addtr">Transfar Money</a>
                     <a class="collapse-item" routerLink="/trst">Transaction Statement</a>
                     <a class="collapse-item" routerLink="#">Fixed Deposit</a>
@@ -146,10 +143,10 @@
                     class="fa fa-exchange me-1 text-success"></i>Employee Profile</a>
         </li>
 
-        <li class="nav-item">
+        <!-- <li class="nav-item">
             <a class="nav-link text-success fw-semibold" routerLink="/emptr"><i
                     class="fa fa-exchange me-1 text-success"></i>Employee Transaction</a>
-        </li>
+        </li> -->
 
         <li class="nav-item">
             <a class="nav-link text-muted fw-semibold" routerLink="/adduser"><i
@@ -177,10 +174,10 @@
             <div id="collapseUtilities" class="collapse">
                 <div class="bg-light py-2 collapse-inner rounded">
                     <h6 class="collapse-header text-dark">Utilities Bill:</h6>
-                    <a class="collapse-item" href="utilities-color.html">Electric Bill</a>
-                    <a class="collapse-item" href="utilities-border.html">Water Bill</a>
-                    <a class="collapse-item" href="utilities-animation.html">Gas Bill</a>
-                    <a class="collapse-item" href="utilities-other.html">Education</a>
+                    <a class="collapse-item" href="#">Electric Bill</a>
+                    <a class="collapse-item" href="#">Water Bill</a>
+                    <a class="collapse-item" href="#">Gas Bill</a>
+                    <a class="collapse-item" href="#">Education</a>
                 </div>
             </div>
         </li>
@@ -197,9 +194,9 @@
             <div id="collapseTwo" class="collapse">
                 <div class="bg-light py-2 collapse-inner rounded">
                     <h6 class="collapse-header text-dark">Savings</h6>
-                    <a class="collapse-item" routerLink="/addtr">Deposit</a>
-                    <a class="collapse-item" routerLink="/addtr">Withdwaw</a>
-                    <a class="collapse-item" routerLink="/addtr">Transfar Money</a>
+                    <a class="collapse-item" routerLink="/deposit">Deposit & Withdwaw</a>
+                    <!-- <a class="collapse-item" routerLink="/emptr">Withdwaw</a> -->
+                    <a class="collapse-item" routerLink="/emptr">Transfar Money</a>
                     <a class="collapse-item" routerLink="/trst">Transaction Statement</a>
                     <a class="collapse-item" routerLink="#">Fixed Deposit</a>
                     <a class="collapse-item" routerLink="#">Loan Apply</a>
@@ -241,13 +238,24 @@
     </li>
 
     <li class="nav-item">
-        <a class="nav-link text-success fw-semibold" routerLink="/login"><i
-                class="fa fa-exchange me-1 text-success"></i>Login</a>
+        <a class="nav-link fw-semibold d-flex align-items-center gap-2" routerLink="/login"
+            style="color: #198754; border: 1px solid transparent; padding: 8px 15px; border-radius: 25px; transition: all 0.3s ease;"
+            onmouseover="this.style.background='#d1f7d6'; this.style.border='1px solid #198754'; this.style.color='#198754';"
+            onmouseout="this.style.background='transparent'; this.style.border='1px solid transparent'; this.style.color='#198754';">
+            <i class="fa fa-sign-in-alt me-1"></i>
+            <span>Login</span>
+        </a>
     </li>
+
     <li class="nav-item">
-        <div class="profile-actions">
-            <button (click)="logout()">Logout</button>
-        </div>
+        <a class="nav-link fw-semibold d-flex align-items-center gap-2" (click)="logout()"
+            style="color: #dc3545; border: 1px solid transparent; padding: 8px 15px; border-radius: 25px; transition: all 0.3s ease; cursor:pointer; text-decoration:none;"
+            onmouseover="this.style.background='#f8d7da'; this.style.border='1px solid #dc3545'; this.style.color='#dc3545';"
+            onmouseout="this.style.background='transparent'; this.style.border='1px solid transparent'; this.style.color='#dc3545';">
+            <i class="fa fa-sign-out-alt me-1"></i>
+            <span>Logout</span>
+        </a>
     </li>
+
 
 </ul>

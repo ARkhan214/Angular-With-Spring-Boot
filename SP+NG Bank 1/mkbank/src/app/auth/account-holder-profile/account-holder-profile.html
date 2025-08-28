@@ -1,5 +1,4 @@
 <p class="text-center text-primary fw-bold fs-4 mb-4"><h4 class="text-center">👤 Account Holder Profile</h4>
-      <div><button (click)="logout()" class="btn btn-danger mb-3">Logout</button></div>
 <div *ngIf="account && account.role === 'USER'; else noAccount" class="container py-4">
   <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
     <div class="row g-0">
@@ -19,7 +18,7 @@
       <div class="col-md-8 p-4">
         <h5 class="fw-bold mb-3 border-bottom pb-2">📋 Account Information</h5>
         <div class="row gy-3">
-          <div class="col-sm-6"><strong>💰 Balance:</strong> {{ account.balance | currency:'BDT':'symbol':'1.2-2' }}</div>
+          <div class="col-sm-6"><strong>💰 Balance:</strong> {{ account.balance | currency:'BDT  ':'symbol':'1.2-2' }}</div>
           <div class="col-sm-6"><strong>🆔 NID:</strong> {{ account.nid }}</div>
           <div class="col-sm-6"><strong>📞 Phone Number:</strong> {{ account.phoneNumber }}</div>
           <div class="col-sm-6"><strong>🏠 Address:</strong> {{ account.address }}</div>

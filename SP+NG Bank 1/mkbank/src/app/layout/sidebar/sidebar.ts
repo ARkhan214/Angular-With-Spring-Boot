@@ -32,7 +32,6 @@ export class Sidebar implements OnInit {
   // }
 
   ngOnInit(): void {
-    // Subscribe to userRole from AuthService
     this.authService.userRole$.subscribe(role => {
       this.userRole = role;
       console.log('Sidebar loaded with role:', this.userRole);

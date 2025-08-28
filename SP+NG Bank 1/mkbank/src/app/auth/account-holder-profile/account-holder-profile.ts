@@ -26,7 +26,7 @@ export class AccountHolderProfile implements OnInit {
     this.accountService.getProfile().subscribe({
       next: (data) => {
         this.account = data;
-        console.log(data + "Kichu Ashe Na");
+        console.log(data + "Profile data ");
         this.cdr.markForCheck();
 
       },

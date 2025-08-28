@@ -4,7 +4,7 @@
     <div class="card-body p-4">
 
       <h3 class="text-center text-primary fw-bold mb-4">
-        💳 Deposit / Transfer Transaction
+        Transfer Form
       </h3>
 
       <!-- Success & Error Messages -->
@@ -16,7 +16,7 @@
       </div>
 
       <!-- Transaction Form -->
-      <form (ngSubmit)="transaction.type === transactionType.TRANSFER ? transfer() : deposit()" class="row g-3">
+      <form (ngSubmit)="transaction.type === transactionType.TRANSFER ? transfer() : fake()" class="row g-3">
 
         <!-- Account ID / Sender ID -->
         <div *ngIf="transaction.type !== transactionType.TRANSFER" class="col-md-6">
@@ -30,7 +30,12 @@
         </div>
 
         <!-- Receiver ID (Only for Transfer) -->
-        <div *ngIf="transaction.type === transactionType.TRANSFER" class="col-md-6">
+        <!-- <div *ngIf="transaction.type === transactionType.TRANSFER" class="col-md-6">
+          <label class="form-label fw-semibold">Receiver ID</label>
+          <input type="number" [(ngModel)]="receiverId" name="receiverId" class="form-control rounded-3" required>
+        </div> -->
+
+        <div class="col-md-6">
           <label class="form-label fw-semibold">Receiver ID</label>
           <input type="number" [(ngModel)]="receiverId" name="receiverId" class="form-control rounded-3" required>
         </div>
@@ -42,26 +47,32 @@
         </div>
 
         <!-- Description -->
-        <div class="col-md-12">
+        <div class="col-md-6">
           <label class="form-label fw-semibold">Description</label>
           <input type="text" [(ngModel)]="transaction.description" name="description" class="form-control rounded-3">
         </div>
 
         <!-- Transaction Type -->
-        <div class="col-md-6 mt-4">
+        <!-- <div class="col-md-6 mt-4">
           <label class="form-label fw-semibold mr-3">Type</label>
           <select [(ngModel)]="transaction.type" name="type" class="form-select rounded-3" required>
-            <option [ngValue]="transactionType.DEPOSIT">Deposit</option>
-            <option [ngValue]="transactionType.WITHDRAW">Withdraw</option>
             <option [ngValue]="transactionType.TRANSFER">Transfer</option>
           </select>
-        </div>
+        </div> -->
+        <!-- Transaction Type (Hidden) -->
+        <input type="hidden" [(ngModel)]="transaction.type" name="type">
 
         <!-- Submit Button -->
         <div class="col-12 text-center mt-3">
-          <button type="submit" class="btn btn-primary px-4 py-2 rounded-pill shadow">
-            {{ transaction.type === transactionType.TRANSFER ? 'Transfer' : 'Deposit/Withdraw' }}
+          <button type="submit" class="btn btn-primary px-4 py-2 mr-2 rounded-pill shadow">
+            {{ transaction.type === transactionType.TRANSFER ? 'Transfer' : 'Transfer' }}
           </button>
+
+          <!-- Reset Button -->
+          <button type="button" class="btn btn-secondary px-4 py-2 rounded-pill shadow" (click)="resetForm()">
+            Reset
+          </button>
+
         </div>
 
       </form>

@@ -1,5 +1,5 @@
 <div class="transaction-form-container">
-  <h2 class="text-center text-primary mb-4">💸 Bank Transaction</h2>
+  <h2 class="text-center text-primary mb-4">💸 Bank Transfer</h2>
 
   <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()" class="transaction-form">
 
@@ -7,8 +7,8 @@
     <div class="form-group mb-3">
       <label>Transaction Type</label>
       <select formControlName="type" class="form-select">
-        <option [ngValue]="transactionType.DEPOSIT">Deposit</option>
-        <option [ngValue]="transactionType.WITHDRAW">Withdraw</option>
+        <!-- <option [ngValue]="transactionType.DEPOSIT">Deposit</option> -->
+        <!-- <option [ngValue]="transactionType.WITHDRAW">Withdraw</option> -->
         <option [ngValue]="transactionType.TRANSFER">Transfer</option>
       </select>
       <div *ngIf="transactionForm.get('type')?.invalid && transactionForm.get('type')?.touched" class="text-danger">
@@ -17,7 +17,7 @@
     </div>
 
     <!-- Receiver Account -->
-    <div class="form-group mb-3" *ngIf="transactionForm.get('type')?.value === transactionType.TRANSFER">
+    <div class="form-group mb-3">
       <label>Receiver Account ID</label>
       <input type="number" formControlName="receiverId" class="form-control" placeholder="Enter Receiver Account ID">
       <div *ngIf="transactionForm.get('receiverId')?.invalid && transactionForm.get('receiverId')?.touched" class="text-danger">
@@ -42,7 +42,7 @@
 
     <!-- Buttons -->
     <div class="d-flex justify-content-between">
-      <button type="submit" class="btn btn-success" [disabled]="transactionForm.invalid">Submit</button>
+      <button type="submit" class="btn btn-success mr-3" [disabled]="transactionForm.invalid">Submit</button>
       <button type="button" class="btn btn-secondary" (click)="resetForm()">Reset</button>
     </div>
 

@@ -1,8 +1,9 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { EmployeeTransactionService } from '../../service/employee-transaction-service';
 import { Transaction } from '../../model/transactions.model';
 import { TransactionType } from '../../model/transactionType.model';
 import { isPlatformBrowser } from '@angular/common';
+import { AlertService } from '../../service/alert-service';
 
 @Component({
   selector: 'app-employee-transaction',
@@ -17,7 +18,7 @@ export class EmployeeTransaction implements OnInit {
   transaction: Partial<Transaction> = {
     amount: 0,
     description: ''
-    
+
   };
 
   accountId: number = 0;      // Deposit
@@ -28,19 +29,14 @@ export class EmployeeTransaction implements OnInit {
   errorMessage: string = '';
 
   constructor(
-    private transactionService: EmployeeTransactionService,
+    private empTransactionService: EmployeeTransactionService,
+    private cdr: ChangeDetectorRef,
+    private alertService:AlertService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
-  // ngOnInit() {
-  //   const storedAccountId = localStorage.getItem('accountId');
-  //   if (storedAccountId) {
-  //     this.accountId = Number(storedAccountId);
-  //     this.senderId = Number(storedAccountId); // senderId একই accountId ধরে নিচ্ছি
-  //   }
-  // }
 
-    ngOnInit() {
+  ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
       const storedAccountId = localStorage.getItem('accountId');
       if (storedAccountId) {
@@ -48,30 +44,7 @@ export class EmployeeTransaction implements OnInit {
         this.senderId = Number(storedAccountId);
       }
     }
-  }
-
-  deposit() {
-    if (!this.accountId || !this.transaction.amount || !this.transaction.type) {
-      this.errorMessage = 'Account ID, Amount, and Type are required!';
-      return;
-    }
-
-    this.transactionService.deposit(this.transaction as Transaction, this.accountId)
-      .subscribe({
-        next: (res) => {
-          this.successMessage = `Deposit successful: ${res.amount}`;
-          this.errorMessage = '';
-          this.transaction.amount = 0;
-          this.transaction.description = '';
-          this.transaction.type = undefined;
-          
-        },
-        error: (err) => {
-          console.error(err);
-          this.errorMessage = 'Deposit failed!';
-          this.successMessage = '';
-        }
-      });
+    this.transaction.type=this.transactionType.TRANSFER;
   }
 
   transfer() {
@@ -80,20 +53,36 @@ export class EmployeeTransaction implements OnInit {
       return;
     }
 
-    this.transactionService.transfer(this.transaction as Transaction, this.senderId, this.receiverId)
+    this.empTransactionService.transfer(this.transaction as Transaction, this.senderId, this.receiverId)
       .subscribe({
         next: (res) => {
-          this.successMessage = `Transfer successful: ${res.amount}`;
-          this.errorMessage = '';
-          this.transaction.amount = 0;
-          this.transaction.description = '';
-          this.transaction.type = undefined;
+          // alert('Transaction Successful!');
+          this.alertService.success('Transaction Successful!');
+          this.cdr.markForCheck();
+          this.resetForm();
         },
         error: (err) => {
           console.error(err);
-          this.errorMessage = 'Transfer failed!';
+          // alert(err.error?.message || 'Transaction Failed!');
+          this.alertService.error('Transaction Failed!');
           this.successMessage = '';
         }
       });
   }
+
+  fake(){}
+
+  resetForm() {
+    this.accountId = 0;
+    this.senderId = 0;
+    this.receiverId = 0;
+    this.transaction = {
+      amount: 0,
+      description: '',
+      type: undefined
+    };
+    this.successMessage = '';
+    this.errorMessage = '';
+  }
+
 }

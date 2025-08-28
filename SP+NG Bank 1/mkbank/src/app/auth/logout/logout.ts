@@ -11,32 +11,6 @@ import { Role } from '../../model/role.model';
   templateUrl: './logout.html',
   styleUrl: './logout.css'
 })
-export class Logout implements OnInit {
-  private userRoleSubject: BehaviorSubject<Role | null> = new BehaviorSubject<Role | null>(null);
-  public userRole$: Observable<Role | null> = this.userRoleSubject.asObservable();
-
-  constructor(
-    private router: Router,
-    private cdr: ChangeDetectorRef,
-    @Inject(PLATFORM_ID) private platformId: Object
-  ) { }
-  ngOnInit(): void {
-    this.logout();
-  }
-
-  logout(): void {
-    if (this.isBrowser()) {
-      alert('You have been logged out successfully!');
-      localStorage.removeItem('userRole');
-      localStorage.removeItem('authToken');
-      this.userRoleSubject.next(null);
-      this.cdr.reattach();
-    }
-    this.router.navigate(['/login']);
-  }
-
-  private isBrowser(): boolean {
-    return isPlatformBrowser(this.platformId);
-  }
+export class Logout{
 
 }

@@ -1,4 +1,4 @@
-// src/app/models/loan.model.ts
+
 import { Accounts } from './accounts.model';
 import { LoanStatus } from './loanStatus';
 import { LoanType } from './loanType';
