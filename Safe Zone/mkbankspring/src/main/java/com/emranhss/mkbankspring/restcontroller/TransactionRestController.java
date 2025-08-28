@@ -178,4 +178,10 @@ public Transaction transfer(
 //        return ResponseEntity.ok(transactions);
 //    }
 
+    @GetMapping("statement/{accountId}")
+    public ResponseEntity<List<Transaction>> getStatement(@PathVariable Long accountId) {
+        List<Transaction> transactions = transactionService.getTransactionsByAccount(accountId);
+        return ResponseEntity.ok(transactions);
+    }
+
 }

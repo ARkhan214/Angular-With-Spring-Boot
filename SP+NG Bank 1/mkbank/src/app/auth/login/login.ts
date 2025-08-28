@@ -5,6 +5,7 @@ import { User } from '../../model/user.model';
 import { AuthResponse } from '../../model/authResponse.model';
 import { AuthService } from '../../service/auth-service';
 import { Role } from '../../model/role.model';
+import { AlertService } from '../../service/alert-service';
 
 @Component({
   selector: 'app-login',
@@ -25,7 +26,8 @@ export class Login {
   constructor(
     private userService: UserService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private alertService:AlertService
   ) { }
 
 
@@ -38,6 +40,7 @@ onSubmit() {
     this.authService.login(this.user.email, this.user.password).subscribe({
       next: (response: AuthResponse) => {
         console.log("Login successful:", response);
+        this.alertService.success('Login successful');
         this.successMessage = response.message;
         this.errorMessage = '';
 
@@ -66,6 +69,7 @@ onSubmit() {
       }
     });
   }
+
 
 
 }

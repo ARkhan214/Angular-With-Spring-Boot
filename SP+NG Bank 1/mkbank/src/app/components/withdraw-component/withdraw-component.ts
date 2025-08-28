@@ -7,6 +7,7 @@ import { Transactionsservice } from '../../service/transactionsservice';
 import { Transaction } from '../../model/transactions.model';
 import { TransactionType } from '../../model/transactionType.model';
 import { isPlatformBrowser } from '@angular/common';
+import { AlertService } from '../../service/alert-service';
 
 @Component({
   selector: 'app-withdraw-component',
@@ -24,6 +25,7 @@ export class WithdrawComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private transactionService: Transactionsservice,
+    private alertService:AlertService,
     private cdRef: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
@@ -58,7 +60,8 @@ export class WithdrawComponent implements OnInit {
   // Submit handler
   onSubmit() {
     if (this.formGroup.invalid) {
-      alert('Form is invalid! Please fill all required fields.');
+      // alert('Form is invalid! Please fill all required fields.');
+      this.alertService.warning('Form is invalid! Please fill all required fields.');
       return;
     }
 
@@ -74,16 +77,19 @@ export class WithdrawComponent implements OnInit {
     };
     
       // Only For Withdraw
+      
     if(formValue.type === this.transactionType.WITHDRAW) {
     
       this.transactionService.makeTransaction(transaction).subscribe({
         next: res => {
-          alert('Transaction Successful!');
+          // alert('Withdraw Successful!');
+          this.alertService.success(res.amount+' Taka Withdraw Successful!');
           this.resetForm();
         },
         error: err => {
-          console.error('Transaction failed:', err);
-          alert(err.error?.message || 'Transaction Failed!');
+          console.error('Withdraw failed:', err);
+          // alert(err.error?.message || 'Withdraw Failed!');
+          this.alertService.error(err.error?.message || 'Withdraw Failed!');
         }
       });
     }

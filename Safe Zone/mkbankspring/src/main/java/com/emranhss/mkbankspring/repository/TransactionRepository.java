@@ -50,4 +50,5 @@ public interface TransactionRepository extends JpaRepository<Transaction,Long> {
     List<Transaction> findByAmountLessThan(double amount);
 
 
+
 }

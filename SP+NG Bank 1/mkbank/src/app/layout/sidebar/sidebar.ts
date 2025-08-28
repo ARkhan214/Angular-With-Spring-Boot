@@ -57,6 +57,16 @@ export class Sidebar implements OnInit {
     return this.userRole === Role.EMPLOYEE;
   }
 
+  
+    isLoggIn(): boolean {
+    const token = this.authService.getToken();
+    if (token && !this.authService.isTokenExpired(token)) {
+      return true;
+    }
+    this.authService.logout();
+    return false;
+
+  }
 
   //    userType: string = '';
 

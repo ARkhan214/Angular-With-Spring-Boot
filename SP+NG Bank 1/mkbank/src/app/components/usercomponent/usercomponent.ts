@@ -7,6 +7,7 @@ import { Accounts } from '../../model/accounts.model';
 import { Accountsservice } from '../../service/accountsservice';
 import { Transactionsservice } from '../../service/transactionsservice';
 import { Role } from '../../model/role.model';
+import { AlertService } from '../../service/alert-service';
 
 @Component({
   selector: 'app-usercomponent',
@@ -24,6 +25,7 @@ export class Usercomponent implements OnInit {
     private accountService: Accountsservice,
     private formbuilder: FormBuilder,
     private transactionService: Transactionsservice,
+    private alertService:AlertService,
     private router: Router
   ) { }
 
@@ -93,13 +95,15 @@ export class Usercomponent implements OnInit {
 
       this.accountService.registerAccount(formData).subscribe({
         next: () => {
-          alert('User and Account saved successfully!');
+          // alert('User and Account saved successfully!');
+          this.alertService.success('User and Account saved successfully!');
           this.userAccountForm.reset();
           this.selectedFile = null;
         },
         error: (err) => {
           console.error(err);
-          alert('Failed to save user and account.');
+          // alert('Failed to save user and account.');
+          this.alertService.error('Failed to save user and account.');
         }
       });
     }

@@ -1,3 +1,24 @@
+==>find transaction
+GET http://localhost:8085/api/transactions/statement/1
+auth token dite be.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ====>addtransaction.ts

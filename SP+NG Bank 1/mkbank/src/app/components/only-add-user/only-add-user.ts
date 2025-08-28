@@ -4,6 +4,7 @@ import { UserService } from '../../service/user.service';
 import { Router } from '@angular/router';
 import { User } from '../../model/user.model';
 import { Role } from '../../model/role.model';
+import { AlertService } from '../../service/alert-service';
 
 @Component({
   selector: 'app-only-add-user',
@@ -19,6 +20,7 @@ export class OnlyAddUser implements OnInit{
   constructor(
     private formbuilder: FormBuilder,
     private userService: UserService,
+    private alertService:AlertService,
      private router: Router
   ){}
 
@@ -66,13 +68,15 @@ this.userAccountForm = this.formbuilder.group({
   
         this.userService.registerUser(formData).subscribe({
           next: () => {
-            alert('Admin Saved Successfully!');
+            // alert('Admin Saved Successfully!');
+            this.alertService.success('Admin Saved Successfully!');
             this.userAccountForm.reset();
             this.selectedFile = null;
           },
           error: (err) => {
             console.error(err);
-            alert('Failed to Save Admin.');
+            // alert('Failed to Save Admin.');
+            this.alertService.error('Failed to Save Admin.');
           }
         });
       }

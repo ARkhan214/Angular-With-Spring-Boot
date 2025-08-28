@@ -24,6 +24,11 @@ public class TransactionService {
     @Autowired
     private EmailService emailService;
 
+    //last update for tranST
+    public List<Transaction> getTransactionsByAccount(Long accountId) {
+        return transactionRepository.findByAccountIdOrderByTransactionTimeDesc(accountId);
+    }
+
 
     // Method for Deposit & withdraw Taka (connected with TransactionResCon Method Number -1)
     public Transaction addTransaction(Transaction transaction, Long id,String token) {

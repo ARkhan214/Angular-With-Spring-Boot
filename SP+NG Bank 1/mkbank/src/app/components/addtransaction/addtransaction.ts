@@ -4,6 +4,7 @@ import { Transactionsservice } from '../../service/transactionsservice';
 import { Transaction } from '../../model/transactions.model';
 import { TransactionType } from '../../model/transactionType.model';
 import { isPlatformBrowser } from '@angular/common';
+import { AlertService } from '../../service/alert-service';
 
 @Component({
   selector: 'app-addtransaction',
@@ -20,6 +21,7 @@ export class Addtransaction {
   constructor(
     private fb: FormBuilder,
     private transactionService: Transactionsservice,
+    private alertService:AlertService,
     private cdRef: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
@@ -55,7 +57,8 @@ export class Addtransaction {
   // Submit handler
   onSubmit() {
     if (this.transactionForm.invalid) {
-      alert('Form is invalid! Please fill all required fields.');
+      // alert('Form is invalid! Please fill all required fields.');
+      this.alertService.warning('Form is invalid! Please fill all required fields.');
       return;
     }
 
@@ -72,7 +75,8 @@ export class Addtransaction {
 
     if (formValue.type === this.transactionType.TRANSFER) {
       if (!formValue.receiverId) {
-        alert('Receiver Account ID is required for Transfer!');
+        // alert('Receiver Account ID is required for Transfer!');
+        this.alertService.warning('Receiver Account ID is required for Transfer!');
         return;
       }
       transaction.receiverAccountId = formValue.receiverId;
@@ -80,12 +84,14 @@ export class Addtransaction {
       // Transfer call
       this.transactionService.transfer(transaction, formValue.receiverId).subscribe({
         next: res => {
-          alert('Transfer Successful!');
+          // alert('Transfer Successful!');
+          this.alertService.success('Transfer Successful!');
           this.resetForm();
         },
         error: err => {
           console.error('Transfer failed:', err);
-          alert(err.error?.message || 'Transfer Failed!');
+          // alert(err.error?.message || 'Transfer Failed!');
+          this.alertService.error(err.error?.message || 'Transfer Failed!');
         }
       });
 

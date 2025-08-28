@@ -1,3 +1,78 @@
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { UserService } from '../../service/user.service';
+import { User } from '../../model/user.model';
+import { AuthResponse } from '../../model/authResponse.model';
+import { AuthService } from '../../service/auth-service';
+import { Role } from '../../model/role.model';
+import { AlertService } from '../../service/alert-service';
+
+@Component({
+  selector: 'app-login',
+  standalone: false,
+  templateUrl: './login.html',
+  styleUrl: './login.css'
+})
+export class Login {
+
+  user: Partial<User> = {
+    email: '',
+    password: ''
+  };
+
+  errorMessage: string = '';
+  successMessage: string = '';
+
+  constructor(
+    private userService: UserService,
+    private router: Router,
+    private authService: AuthService,
+    private alertService:AlertService
+  ) { }
+
+
+onSubmit() {
+    if (!this.user.email || !this.user.password) {
+      this.errorMessage = 'Email and password are required!';
+      return;
+    }
+
+    this.authService.login(this.user.email, this.user.password).subscribe({
+      next: (response: AuthResponse) => {
+        console.log("Login successful:", response);
+        this.alertService.success('Login successful');
+        this.successMessage = response.message;
+        this.errorMessage = '';
+
+        // Decode token for account id if needed
+        const payload = JSON.parse(atob(response.token.split('.')[1]));
+        const accountId = payload.id;
+        console.log("Account id:", accountId);
+
+        // Redirect by role
+        const role: Role = payload.role as Role;
+
+        if (role === Role.ADMIN) {
+          this.router.navigate(['/admin-profile']);
+        } else if (role === Role.EMPLOYEE) {
+          this.router.navigate(['/employee-profile']);
+        } else if (role === Role.USER) {
+          this.router.navigate(['/account-profile']);
+        } else {
+          this.router.navigate(['/']);
+        }
+      },
+      error: (err) => {
+        console.error("Login failed:", err);
+        this.errorMessage = "Invalid email or password!";
+        this.successMessage = '';
+      }
+    });
+  }
+
+
+
+}  
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { BehaviorSubject, catchError, map, Observable } from 'rxjs';
@@ -196,3 +271,100 @@ export class AuthService {
   }
 
 }
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { UserService } from '../../service/user.service';
+import { AuthService } from '../../service/auth-service';
+import { Role } from '../../model/role.model';
+
+@Component({
+  selector: 'app-sidebar',
+  standalone: false,
+  templateUrl: './sidebar.html',
+  styleUrl: './sidebar.css'
+})
+export class Sidebar implements OnInit {
+
+
+  userRole: string | null = null;
+
+  constructor(
+    private authService: AuthService,
+    private userService: UserService
+  ) { }
+
+  //   ngOnInit(): void {
+  //   this.userService.currentUser$.subscribe(user=>{
+  //     this.userRole = user?.role || '';
+  //   })
+  // }
+
+  // ngOnInit(): void {
+  //   this.userRole = this.authService.getUserRole();
+  //   console.log('Sidebar loaded with role:', this.userRole);
+  // }
+
+  ngOnInit(): void {
+    this.authService.userRole$.subscribe(role => {
+      this.userRole = role;
+      console.log('Sidebar loaded with role:', this.userRole);
+    });
+  }
+
+
+
+  logout() {
+    this.authService.logout();
+  }
+
+
+  isAdmin(): boolean {
+    return this.userRole === Role.ADMIN;
+  }
+
+  isUser(): boolean {
+    return this.userRole === Role.USER;
+  }
+
+  isEmployee(): boolean {
+    return this.userRole === Role.EMPLOYEE;
+  }
+
+  
+    isLoggIn(): boolean {
+    const token = this.authService.getToken();
+    if (token && !this.authService.isTokenExpired(token)) {
+      return true;
+    }
+    this.authService.logout();
+    return false;
+
+  }
+
+  //    userType: string = '';
+
+  // constructor(
+  //   private userService: UserService
+  // ){}
+
+  // ngOnInit(): void {
+  //   this.userService.currentUser$.subscribe(user=>{
+  //     this.userType = user?.type || '';
+  //   })
+  // }
+
+}  
+
+eta amar sidebar html.
+
+    <li class="nav-item">
+        <a class="nav-link fw-semibold d-flex align-items-center gap-2" routerLink="/login"
+            style="color: #198754; border: 1px solid transparent; padding: 8px 15px; border-radius: 25px; transition: all 0.3s ease;"
+            onmouseover="this.style.background='#d1f7d6'; this.style.border='1px solid #198754'; this.style.color='#198754';"
+            onmouseout="this.style.background='transparent'; this.style.border='1px solid transparent'; this.style.color='#198754';">
+            <i class="fa fa-sign-in-alt me-1"></i>
+            <span>Login</span>
+        </a>
+    </li> 
+
+ebar sono .ami chai kono user ba admin ba employee login kora thakle tar sidebar theke login er option hide hobe.abar logout korle abar sidebar e login dekha jabe.

@@ -7,6 +7,7 @@ import { Position } from '../../model/position.model';
 import { User } from '../../model/user.model';
 import { Role } from '../../model/role.model';
 import { Employee } from '../../model/employee.model';
+import { AlertService } from '../../service/alert-service';
 
 @Component({
   selector: 'app-employee-component',
@@ -27,6 +28,7 @@ export class EmployeeComponent implements OnInit {
 
   constructor(
     private userService: UserService,
+    private alertService:AlertService,
     private employeeService: EmployeeService,
     private formbuilder: FormBuilder
   ) { }
@@ -102,13 +104,15 @@ export class EmployeeComponent implements OnInit {
 
       this.employeeService.registerEmployee(formData).subscribe({
         next: () => {
-          alert('User and Employee Saved Successfully!');
+          // alert('User and Employee Saved Successfully!');
+          this.alertService.success('User and Employee Saved Successfully!');
           this.userEmployeeForm.reset();
           this.selectedFile = null;
         },
         error: (err) => {
           console.error(err);
-          alert('Failed to Save User and Employee.');
+          // alert('Failed to Save User and Employee.');
+          this.alertService.error('Failed to Save User and Employee.');
         }
       });
     }
