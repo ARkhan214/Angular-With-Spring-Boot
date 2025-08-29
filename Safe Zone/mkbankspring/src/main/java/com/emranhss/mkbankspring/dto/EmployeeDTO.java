@@ -25,6 +25,22 @@ public class EmployeeDTO {
     public EmployeeDTO() {
     }
 
+    public EmployeeDTO(Long id, String name, EmployeeStatus status, String nid, String phoneNumber, String address, Position position, double salary, Date dateOfJoining, Date dateOfBirth, Date retirementDate, String photo, Role role) {
+        this.id = id;
+        this.name = name;
+        this.status = status;
+        this.nid = nid;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.position = position;
+        this.salary = salary;
+        this.dateOfJoining = dateOfJoining;
+        this.dateOfBirth = dateOfBirth;
+        this.retirementDate = retirementDate;
+        this.photo = photo;
+        this.role = role;
+    }
+
     public EmployeeDTO(Long id, String name, EmployeeStatus status, String nid, String phoneNumber, String address, Position position, double salary, Date dateOfJoining, Date dateOfBirth, Date retirementDate, Long userId, String photo, Role role) {
         this.id = id;
         this.name = name;

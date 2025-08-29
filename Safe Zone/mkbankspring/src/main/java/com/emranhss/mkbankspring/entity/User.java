@@ -22,6 +22,9 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String email;
     private String password;
+    // Extra field for reset
+    private String resetToken;
+    private Date tokenExpiry;
 
     @Column(length = 15, unique = true, nullable = false)
     private String phoneNumber;
@@ -47,11 +50,13 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(Long id, String name, String email, String password, String phoneNumber, String photo, Date dateOfBirth, Role role, List<Token> tokens) {
+    public User(Long id, String name, String email, String password, String resetToken, Date tokenExpiry, String phoneNumber, String photo, Date dateOfBirth, Role role, List<Token> tokens) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
+        this.resetToken = resetToken;
+        this.tokenExpiry = tokenExpiry;
         this.phoneNumber = phoneNumber;
         this.photo = photo;
         this.dateOfBirth = dateOfBirth;
@@ -90,6 +95,13 @@ public class User implements UserDetails {
     public void setPassword(String password) {
         this.password = password;
     }
+    public String getResetToken() { return resetToken; }
+    public void setResetToken(String resetToken) { this.resetToken = resetToken; }
+
+    public Date getTokenExpiry() { return tokenExpiry; }
+    public void setTokenExpiry(Date tokenExpiry) { this.tokenExpiry = tokenExpiry; }
+
+
 
     public String getPhoneNumber() {
         return phoneNumber;

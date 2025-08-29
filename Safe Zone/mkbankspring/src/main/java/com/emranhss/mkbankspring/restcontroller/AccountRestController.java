@@ -73,13 +73,10 @@ public class AccountRestController {
         }
     }
 
-    //for all account view (Method Number -3)
-    @GetMapping("/all")
-    public ResponseEntity<List<Accounts>>getAllAccounts() {
-        List<Accounts> accounts=accountService.getAll();
-        return ResponseEntity.ok(accounts);
+    @GetMapping("all")
+    public ResponseEntity<List<AccountsDTO>> getAllAccountsDTO() {
+        return ResponseEntity.ok(accountService.getAllAccountsDTO());
     }
-
 
     // Method for Transaction Taka (Method Number -4)
     @PutMapping("{id}")
@@ -100,20 +97,6 @@ public class AccountRestController {
 
         return ResponseEntity.ok(updated);
     }
-//
-//    @GetMapping("/profile")
-//    public ResponseEntity<?> getProfile(Authentication authentication) {
-//
-//        System.out.println("Authenticated User: " + authentication.getName());
-//        System.out.println("Authorities: " + authentication.getAuthorities());
-//        String email = authentication.getName();
-//        Optional<User> user =userRepository.findByEmail(email);
-//        Accounts accounts = accountService.getProfileByUserId(user.get().getId());
-//        return ResponseEntity.ok(accounts);
-//
-//    }
-
-
 
     @GetMapping("profile")
     public AccountsDTO getProfile(Authentication authentication) {

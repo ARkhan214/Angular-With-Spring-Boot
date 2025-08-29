@@ -3,8 +3,22 @@ GET http://localhost:8085/api/transactions/statement/1
 auth token dite be.
 
 
+10-666-956-20001
+From Amount
+To Amount
+Fiter By Type
+Credit
+Debit
+Both
+Filter by Period
+Last @2 Weeks
+last month 
+3 month
+6 month
+Spacific Date 
 
-
+from dat
+e to date
 
 
 

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeService {
@@ -56,6 +57,30 @@ private EmployeeRepository employeeRepository;
         return dto;
     }
 
+    // View All Employees by DTO
+    public List<EmployeeDTO> getAllEmployeesDTO() {
+        return employeeRepository.findAll().stream()
+                .map(emp -> new EmployeeDTO(
+                        emp.getId() != null ? emp.getId() : 0,
+                        emp.getName(),
+                        emp.getStatus(),
+                        emp.getNid(),
+                        emp.getPhoneNumber(),
+                        emp.getAddress(),
+                        emp.getPosition(),
+                        emp.getSalary(),
+                        emp.getDateOfJoining(),
+                        emp.getDateOfBirth(),
+                        emp.getRetirementDate(),
+                        emp.getPhoto(),
+                        emp.getRole()
+                ))
+                .collect(Collectors.toList());
+    }
+
+
+
+
     public Employee findEmployeeByEmail(String email) {
         return employeeRepository.findByUserEmail(email)
                 .orElseThrow(() -> new RuntimeException("Employee not found for user with email: " + email));
@@ -64,4 +89,10 @@ private EmployeeRepository employeeRepository;
     public List<Employee> getAll() {
         return employeeRepository.findAll();
     }
+
+    //Total salary calculate
+    public Double getTotalSalary() {
+        return employeeRepository.getTotalSalary();
+    }
+
 }

@@ -37,6 +37,11 @@ import { AuthInterceptor } from './service/auth.interceptor';
 import { EmployeeComponent } from './components/employee-component/employee-component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { EmployeeTransaction } from './components/employee-transaction/employee-transaction';
+import { AccTranStatement } from './statements/acc-tran-statement/acc-tran-statement';
+import { EmpTranStatement } from './statements/emp-tran-statement/emp-tran-statement';
+import { ViewAllEmployee } from './components/view-all-employee/view-all-employee';
+import { ForgotPasswordComponent } from './components/forgot-password-component/forgot-password-component';
+import { ResetPasswordComponent } from './components/reset-password-component/reset-password-component';
 
 
 @NgModule({
@@ -70,6 +75,11 @@ import { EmployeeTransaction } from './components/employee-transaction/employee-
     EmployeeProfile,
     EmployeeComponent,
     EmployeeTransaction,
+    AccTranStatement,
+    EmpTranStatement,
+    ViewAllEmployee,
+    ForgotPasswordComponent,
+    ResetPasswordComponent,
   ],
   imports: [
     BrowserModule,

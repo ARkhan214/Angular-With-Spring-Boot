@@ -4,7 +4,6 @@ import { TransactionType } from "./transactionType.model";
 export class Transaction {
 
     id?:number;
-    // type!: 'DEPOSIT' | 'WITHDRAW' | 'FIXED_DEPOSIT' | 'TRANSFER' | 'RECEIVE';
     type!:TransactionType;
     amount !: number;
     transactionTime !: Date;

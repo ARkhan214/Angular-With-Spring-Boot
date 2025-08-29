@@ -6,6 +6,7 @@ import { Accountsservice } from './accountsservice';
 import { Accounts } from '../model/accounts.model';
 import { environment } from '../environment/environment';
 import { isPlatformBrowser } from '@angular/common';
+import { TransactionDTO } from '../model/transactionStatementDTO.model';
 
 @Injectable({
   providedIn: 'root'
@@ -94,149 +95,15 @@ transfer(transaction: Transaction, receiverId: number): Observable<Transaction> 
 
 
 
-  //   transferOnly(transaction: Transaction, senderId: number, receiverId: number, token: string): Observable<Transaction> {
-  //   const headers = new HttpHeaders({
-  //     'Content-Type': 'application/json',
-  //     'Authorization': `Bearer ${token}`
-  //   });
-
-  //   return this.http.post<Transaction>(
-  //     `${this.baseUrl}/tr/${senderId}/${receiverId}`,
-  //     transaction,
+  // Account Transaction list(last update)
+  // ======================================
+  // getTransactionsByAccount(accountId: number): Observable<Transaction[]> {
+  //   const headers = this.getAuthHeaders();
+  //   return this.http.get<Transaction[]>(
+  //     `${this.baseUrl}/account/${accountId}`,
   //     { headers }
   //   );
   // }
-
-
-  // makeTransaction(transaction: Transaction, accountId: number, token: string): Observable<Transaction> {
-  //   const headers = new HttpHeaders({
-  //     'Content-Type': 'application/json',
-  //     'Authorization': `Bearer ${token}`
-  //   });
-  //   return this.http.post<Transaction>(`${this.baseUrl}/${accountId}`, transaction, { headers });
-  // }
-
-
-  // addTransactionWithBalance(transaction: Transaction): Observable<any> {
-  //   const accountId = transaction.accountId;
-
-  //   console.log(accountId);
-
-  //   return this.http.get<Accounts>(`${this.apiUrl}/${accountId}`).pipe(
-
-  //     switchMap(account => {
-  //       if (!account) {
-  //         return throwError(() => new Error('Account not found!'));
-  //       }
-
-  //       //new code for status
-  //       if (account.accountActiveStatus === false) {
-  //         return throwError(() => new Error('This account is closed and cannot perform transactions.'));
-  //       }
-
-  //       let newBalance = account.balance || 0;
-
-  //       console.log(accountId);
-
-  //       if (transaction.type === 'DEPOSIT') {
-  //         newBalance += transaction.amount;
-  //       } else if (transaction.type === 'WITHDRAW') {
-  //         if (transaction.amount > newBalance) {
-  //           return throwError(() => new Error('Insufficient balance!'));
-  //         }
-  //         newBalance -= transaction.amount;
-  //       }
-
-  //       else if (transaction.type === 'TRANSFER') {
-  //         if (transaction.amount > newBalance) {
-  //           return throwError(() => new Error('Insufficient balance!'));
-  //         }
-
-  //         // Sender balance minus
-  //         newBalance -= transaction.amount;
-
-  //         // Find Receiver account and incarage balance
-  //         const receiverId = transaction.receiverAccountId;
-
-  //         this.http.get<Accounts>(`${this.apiUrl}/${receiverId}`).subscribe(receiverAccount => {
-
-  //           const updatedReceiver = {
-  //             ...receiverAccount,
-  //             balance: receiverAccount.balance + transaction.amount
-  //           };
-
-  //           // update Receiver- balance
-  //           this.http.put(`${this.apiUrl}/${receiverId}`, updatedReceiver).subscribe({
-  //             next: () => {
-  //               console.log('Receiver balance updated!');
-  //             },
-  //             error: err => {
-  //               console.error('Receiver update failed:', err);
-  //             }
-  //           });
-  //         }, error => {
-  //           console.error('Receiver not found:', error);
-  //         });
-  //       }
-
-  //       // Update account balance
-  //       const updatedAccount: Accounts = { ...account, balance: newBalance };
-
-  //       return this.http.put<Accounts>(`${this.apiUrl}/${accountId}`, updatedAccount).pipe(
-  //         switchMap(() => {
-  //           return this.http.post<Transaction>(this.transactionsUrl, transaction);
-  //         })
-  //       );
-  //     })
-  //   );
-
-  // }
-
-
-
-
-
-  // addTransaction(transaction: Transaction): Observable<any> {
-
-  //   const accountId = transaction.accountId;
-
-  //   return this.http.get<Accounts>(`${this.apiUrl}/${accountId}`).pipe(
-  //     switchMap(account => {
-  //       if (!account) {
-  //         return throwError(() => new Error('Account not found!'));
-  //       }
-
-  //       let newBalance = account.balance || 0;
-
-  //       if (transaction.type === 'DEPOSIT') {
-  //         newBalance += transaction.amount;
-  //       } else if (transaction.type === 'WITHDRAW') {
-  //         if (transaction.amount > newBalance) {
-  //           return throwError(() => new Error('Insufficient balance!'));
-  //         }
-  //         newBalance -= transaction.amount;
-  //       }
-  //        const updatedAccount: Accounts = { ...account, balance: newBalance };
-
-  //              return this.http.put<Accounts>(`${this.apiUrl}/${accountId}`, updatedAccount).pipe(
-  //         switchMap(() => {
-  //           return this.http.post<Transaction>(this.transactionsUrl, transaction);
-  //         })
-  //       );
-  //     })
-
-  //   );
-  // }
-
-  // Account Transaction list(last update)
-  // ======================================
-  getTransactionsByAccount(accountId: number): Observable<Transaction[]> {
-    const headers = this.getAuthHeaders();
-    return this.http.get<Transaction[]>(
-      `${this.baseUrl}/account/${accountId}`,
-      { headers }
-    );
-  }
 
     // Get transactions by accountId
   // getTransactionsByAccount(accountId: number): Observable<Transaction[]> {
@@ -301,6 +168,75 @@ transfer(transaction: Transaction, receiverId: number): Observable<Transaction> 
 
 
 
+
+//-----Find All Transaction for Transaction Statement for Account--------Start------
+  getStatement(): Observable<TransactionDTO[]> {
+    
+    let headers = new HttpHeaders();
+
+    if (isPlatformBrowser(this.platformId)) {
+      const token = localStorage.getItem('authToken');
+     
+      if (token) {
+        headers = headers.set('Authorization', 'Bearer ' + token);
+      }
+    }
+
+    return this.http.get<TransactionDTO[]>(`${environment.springUrl}/transactions/statement`, { headers });
+  }
+//-----Find All Transaction for Transaction Statement for Account--------End------
+
+
+//-----Find All Transaction for Transaction Statement for Employee--------Start------
+
+    getTransactionsByAccount(accountId: number): Observable<TransactionDTO[]> {
+   
+    return this.http.get<TransactionDTO[]>(`${environment.springUrl}/employees/${accountId}`);
+  }
+
+//-----Find All Transaction for Transaction Statement for Employee--------End------
+
+
+// -------- Filter Section -----------For Traansaction Statement Filter Start for Employee-----------------------
+getTransactionsWithFilter(
+  accountId: number,
+  startDate?: string,
+  endDate?: string,
+  type?: string,
+  transactionType?: string
+): Observable<TransactionDTO[]> {
+  let params = new HttpParams().set('accountId', accountId);
+
+  if (startDate) params = params.set('startDate', startDate);
+  if (endDate) params = params.set('endDate', endDate);
+  if (type) params = params.set('type', type);
+  if (transactionType) params = params.set('transactionType', transactionType);
+
+  return this.http.get<TransactionDTO[]>(`${this.baseUrl}/filter`, { params });
+}
+// -------- Filter Section -----------For Traansaction Statement Filter End for Employee-----------------------
+
+
+// -------- Filter Section -----------For Traansaction Statement Filter Start for Account-----------------------
+getTransactionsWithFilterForAccountHolder(
+  startDate?: string,
+  endDate?: string,
+  type?: string,
+  transactionType?: string
+): Observable<TransactionDTO[]> {
+  let params = new HttpParams();
+
+  if (startDate) params = params.set('startDate', startDate);
+  if (endDate) params = params.set('endDate', endDate);
+  if (type) params = params.set('type', type);
+  if (transactionType) params = params.set('transactionType', transactionType);
+
+  const headers = this.getAuthHeaders();
+
+  return this.http.get<TransactionDTO[]>(`${environment.springUrl}/transactions/statement/filter`, { params, headers });
+}
+
+// -------- Filter Section -----------For Traansaction Statement Filter End for Account-----------------------
 
 
 

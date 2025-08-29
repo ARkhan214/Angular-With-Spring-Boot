@@ -40,6 +40,11 @@ export class EmployeeService {
     return this.http.get<Employee[]>(`${this.apiUrl}/employees/all`);
   }
 
+    // Total Salary 
+  getTotalSalary(): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/employees/total-salary`);
+  }
+
   //its working for create Employee on Employee Component
   registerEmployee(formData: FormData): Observable<any> {
     return this.http.post(`${this.apiUrl}/employees/`, formData);

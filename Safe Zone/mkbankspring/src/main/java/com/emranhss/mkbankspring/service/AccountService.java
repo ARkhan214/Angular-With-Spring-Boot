@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountService {
@@ -69,6 +70,26 @@ public class AccountService {
         return dto;
     }
 
+    //For all Accounts
+    public List<AccountsDTO> getAllAccountsDTO() {
+        return accountRepository.findAll().stream()
+                .map(acc -> new AccountsDTO(
+                        acc.getId() != null ? acc.getId() : 0,
+                        acc.getName(),
+                        acc.isAccountActiveStatus(),
+                        acc.getAccountType(),
+                        acc.getBalance(),
+                        acc.getNid(),
+                        acc.getPhoneNumber(),
+                        acc.getAddress(),
+                        acc.getPhoto(),
+                        acc.getDateOfBirth(),
+                        acc.getAccountOpeningDate(),
+                        acc.getAccountClosingDate(),
+                        acc.getRole() != null ? acc.getRole().toString() : ""
+                ))
+                .collect(Collectors.toList());
+    }
 
 
     // Find Account by Email

@@ -2,6 +2,7 @@ package com.emranhss.mkbankspring.restcontroller;
 
 import com.emranhss.mkbankspring.dto.AccountsDTO;
 import com.emranhss.mkbankspring.dto.EmployeeDTO;
+import com.emranhss.mkbankspring.dto.TransactionDTO;
 import com.emranhss.mkbankspring.entity.Accounts;
 import com.emranhss.mkbankspring.entity.Employee;
 import com.emranhss.mkbankspring.entity.User;
@@ -9,6 +10,7 @@ import com.emranhss.mkbankspring.repository.EmployeeRepository;
 import com.emranhss.mkbankspring.repository.UserRepository;
 import com.emranhss.mkbankspring.service.AuthService;
 import com.emranhss.mkbankspring.service.EmployeeService;
+import com.emranhss.mkbankspring.service.TransactionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ public class EmployeeRestController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TransactionService transactionService;
 
     // for employee save or update or registration (Method Number -1)
     @PostMapping("")
@@ -63,11 +68,19 @@ public class EmployeeRestController {
 
 
     // (Method 1) find all Employee
+//    @GetMapping("all")
+//    public ResponseEntity<List<Employee>> getAllEmployees() {
+//        List<Employee> employees = employeeService.getAllEmployees();
+//        return ResponseEntity.ok(employees);
+//    }
+
+
     @GetMapping("all")
-    public ResponseEntity<List<Employee>> getAllEmployees() {
-        List<Employee> employees = employeeService.getAllEmployees();
-        return ResponseEntity.ok(employees);
+    public ResponseEntity<List<EmployeeDTO>> getAllEmployees() {
+
+        return ResponseEntity.ok(employeeService.getAllEmployeesDTO());
     }
+
 
     // (Method 2) find Employee by id(related with EmployeeService method -3)
 //    @GetMapping("{id}")
@@ -103,4 +116,18 @@ public class EmployeeRestController {
 public EmployeeDTO getProfile(Authentication authentication) {
     return employeeService.getProfileByUserId(authentication.getName());
 }
+
+//Employee eta diea Account Holder er TransactionStatement dekhbe
+    @GetMapping("{accountId}")
+    public List<TransactionDTO> getTransactionStatement(@PathVariable Long accountId) {
+        return transactionService.getTransactionsByAccountID(accountId);
     }
+
+
+    //Total Salary calculate
+    @GetMapping("total-salary")
+    public ResponseEntity<Double> getTotalSalary() {
+        return ResponseEntity.ok(employeeService.getTotalSalary());
+    }
+
+}

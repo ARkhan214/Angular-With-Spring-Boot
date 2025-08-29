@@ -23,36 +23,46 @@ import { EmployeeProfile } from './auth/employee-profile/employee-profile';
 import { EmployeeComponent } from './components/employee-component/employee-component';
 import { Logout } from './auth/logout/logout';
 import { EmployeeTransaction } from './components/employee-transaction/employee-transaction';
+import { AccTranStatement } from './statements/acc-tran-statement/acc-tran-statement';
+import { EmpTranStatement } from './statements/emp-tran-statement/emp-tran-statement';
+import { ViewAllEmployee } from './components/view-all-employee/view-all-employee';
+import { ForgotPasswordComponent } from './components/forgot-password-component/forgot-password-component';
+import { ResetPasswordComponent } from './components/reset-password-component/reset-password-component';
 
 
 
 
 const routes: Routes = [
-  {path:'',component:Home},
-  {path:'adduser',component:Usercomponent},
-  {path:'addemployee',component:EmployeeComponent},
-  {path:'viewalluser',component:Viewallusercomponent},
-  {path:'updateuser/:id',component:Updateusercomponent},
-  {path:'viewallaccount',component:ViewAllAccounts},
-  {path:'deposit',component:DepositComponent},
-  {path:'withdraw',component:WithdrawComponent},
-  {path:'about',component:AboutBank},
-  {path:'transaction',component:TransactionComponent},
-  {path:'addtr',component:Addtransaction},
-  {path:'emptr',component:EmployeeTransaction},
-  {path:'trst',component:TransactionStatement},
-  {path:'login',component:Login},
-  {path:'logout',component:Logout},
-  {path: 'user-profile', component: UserProfile},
-  {path: 'account-profile', component: AccountHolderProfile},
-  {path: 'employee-profile', component: EmployeeProfile},
-  {path: 'admin-profile', component: AdminProfile},
-  {path: 'contact', component: ContactUs},
-  {path: 'admindash', component: AdminDashboard},
-  {path: 'onlyadduser', component: OnlyAddUser},
+  { path: '', component: Home },
+  { path: 'adduser', component: Usercomponent },
+  { path: 'addemployee', component: EmployeeComponent },
+  { path: 'viewalluser', component: Viewallusercomponent },
+  { path: 'updateuser/:id', component: Updateusercomponent },
+  { path: 'viewallaccount', component: ViewAllAccounts },
+  { path: 'viewallemp', component: ViewAllEmployee },
+  { path: 'deposit', component: DepositComponent },
+  { path: 'withdraw', component: WithdrawComponent },
+  { path: 'about', component: AboutBank },
+  { path: 'transaction', component: TransactionComponent },
+  { path: 'addtr', component: Addtransaction },
+  { path: 'emptr', component: EmployeeTransaction },
+  { path: 'trst', component: TransactionStatement },
+  { path: 'acctrst', component: AccTranStatement },
+  { path: 'emptrst', component: EmpTranStatement },
+  { path: 'login', component: Login },
+  { path: 'logout', component: Logout },
+  { path: 'user-profile', component: UserProfile },
+  { path: 'account-profile', component: AccountHolderProfile },
+  { path: 'employee-profile', component: EmployeeProfile },
+  { path: 'admin-profile', component: AdminProfile },
+  { path: 'contact', component: ContactUs },
+  { path: 'admindash', component: AdminDashboard },
+  { path: 'onlyadduser', component: OnlyAddUser },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
 
 
-  
+
 ];
 
 @NgModule({

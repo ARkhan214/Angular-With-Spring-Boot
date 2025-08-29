@@ -29,7 +29,7 @@ export class ViewAllAccounts implements OnInit {
   }
 
   loadData(): void {
-  this.accountService.getAllAccount().subscribe(accounts => {
+  this.accountService.getAllAccounts().subscribe(accounts => {
     this.account = accounts;           
     console.log("Accounts from API: ", this.account);
     this.filteredAccount = [...accounts]; 

@@ -54,12 +54,14 @@ public class SecurityConfig {
                                 "/api/employees/",
                                 "/api/employees/**",
                                 "/api/transactions/**",
-                                "/api/transactions/tr/**"
+                                "/api/transactions/tr/**",
+                                "/api/transactions/statement",
+                                "/api/employees/**"
 
                         )
                         .permitAll()
                                 .requestMatchers("/api/user/profile").authenticated()
-                                .requestMatchers("/api/loans/apply").hasRole("USER")
+                                .requestMatchers("/api/loans/apply","/api/transactions/statement").hasRole("USER")
 //                        .requestMatchers("/api/transactions/**","/api/account/").hasRole("USER")
 //                        .requestMatchers("/api/employees/","/api/employees/**","/api/transactions/**","/api/transactions/tr/**").hasRole("EMPLOYEE")
                         .anyRequest().authenticated()

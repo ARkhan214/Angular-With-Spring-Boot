@@ -44,7 +44,7 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link text-info fw-semibold" routerLink="#"><i class="fa fa-credit-card me-1 text-info"></i>All
+            <a class="nav-link text-info fw-semibold" routerLink="/viewallemp"><i class="fa fa-credit-card me-1 text-info"></i>All
                 Employees</a>
         </li>
 
@@ -61,7 +61,7 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link text-success fw-semibold" routerLink="/trst"><i
+            <a class="nav-link text-success fw-semibold" routerLink="/emptrst"><i
                     class="fa fa-exchange me-1 text-success"></i>Transaction Statement</a>
         </li>
 
@@ -111,7 +111,7 @@
                 <div class="bg-light py-2 collapse-inner rounded">
                     <a class="collapse-item" routerLink="/withdraw">Withdwaw</a>
                     <a class="collapse-item" routerLink="/addtr">Transfar Money</a>
-                    <a class="collapse-item" routerLink="/trst">Transaction Statement</a>
+                    <a class="collapse-item" routerLink="/acctrst">Transaction Statement</a>
                     <a class="collapse-item" routerLink="#">Fixed Deposit</a>
                     <a class="collapse-item" routerLink="#">Loan Apply</a>
                     <a class="collapse-item" routerLink="#">DPS</a>
@@ -185,7 +185,7 @@
                     <a class="collapse-item" routerLink="/deposit">Deposit & Withdwaw</a>
                     <!-- <a class="collapse-item" routerLink="/emptr">Withdwaw</a> -->
                     <a class="collapse-item" routerLink="/emptr">Transfar Money</a>
-                    <a class="collapse-item" routerLink="/trst">Transaction Statement</a>
+                    <a class="collapse-item" routerLink="/emptrst">Transaction Statement</a>
                     <a class="collapse-item" routerLink="#">Fixed Deposit</a>
                     <a class="collapse-item" routerLink="#">Loan Apply</a>
                     <a class="collapse-item" routerLink="#">DPS</a>
@@ -217,9 +217,10 @@
         </a>
         <div id="collapsePages" class="collapse">
             <div class="bg-light py-2 collapse-inner rounded">
-                <a class="collapse-item" href="#">Forgot Password</a>
-
+                <a class="collapse-item" routerLink="/forgot-password">Forgot Password</a>
+                    <a class="collapse-item" routerLink="/reset-password">Reset Password</a>
             </div>
+            
         </div>
     </li>
 

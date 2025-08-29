@@ -5,6 +5,7 @@ import { map, Observable, switchMap, throwError } from 'rxjs';
 import { environment } from '../environment/environment';
 import { AuthService } from './auth-service';
 import { isPlatformBrowser } from '@angular/common';
+import { AccountsDTO } from '../model/accountsDTO.model';
 
 @Injectable({
   providedIn: 'root'
@@ -94,10 +95,18 @@ export class Accountsservice {
 
 
   //Sob account dekhar jonno (related with ViewAllAccounts.ts er loadData methode)
-  getAllAccount(): Observable<Accounts[]> {
-    return this.http.get<Accounts[]>(`${this.apiUrl}/account/all`);
+  // getAllAccount(): Observable<AccountsDTO[]> {
+  //   return this.http.get<AccountsDTO[]>(`${this.apiUrl}/account/all`);
+  // }
+
+  getAllAccount(): Observable<AccountsDTO[]> {
+    return this.http.get<AccountsDTO[]>(`${this.apiUrl}/account/all`);
   }
 
+  //for admin dashbord
+  getAllAccounts(): Observable<Accounts[]> {
+    return this.http.get<Accounts[]>(`${this.apiUrl}/account/all`);
+  }
 
 
   // view account info
@@ -156,10 +165,7 @@ export class Accountsservice {
 
 
 
-  //for admin dashbord
-  getAllAccounts(): Observable<Accounts[]> {
-    return this.http.get<Accounts[]>(`${this.apiUrl}/account/all`);
-  }
+
 
   //its working for create account on usercomponent
   registerAccount(formData: FormData): Observable<any> {

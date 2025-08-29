@@ -1,5 +1,6 @@
 package com.emranhss.mkbankspring.service;
 
+import com.emranhss.mkbankspring.dto.TransactionDTO;
 import com.emranhss.mkbankspring.entity.Accounts;
 import com.emranhss.mkbankspring.entity.Transaction;
 import com.emranhss.mkbankspring.entity.TransactionType;
@@ -10,8 +11,10 @@ import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionService {
@@ -248,17 +251,17 @@ public class TransactionService {
 
 
 
+//last comment (releted with controller)
 
-
-    // Get transactions by accountId(for tr statement)
-    public List<Transaction> getTransactionsByAccountId(Long accountId){
-        return transactionRepository.findByAccountId(accountId);
-    }
-
-    // find transaction by accountId + date(for tr statement)
-    public List<Transaction> getTransactionsByAccountIdAndDateRange(Long accountId, Date start, Date end) {
-        return transactionRepository.findByAccount_IdAndTransactionTimeBetween(accountId, start, end);
-    }
+//     Get transactions by accountId(for tr statement)
+//    public List<Transaction> getTransactionsByAccountId(Long accountId){
+//        return transactionRepository.findByAccountId(accountId);
+//    }
+//
+//    // find transaction by accountId + date(for tr statement)
+//    public List<Transaction> getTransactionsByAccountIdAndDateRange(Long accountId, Date start, Date end) {
+//        return transactionRepository.findByAccount_IdAndTransactionTimeBetween(accountId, start, end);
+//    }
 
 
 
@@ -344,6 +347,112 @@ public class TransactionService {
         } catch (MessagingException e) {
             throw new RuntimeException("Failed to send transaction email", e);
         }
+    }
+
+
+
+    //Transcation Statement
+    public List<TransactionDTO> getTransactionsByAccountID(Long accountId) {
+        List<Transaction> transactions =
+                transactionRepository.findByAccountIdOrderByTransactionTimeDesc(accountId);
+
+        return transactions.stream().map(tx -> {
+            String nature = getTransactionNature(tx); // DEBIT / CREDIT নির্ধারণ
+
+            return new TransactionDTO(
+                    tx.getId(),
+                    tx.getAccount().getName(),   // Account holder name
+                    tx.getReceiverAccount() != null ? tx.getReceiverAccount().getId() : null,   // Receiver ID
+                    tx.getReceiverAccount() != null ? tx.getReceiverAccount().getName() : null, // Receiver Name
+                    nature,
+                    tx.getType().name(),
+                    tx.getAmount(),
+                    tx.getTransactionTime(),
+                    tx.getDescription()
+
+            );
+        }).toList();
+    }
+
+    // Debit / Credit Logic
+    private String getTransactionNature(Transaction tx) {
+        if (tx.getType() == TransactionType.INITIALBALANCE
+                || tx.getType() == TransactionType.DEPOSIT
+                || tx.getType() == TransactionType.RECEIVE) {
+            return "CREDIT";
+        } else if (tx.getType() == TransactionType.WITHDRAW
+                || tx.getType() == TransactionType.FIXED_DEPOSIT
+                || tx.getType() == TransactionType.TRANSFER) {
+            return "DEBIT";
+        } else {
+            return "UNKNOWN";
+        }
+    }
+
+
+    //TransactionStatement Filter for Employee with giving Id
+ public List<TransactionDTO> getTransactionsByAccountIDWithFilter(
+         Long accountId,
+         String startDateStr,
+         String endDateStr,
+         String type,
+         String transactionType
+ ) {
+     final Date startDate;
+     final Date endDate;
+
+     try {
+         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+         startDate = (startDateStr != null) ? sdf.parse(startDateStr) : null;
+         endDate = (endDateStr != null) ? sdf.parse(endDateStr) : null;
+     } catch (Exception e) {
+         throw new RuntimeException("Invalid date format. Use yyyy-MM-dd", e);
+     }
+
+     List<Transaction> transactions = transactionRepository.findByAccountIdOrderByTransactionTimeDesc(accountId);
+
+     return transactions.stream()
+             .filter(tx -> (startDate == null || !tx.getTransactionTime().before(startDate)))
+             .filter(tx -> (endDate == null || !tx.getTransactionTime().after(endDate)))
+             .filter(tx -> (type == null || getTransactionNature(tx).equalsIgnoreCase(type)))
+             .filter(tx -> (transactionType == null || tx.getType().name().equalsIgnoreCase(transactionType)))
+             .map(tx -> new TransactionDTO(
+                     tx.getId(),
+                     tx.getAccount().getName(),
+                     tx.getReceiverAccount() != null ? tx.getReceiverAccount().getId() : null,
+                     tx.getReceiverAccount() != null ? tx.getReceiverAccount().getName() : null,
+                     getTransactionNature(tx),
+                     tx.getType().name(),
+                     tx.getAmount(),
+                     tx.getTransactionTime(),
+                     tx.getDescription()
+             ))
+             .collect(Collectors.toList());
+ }
+
+
+//TransactionStatement Filter for Account Holder without giving Id
+    public List<TransactionDTO> getFilteredTransactions(Long accountId, Date startDate, Date endDate, String type, String transactionType) {
+        List<Transaction> transactions = transactionRepository.findByAccountIdOrderByTransactionTimeDesc(accountId);
+
+        // Java Stream  filter apply
+        return transactions.stream()
+                .filter(tx -> (startDate == null || !tx.getTransactionTime().before(startDate)))
+                .filter(tx -> (endDate == null || !tx.getTransactionTime().after(endDate)))
+                .filter(tx -> (type == null || type.isEmpty() || getTransactionNature(tx).equalsIgnoreCase(type)))
+                .filter(tx -> (transactionType == null || transactionType.isEmpty() || tx.getType().name().equalsIgnoreCase(transactionType)))
+                .map(tx -> new TransactionDTO(
+                        tx.getId(),
+                        tx.getAccount().getName(),
+                        tx.getReceiverAccount() != null ? tx.getReceiverAccount().getId() : null,
+                        tx.getReceiverAccount() != null ? tx.getReceiverAccount().getName() : null,
+                        getTransactionNature(tx),
+                        tx.getType().name(),
+                        tx.getAmount(),
+                        tx.getTransactionTime(),
+                        tx.getDescription()
+                ))
+                .toList();
     }
 
 }

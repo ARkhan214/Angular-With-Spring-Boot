@@ -17,5 +17,10 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     @Query("SELECT emp FROM Employee emp WHERE emp.user.email = :email")
     Optional<Employee> findByUserEmail(@Param("email") String email);
 
+
+    //total Salary Calculate.
+    @Query("SELECT SUM(e.salary) FROM Employee e")
+    Double getTotalSalary();
+
 //    Optional<Object> findByUserId(Long userId);
 }

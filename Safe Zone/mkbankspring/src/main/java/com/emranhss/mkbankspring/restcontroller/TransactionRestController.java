@@ -1,10 +1,12 @@
 package com.emranhss.mkbankspring.restcontroller;
 
+import com.emranhss.mkbankspring.dto.TransactionDTO;
 import com.emranhss.mkbankspring.entity.Accounts;
 import com.emranhss.mkbankspring.entity.Transaction;
 import com.emranhss.mkbankspring.entity.User;
 import com.emranhss.mkbankspring.repository.AccountRepository;
 import com.emranhss.mkbankspring.repository.UserRepository;
+import com.emranhss.mkbankspring.service.AccountService;
 import com.emranhss.mkbankspring.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -25,6 +27,9 @@ public class TransactionRestController {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private AccountService  accountService;
 
 
     @Autowired
@@ -120,14 +125,14 @@ public Transaction transfer(
     }
 
 
-    //  Get transactions by account ID(Method Number -3)
-    @GetMapping("account/{accountId}")
-    public ResponseEntity<List<Transaction>> getTransactionsByAccount(@PathVariable Long accountId) {
-        Accounts account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
-        List<Transaction> transactions = transactionService.getTransactionsByAccountId(accountId);
-        return ResponseEntity.ok(transactions);
-    }
+//    //  Get transactions by account ID(Method Number -3)
+//    @GetMapping("account/{accountId}")
+//    public ResponseEntity<List<Transaction>> getTransactionsByAccount(@PathVariable Long accountId) {
+//        Accounts account = accountRepository.findById(accountId)
+//                .orElseThrow(() -> new RuntimeException("Account not found"));
+//        List<Transaction> transactions = transactionService.getTransactionsByAccountId(accountId);
+//        return ResponseEntity.ok(transactions);
+//    }
 
 
 
@@ -156,7 +161,7 @@ public Transaction transfer(
         transactionService.deleteTransactionByAccountId(accountId);
     }
 
-
+//last comment (releted with controller)
     //For Transaction Statement
 //     Find statement by Account Id
 //    @GetMapping("/account/{accountId}")
@@ -184,4 +189,62 @@ public Transaction transfer(
         return ResponseEntity.ok(transactions);
     }
 
+//    @GetMapping("{accountId}")
+//    public List<TransactionDTO> getTransactionStatement(@PathVariable Long accountId) {
+//        return transactionService.getTransactionsByAccountID(accountId);
+//    }
+
+
+
+    //Account holder tar bank statement dekhar jonno eta baboher kortese
+    @GetMapping("statement")
+    public List<TransactionDTO> getTransactionStatement(Authentication authentication) {
+        //email/username from Authentication
+        String email = authentication.getName();
+
+        // find Account
+        Long accountId = accountService.findAccountByEmail(email).getId();
+
+        // Statement
+        return transactionService.getTransactionsByAccountID(accountId);
+    }
+
+    // Filter endpoint for employee(employee eta diea filter kortese)
+    @GetMapping("filter")
+    public List<TransactionDTO> getTransactionsWithFilter(
+            @RequestParam Long accountId,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String transactionType
+    ) {
+        return transactionService.getTransactionsByAccountIDWithFilter(
+                accountId,
+                startDate,
+                endDate,
+                type,
+                transactionType
+        );
+    }
+
+
+
+    //Filter For Account Holder Without giving account
+    @GetMapping("statement/filter")
+    public List<TransactionDTO>getFilteredTransactions(
+            Authentication authentication,
+            @RequestParam(required = false)@DateTimeFormat(pattern = "yyyy-MM-dd")Date startDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String transactionType
+    ) {
+        // 1. Get logged in user's email
+        String email = authentication.getName();
+
+        // 2. Get accountId from email
+        Long accountId = accountService.findAccountByEmail(email).getId();
+
+        // 3. Service call (filter logic implement service layer)
+        return transactionService.getFilteredTransactions(accountId, startDate, endDate, type, transactionType);
+    }
 }
