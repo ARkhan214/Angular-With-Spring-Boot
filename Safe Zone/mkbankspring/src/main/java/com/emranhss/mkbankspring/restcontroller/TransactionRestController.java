@@ -247,4 +247,88 @@ public Transaction transfer(
         // 3. Service call (filter logic implement service layer)
         return transactionService.getFilteredTransactions(accountId, startDate, endDate, type, transactionType);
     }
+
+
+
+    //payment er jonno
+
+    // ====================== BILL PAYMENT ENDPOINTS ======================
+
+    @PostMapping("pay/electricity")
+    public ResponseEntity<Transaction> payElectricity(@RequestBody TransactionDTO dto,
+                                                      Authentication authentication) {
+        Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+        Transaction tx = transactionService.payElectricityBill(
+                accountId,
+                dto.getAmount(),
+                dto.getCompanyName(),
+                dto.getAccountHolderBillingId()
+        );
+        return ResponseEntity.ok(tx);
+    }
+
+    @PostMapping("pay/gas")
+    public ResponseEntity<Transaction> payGas(@RequestBody TransactionDTO dto,
+                                              Authentication authentication) {
+        Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+        Transaction tx = transactionService.payGasBill(
+                accountId,
+                dto.getAmount(),
+                dto.getCompanyName(),
+                dto.getAccountHolderBillingId()
+        );
+        return ResponseEntity.ok(tx);
+    }
+
+    @PostMapping("pay/water")
+    public ResponseEntity<Transaction> payWater(@RequestBody TransactionDTO dto,
+                                                Authentication authentication) {
+        Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+        Transaction tx = transactionService.payWaterBill(
+                accountId,
+                dto.getAmount(),
+                dto.getCompanyName(),
+                dto.getAccountHolderBillingId()
+        );
+        return ResponseEntity.ok(tx);
+    }
+
+    @PostMapping("pay/internet")
+    public ResponseEntity<Transaction> payInternet(@RequestBody TransactionDTO dto,
+                                                   Authentication authentication) {
+        Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+        Transaction tx = transactionService.payInternetBill(
+                accountId,
+                dto.getAmount(),
+                dto.getCompanyName(),
+                dto.getAccountHolderBillingId()
+        );
+        return ResponseEntity.ok(tx);
+    }
+
+    @PostMapping("pay/mobile")
+    public ResponseEntity<Transaction> payMobile(@RequestBody TransactionDTO dto,
+                                                 Authentication authentication) {
+        Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+        Transaction tx = transactionService.payMobileBill(
+                accountId,
+                dto.getAmount(),
+                dto.getCompanyName(),
+                dto.getAccountHolderBillingId()
+        );
+        return ResponseEntity.ok(tx);
+    }
+
+    @PostMapping("pay/credit-card")
+    public ResponseEntity<Transaction> payCreditCard(@RequestBody TransactionDTO dto,
+                                                     Authentication authentication) {
+        Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+        Transaction tx = transactionService.payCreditCardBill(
+                accountId,
+                dto.getAmount(),
+                dto.getCompanyName(),
+                dto.getAccountHolderBillingId()
+        );
+        return ResponseEntity.ok(tx);
+    }
 }

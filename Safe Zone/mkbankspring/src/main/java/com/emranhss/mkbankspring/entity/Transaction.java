@@ -16,6 +16,12 @@ public class Transaction {
     @Column(nullable = false, length = 20)
     private TransactionType type;
 
+    // Bill company name(Dhaka wasa,Titash Gas,DMP Electricity .etc)
+    private String companyName;
+
+    // account holder er Billing ID/(Electricity bill -meter id-12321,Water bill id-mj322 .etc)
+    private String accountHolderBillingId;
+
     @Column(nullable = false)
     private double amount;
 
@@ -43,9 +49,11 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(Long id, TransactionType type, double amount, Date transactionTime, String description, Accounts account, Accounts receiverAccount, String token) {
+    public Transaction(Long id, TransactionType type, String companyName, String accountHolderBillingId, double amount, Date transactionTime, String description, Accounts account, Accounts receiverAccount, String token) {
         this.id = id;
         this.type = type;
+        this.companyName = companyName;
+        this.accountHolderBillingId = accountHolderBillingId;
         this.amount = amount;
         this.transactionTime = transactionTime;
         this.description = description;
@@ -68,6 +76,22 @@ public class Transaction {
 
     public void setType(TransactionType type) {
         this.type = type;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getAccountHolderBillingId() {
+        return accountHolderBillingId;
+    }
+
+    public void setAccountHolderBillingId(String accountHolderBillingId) {
+        this.accountHolderBillingId = accountHolderBillingId;
     }
 
     public double getAmount() {

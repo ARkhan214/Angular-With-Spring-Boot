@@ -8,6 +8,7 @@ import com.emranhss.mkbankspring.entity.User;
 import com.emranhss.mkbankspring.repository.AccountRepository;
 import com.emranhss.mkbankspring.repository.TransactionRepository;
 import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -368,7 +369,9 @@ public class TransactionService {
                     tx.getType().name(),
                     tx.getAmount(),
                     tx.getTransactionTime(),
-                    tx.getDescription()
+                    tx.getDescription(),
+                    tx.getCompanyName(),
+                    tx.getAccountHolderBillingId()
 
             );
         }).toList();
@@ -425,7 +428,9 @@ public class TransactionService {
                      tx.getType().name(),
                      tx.getAmount(),
                      tx.getTransactionTime(),
-                     tx.getDescription()
+                     tx.getDescription(),
+                     tx.getCompanyName(),
+                     tx.getAccountHolderBillingId()
              ))
              .collect(Collectors.toList());
  }
@@ -450,9 +455,81 @@ public class TransactionService {
                         tx.getType().name(),
                         tx.getAmount(),
                         tx.getTransactionTime(),
-                        tx.getDescription()
+                        tx.getDescription(),
+                        tx.getCompanyName(),
+                        tx.getAccountHolderBillingId()
                 ))
                 .toList();
     }
 
+
+
+
+    //payment er jonno
+    public TransactionService(AccountRepository accountRepository,
+                              TransactionRepository transactionRepository) {
+        this.accountRepository = accountRepository;
+        this.transactionRepository = transactionRepository;
+    }
+
+    /**
+     * Common method for all bill payments
+     */
+    @Transactional
+    protected Transaction processBillPayment(Long accountId,
+                                             double amount,
+                                             String companyName,
+                                             String customerBillingId,
+                                             TransactionType type) {
+
+        Accounts account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        // Check balance
+        if (account.getBalance() < amount) {
+            throw new RuntimeException("Insufficient balance to pay bill");
+        }
+
+        // Deduct balance
+        account.setBalance(account.getBalance() - amount);
+        accountRepository.save(account);
+
+        // Create transaction
+        Transaction transaction = new Transaction();
+        transaction.setAccount(account);
+        transaction.setType(type);
+        transaction.setCompanyName(companyName);
+        transaction.setAccountHolderBillingId(customerBillingId);
+        transaction.setAmount(amount);
+        transaction.setTransactionTime(new Date());
+        transaction.setDescription("Bill payment: " + type.name());
+
+        return transactionRepository.save(transaction);
+    }
+
+    // =================== Specific Bill Payment Methods ===================
+
+    public Transaction payElectricityBill(Long accountId, double amount, String companyName, String customerBillingId) {
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_ELECTRICITY);
+    }
+
+    public Transaction payGasBill(Long accountId, double amount, String companyName, String customerBillingId) {
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_GAS);
+    }
+
+    public Transaction payWaterBill(Long accountId, double amount, String companyName, String customerBillingId) {
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_WATER);
+    }
+
+    public Transaction payInternetBill(Long accountId, double amount, String companyName, String customerBillingId) {
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_INTERNET);
+    }
+
+    public Transaction payMobileBill(Long accountId, double amount, String companyName, String customerBillingId) {
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_MOBILE);
+    }
+
+    public Transaction payCreditCardBill(Long accountId, double amount, String companyName, String customerBillingId) {
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_CREDIT_CARD);
+    }
 }

@@ -74,6 +74,8 @@
           <th>Amount</th>
           <th>Date</th>
           <th>Description</th>
+          <th>companyName</th>
+          <th>Account Holder Billing Id</th>
         </tr>
       </thead>
       <tbody>
@@ -86,6 +88,8 @@
           <td>{{ tx.amount | number:'1.2-2' }}</td>
           <td>{{ tx.transactionTime | date:'short' }}</td>
           <td>{{ tx.description }}</td>
+          <td>{{tx.companyName}}</td>
+          <td>{{tx.accountHolderBillingId}}</td>
         </tr>
       </tbody>
     </table>
