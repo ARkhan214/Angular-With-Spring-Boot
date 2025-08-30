@@ -15,17 +15,21 @@ export class ResetPasswordComponent {
   message: string = '';
 
 
-constructor(private http:HttpClient,
-  private alertService:AlertService,
-  private cdr:ChangeDetectorRef
-){}
+// constructor(private http:HttpClient,
+//   private alertService:AlertService,
+//   private cdr:ChangeDetectorRef
+// ){}
 
 
-  // constructor(private http: HttpClient, private route: ActivatedRoute) {
-  //   this.route.queryParams.subscribe(params => {
-  //     this.token = params['token'] || '';
-  //   });
-  // }
+  constructor(
+    private http: HttpClient,
+     private route: ActivatedRoute,
+    private alertService:AlertService
+  ) {
+    this.route.queryParams.subscribe(params => {
+      this.token = params['token'] || '';
+    });
+  }
 
   resetPassword() {
     const formData = new URLSearchParams();
@@ -36,13 +40,13 @@ constructor(private http:HttpClient,
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     }).subscribe({
       next: (res: any) =>{
-        this.message = res,
-        this.alertService.success('Password Changed Successfully');
-        this.cdr.markForCheck();
+        this.message = res.message
+        this.alertService.success(this.message);
+        // this.cdr.markForCheck();
       },
       error: (err: any) => {
-        this.message = 'Error resetting password'
-        this.alertService.error(err+'Error resetting password');
+        this.message = err.error?.message || 'Error resetting password'
+        this.alertService.error(this.message);
       }
     });
   }

@@ -124,19 +124,18 @@ public class UserRestController {
         return ResponseEntity.ok(user1);
     }
 
-
-
-
     //for pasword reset
-    // Step 1: Forgot Password
     @PostMapping("forgot-password")
-    public String forgotPassword(@RequestParam String email) {
-        return authService.forgotPassword(email);
+    public ResponseEntity<Map<String, String>> forgotPassword(@RequestParam String email) {
+        String result = authService.forgotPassword(email);
+        return ResponseEntity.ok(Map.of("message", result));
     }
 
-    // Step 2: Reset Password
     @PostMapping("reset-password")
-    public String resetPassword(@RequestParam String token, @RequestParam String newPassword) {
-        return authService.resetPassword(token, newPassword);
+    public ResponseEntity<Map<String, String>> resetPassword(@RequestParam String token,
+                                                             @RequestParam String newPassword) {
+        String result = authService.resetPassword(token, newPassword);
+        return ResponseEntity.ok(Map.of("message", result));
     }
+
 }

@@ -56,7 +56,10 @@ public class SecurityConfig {
                                 "/api/transactions/**",
                                 "/api/transactions/tr/**",
                                 "/api/transactions/statement",
-                                "/api/employees/**"
+                                "/api/employees/**",
+                                "/api/user/reset-password",
+                                "/api/user/forgot-password"
+
 
                         )
                         .permitAll()

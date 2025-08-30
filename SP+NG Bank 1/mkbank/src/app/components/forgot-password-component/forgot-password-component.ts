@@ -30,18 +30,13 @@ export class ForgotPasswordComponent {
     })
       .subscribe({
         next: (res: any) => {
-          this.message = res;
-
-          // Success  reset-password page এ navigate
-          if (this.message.includes('sent')) {
-            this.router.navigate(['/reset-password'], { queryParams: { email: this.email } });
-          }
+          this.message = res.message;
           this.alertService.success('Check your email and Change your password');
           this.cdr.markForCheck();
         },
         error: (err: any) => {
           this.message = 'Error sending reset link';
-          this.alertService.error('Error resetting password!');
+          this.alertService.error('Error sending reset link');
         }
       });
 
