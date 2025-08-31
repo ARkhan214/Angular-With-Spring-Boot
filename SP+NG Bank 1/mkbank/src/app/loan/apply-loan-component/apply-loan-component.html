@@ -1,0 +1,31 @@
+<p>apply-loan-component works!</p>
+<!-- apply-loan-component.html -->
+<div class="loan-form-container">
+  <h2>Apply for a Loan</h2>
+
+  <div class="form-group">
+    <label for="loanAmount">Loan Amount</label>
+    <input type="number" id="loanAmount" [(ngModel)]="loanAmount" placeholder="Enter loan amount" />
+  </div>
+
+  <div class="form-group">
+    <label for="durationInMonths">Duration (Months)</label>
+    <input type="number" id="durationInMonths" [(ngModel)]="durationInMonths" placeholder="Enter duration in months" />
+  </div>
+
+  <div class="form-group">
+    <label for="loanType">Loan Type</label>
+    <select id="loanType" [(ngModel)]="loanType">
+      <option value="" disabled>Select Loan Type</option>
+      <option value="PERSONAL">Personal</option>
+      <option value="HOME">Home</option>
+      <option value="CAR">Car</option>
+      <option value="EDUCATION">Education</option>
+      <option value="BUSINESS">Business</option>
+    </select>
+  </div>
+
+  <button (click)="applyLoan()">Apply Loan</button>
+
+  <p class="message" *ngIf="message">{{ message }}</p>
+</div>

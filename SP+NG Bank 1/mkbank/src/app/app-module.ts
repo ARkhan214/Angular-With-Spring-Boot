@@ -48,6 +48,7 @@ import { WaterBillComponent } from './payments/water-bill-component/water-bill-c
 import { InternetBillComponent } from './payments/internet-bill-component/internet-bill-component';
 import { MobileBillComponent } from './payments/mobile-bill-component/mobile-bill-component';
 import { CreditCardBillComponent } from './payments/credit-card-bill-component/credit-card-bill-component';
+import { ApplyLoanComponent } from './loan/apply-loan-component/apply-loan-component';
 
 
 @NgModule({
@@ -92,6 +93,7 @@ import { CreditCardBillComponent } from './payments/credit-card-bill-component/c
     InternetBillComponent,
     MobileBillComponent,
     CreditCardBillComponent,
+    ApplyLoanComponent,
   ],
   imports: [
     BrowserModule,

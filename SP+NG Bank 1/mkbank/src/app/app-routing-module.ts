@@ -34,6 +34,7 @@ import { CreditCardBillComponent } from './payments/credit-card-bill-component/c
 import { ElectricityBillComponent } from './payments/electricity-bill-component/electricity-bill-component';
 import { GasBillComponent } from './payments/gas-bill-component/gas-bill-component';
 import { InternetBillComponent } from './payments/internet-bill-component/internet-bill-component';
+import { ApplyLoanComponent } from './loan/apply-loan-component/apply-loan-component';
 
 
 
@@ -72,6 +73,7 @@ const routes: Routes = [
   { path: 'electricity-bill', component: ElectricityBillComponent },
   { path: 'gas-bill', component: GasBillComponent },
   { path: 'internet-bill', component: InternetBillComponent },
+  { path: 'apply-loan', component: ApplyLoanComponent },
 
 
 
