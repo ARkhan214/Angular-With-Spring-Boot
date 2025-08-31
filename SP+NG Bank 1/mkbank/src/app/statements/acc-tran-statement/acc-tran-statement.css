@@ -8,6 +8,14 @@
   font-family: Arial, sans-serif;
 }
 
+.transaction-container {
+  min-height: 80vh; /* page height 80% viewport height */
+  max-width: 1400px; /* wider container */
+  margin: 20px auto; /* center page with some top-bottom margin */
+  padding: 30px; /* internal padding */
+}
+
+
 .transaction-container h2 {
   text-align: center;
   margin-bottom: 20px;

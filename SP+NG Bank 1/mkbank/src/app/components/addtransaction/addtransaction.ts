@@ -96,19 +96,6 @@ export class Addtransaction {
       });
 
     }
-    //  else {
-    //   // Deposit / Withdraw
-    //   this.transactionService.makeTransaction(transaction).subscribe({
-    //     next: res => {
-    //       alert('Transaction Successful!');
-    //       this.resetForm();
-    //     },
-    //     error: err => {
-    //       console.error('Transaction failed:', err);
-    //       alert(err.error?.message || 'Transaction Failed!');
-    //     }
-    //   });
-    // }
   }
 
   // Reset form + clear localStorage

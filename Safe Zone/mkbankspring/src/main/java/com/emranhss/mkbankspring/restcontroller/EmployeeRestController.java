@@ -67,13 +67,6 @@ public class EmployeeRestController {
     }
 
 
-    // (Method 1) find all Employee
-//    @GetMapping("all")
-//    public ResponseEntity<List<Employee>> getAllEmployees() {
-//        List<Employee> employees = employeeService.getAllEmployees();
-//        return ResponseEntity.ok(employees);
-//    }
-
 
     @GetMapping("all")
     public ResponseEntity<List<EmployeeDTO>> getAllEmployees() {
@@ -82,36 +75,6 @@ public class EmployeeRestController {
     }
 
 
-    // (Method 2) find Employee by id(related with EmployeeService method -3)
-//    @GetMapping("{id}")
-//    public EmployeeDTO getEmployeeById(@PathVariable Long id) {
-//        return employeeService.getProfileByUserId(id);
-//    }
-
-//    @GetMapping("profile")
-//    public ResponseEntity<?> getProfileForEmployee(Authentication authentication) {
-//
-//        System.out.println("Authenticated User: " + authentication.getName());
-//        System.out.println("Authorities: " + authentication.getAuthorities());
-//        String email = authentication.getName();
-//        Optional<User> user =userRepository.findByEmail(email);
-//        Employee employee = employeeService.findEmployeeById(user.get().getId());
-//        System.out.println(employee+"3333333");
-//        return ResponseEntity.ok(employee);
-//
-//    }
-
-//    @GetMapping("/profile")
-//    public ResponseEntity<EmployeeDTO> getProfile(Authentication authentication) {
-//        String email = authentication.getName();
-//        User user = userRepository.findByEmail(email)
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        EmployeeDTO employeeProfile = employeeService.getProfileByUserId(user.getId());
-//        return ResponseEntity.ok(employeeProfile);
-//    }
-
-//
 @GetMapping("profile")
 public EmployeeDTO getProfile(Authentication authentication) {
     return employeeService.getProfileByUserId(authentication.getName());

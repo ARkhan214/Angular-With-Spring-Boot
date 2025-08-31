@@ -28,6 +28,12 @@ import { EmpTranStatement } from './statements/emp-tran-statement/emp-tran-state
 import { ViewAllEmployee } from './components/view-all-employee/view-all-employee';
 import { ForgotPasswordComponent } from './components/forgot-password-component/forgot-password-component';
 import { ResetPasswordComponent } from './components/reset-password-component/reset-password-component';
+import { WaterBillComponent } from './payments/water-bill-component/water-bill-component';
+import { MobileBillComponent } from './payments/mobile-bill-component/mobile-bill-component';
+import { CreditCardBillComponent } from './payments/credit-card-bill-component/credit-card-bill-component';
+import { ElectricityBillComponent } from './payments/electricity-bill-component/electricity-bill-component';
+import { GasBillComponent } from './payments/gas-bill-component/gas-bill-component';
+import { InternetBillComponent } from './payments/internet-bill-component/internet-bill-component';
 
 
 
@@ -60,6 +66,12 @@ const routes: Routes = [
   { path: 'onlyadduser', component: OnlyAddUser },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
+  { path: 'water-bill', component: WaterBillComponent },
+  { path: 'mobile-bill', component: MobileBillComponent },
+  { path: 'credit-card-bill', component: CreditCardBillComponent },
+  { path: 'electricity-bill', component: ElectricityBillComponent },
+  { path: 'gas-bill', component: GasBillComponent },
+  { path: 'internet-bill', component: InternetBillComponent },
 
 
 

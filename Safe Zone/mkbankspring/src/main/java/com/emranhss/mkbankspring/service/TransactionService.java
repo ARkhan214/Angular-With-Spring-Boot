@@ -135,59 +135,6 @@ public class TransactionService {
     }
 
 
-
-    //method for transfer
-//    public Transaction onlyTransfer(Transaction transaction, Long senderId,Long receiverId ,String token) {
-//
-//            Accounts sender = accountRepository.findById(senderId)
-//                .orElseThrow(() -> new RuntimeException("Sender account not found!"));
-//        System.out.println("Sender current balance: " + sender);
-//
-//        Accounts receiver = accountRepository.findById(receiverId)
-//                .orElseThrow(() -> new RuntimeException("Receiver account not found!"));
-//        System.out.println("Receiver current balance: " + receiver);
-//
-//        double newBalance = sender.getBalance();
-//
-//        if (transaction.getType() == TransactionType.TRANSFER) {
-//
-//        if (!receiver.isAccountActiveStatus()){
-//            throw new RuntimeException("Receiver account is closed!");
-//        }
-//        if (!sender.isAccountActiveStatus()) {
-//                throw new RuntimeException("Sender account is closed!");
-//        }
-//
-//        if (transaction.getAmount() > newBalance) {
-//            throw new RuntimeException("Insufficient balance!");
-//        }
-//
-//        newBalance -= transaction.getAmount();              //minus amount from sender account
-//        sender.setBalance(newBalance);                      //sender er balance save korlam
-//             accountRepository.save(sender);
-//
-//        //update reciver balance
-//        double receiverBalance = receiver.getBalance();     //receiver balance find
-//        receiverBalance +=transaction.getAmount();          //receiver balance update
-//        receiver.setBalance(receiverBalance);               //save receiver new balance
-//        accountRepository.save(receiver);
-//
-//        transaction.setAccount(sender);
-//        transaction.setReceiverAccount(receiver);
-//        transaction.setTransactionTime(new Date());
-//        transaction.setToken(token);
-//
-//        this.cashIN(receiverId,transaction.getAmount());     // Send receiver email
-//        }
-//        return transactionRepository.save(transaction);
-//
-//    }
-
-
-
-
-
-
     //For Admin dashbord
     public List<Transaction> getPositiveTransactions() {
         return transactionRepository.findByAmountGreaterThan(0.0);
@@ -225,10 +172,6 @@ public class TransactionService {
 
 
 
-
-
-
-
     // Save or update transaction
     public Transaction saveTransaction(Transaction transaction){
         return transactionRepository.save(transaction);
@@ -249,23 +192,6 @@ public class TransactionService {
     public Transaction getTransactionByAccountId(Long accountId){
         return transactionRepository.findById(accountId).get();
     }
-
-
-
-//last comment (releted with controller)
-
-//     Get transactions by accountId(for tr statement)
-//    public List<Transaction> getTransactionsByAccountId(Long accountId){
-//        return transactionRepository.findByAccountId(accountId);
-//    }
-//
-//    // find transaction by accountId + date(for tr statement)
-//    public List<Transaction> getTransactionsByAccountIdAndDateRange(Long accountId, Date start, Date end) {
-//        return transactionRepository.findByAccount_IdAndTransactionTimeBetween(accountId, start, end);
-//    }
-
-
-
 
 
     //for delete transaction by id (connected with TransactionResCon Method Number -4)
@@ -385,7 +311,13 @@ public class TransactionService {
             return "CREDIT";
         } else if (tx.getType() == TransactionType.WITHDRAW
                 || tx.getType() == TransactionType.FIXED_DEPOSIT
-                || tx.getType() == TransactionType.TRANSFER) {
+                || tx.getType() == TransactionType.TRANSFER
+                || tx.getType() == TransactionType.BILL_PAYMENT_MOBILE
+                || tx.getType() == TransactionType.BILL_PAYMENT_WATER
+                || tx.getType() == TransactionType.BILL_PAYMENT_INTERNET
+                || tx.getType() == TransactionType.BILL_PAYMENT_GAS
+                || tx.getType() == TransactionType.BILL_PAYMENT_ELECTRICITY
+                || tx.getType() == TransactionType.BILL_PAYMENT_CREDIT_CARD) {
             return "DEBIT";
         } else {
             return "UNKNOWN";
@@ -466,21 +398,15 @@ public class TransactionService {
 
 
     //payment er jonno
-    public TransactionService(AccountRepository accountRepository,
-                              TransactionRepository transactionRepository) {
-        this.accountRepository = accountRepository;
-        this.transactionRepository = transactionRepository;
-    }
+     //Common method for all bill payments
 
-    /**
-     * Common method for all bill payments
-     */
     @Transactional
     protected Transaction processBillPayment(Long accountId,
                                              double amount,
                                              String companyName,
                                              String customerBillingId,
-                                             TransactionType type) {
+                                             TransactionType type,
+                                             String token) {
 
         Accounts account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
@@ -504,32 +430,34 @@ public class TransactionService {
         transaction.setTransactionTime(new Date());
         transaction.setDescription("Bill payment: " + type.name());
 
+        transaction.setToken(token);
+
         return transactionRepository.save(transaction);
     }
 
     // =================== Specific Bill Payment Methods ===================
 
-    public Transaction payElectricityBill(Long accountId, double amount, String companyName, String customerBillingId) {
-        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_ELECTRICITY);
+    public Transaction payElectricityBill(Long accountId, double amount, String companyName, String customerBillingId,String token) {
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_ELECTRICITY,token);
     }
 
-    public Transaction payGasBill(Long accountId, double amount, String companyName, String customerBillingId) {
-        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_GAS);
+    public Transaction payGasBill(Long accountId, double amount, String companyName, String customerBillingId,String token) {
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_GAS,token);
     }
 
-    public Transaction payWaterBill(Long accountId, double amount, String companyName, String customerBillingId) {
-        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_WATER);
+    public Transaction payWaterBill(Long accountId, double amount, String companyName, String customerBillingId,String token) {
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_WATER,token);
     }
 
-    public Transaction payInternetBill(Long accountId, double amount, String companyName, String customerBillingId) {
-        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_INTERNET);
+    public Transaction payInternetBill(Long accountId, double amount, String companyName, String customerBillingId,String token) {
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_INTERNET,token);
     }
 
-    public Transaction payMobileBill(Long accountId, double amount, String companyName, String customerBillingId) {
-        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_MOBILE);
+    public Transaction payMobileBill(Long accountId, double amount, String companyName, String customerBillingId,String token) {
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_MOBILE,token);
     }
 
-    public Transaction payCreditCardBill(Long accountId, double amount, String companyName, String customerBillingId) {
-        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_CREDIT_CARD);
+    public Transaction payCreditCardBill(Long accountId, double amount, String companyName, String customerBillingId,String token) {
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_CREDIT_CARD,token);
     }
 }

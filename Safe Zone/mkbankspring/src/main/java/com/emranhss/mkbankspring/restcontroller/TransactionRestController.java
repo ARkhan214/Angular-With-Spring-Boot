@@ -101,11 +101,6 @@ public Transaction transfer(
     return transactionService.onlyTransfer(transaction, senderId, receiverId, token);
 }
 
-
-
-
-
-
     //  Get all transactions(Method Number -2)
     @GetMapping("all")
     public ResponseEntity<List<Transaction>> getAllTransactions() {
@@ -123,18 +118,6 @@ public Transaction transfer(
     public ResponseEntity<List<Transaction>> getNegativeTransactions() {
         return ResponseEntity.ok(transactionService.getNegativeTransactions());
     }
-
-
-//    //  Get transactions by account ID(Method Number -3)
-//    @GetMapping("account/{accountId}")
-//    public ResponseEntity<List<Transaction>> getTransactionsByAccount(@PathVariable Long accountId) {
-//        Accounts account = accountRepository.findById(accountId)
-//                .orElseThrow(() -> new RuntimeException("Account not found"));
-//        List<Transaction> transactions = transactionService.getTransactionsByAccountId(accountId);
-//        return ResponseEntity.ok(transactions);
-//    }
-
-
 
     //(Method Number -5)
     //Table Relation Use kore filter kora(Transaction table er sathe Account Table er Relation k kaje lagano)
@@ -160,28 +143,6 @@ public Transaction transfer(
 
         transactionService.deleteTransactionByAccountId(accountId);
     }
-
-//last comment (releted with controller)
-    //For Transaction Statement
-//     Find statement by Account Id
-//    @GetMapping("/account/{accountId}")
-//    public ResponseEntity<List<Transaction>> getTransactionsByAccountId(@PathVariable Long accountId) {
-//        List<Transaction> transactions = transactionService.getTransactionsByAccountId(accountId);
-//        return ResponseEntity.ok(transactions);
-//    }
-
-    // Find statement Account Id + Date Range
-//    @GetMapping("/account/{accountId}/filter")
-//    public ResponseEntity<List<Transaction>> getTransactionsByAccountAndDate(
-//            @PathVariable Long accountId,
-//            @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-//            @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-//
-//        List<Transaction> transactions =
-//                transactionService.getTransactionsByAccountIdAndDateRange(accountId, startDate, endDate);
-//
-//        return ResponseEntity.ok(transactions);
-//    }
 
     @GetMapping("statement/{accountId}")
     public ResponseEntity<List<Transaction>> getStatement(@PathVariable Long accountId) {
@@ -258,11 +219,13 @@ public Transaction transfer(
     public ResponseEntity<Transaction> payElectricity(@RequestBody TransactionDTO dto,
                                                       Authentication authentication) {
         Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+        String token = (String)authentication.getCredentials(); // JWT token set korlam
         Transaction tx = transactionService.payElectricityBill(
                 accountId,
                 dto.getAmount(),
                 dto.getCompanyName(),
-                dto.getAccountHolderBillingId()
+                dto.getAccountHolderBillingId(),
+                token
         );
         return ResponseEntity.ok(tx);
     }
@@ -271,11 +234,13 @@ public Transaction transfer(
     public ResponseEntity<Transaction> payGas(@RequestBody TransactionDTO dto,
                                               Authentication authentication) {
         Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+        String token=(String)authentication.getCredentials();
         Transaction tx = transactionService.payGasBill(
                 accountId,
                 dto.getAmount(),
                 dto.getCompanyName(),
-                dto.getAccountHolderBillingId()
+                dto.getAccountHolderBillingId(),
+                token
         );
         return ResponseEntity.ok(tx);
     }
@@ -284,11 +249,13 @@ public Transaction transfer(
     public ResponseEntity<Transaction> payWater(@RequestBody TransactionDTO dto,
                                                 Authentication authentication) {
         Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+        String token = (String)authentication.getCredentials();
         Transaction tx = transactionService.payWaterBill(
                 accountId,
                 dto.getAmount(),
                 dto.getCompanyName(),
-                dto.getAccountHolderBillingId()
+                dto.getAccountHolderBillingId(),
+                token
         );
         return ResponseEntity.ok(tx);
     }
@@ -297,11 +264,13 @@ public Transaction transfer(
     public ResponseEntity<Transaction> payInternet(@RequestBody TransactionDTO dto,
                                                    Authentication authentication) {
         Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+        String token = (String)authentication.getCredentials();
         Transaction tx = transactionService.payInternetBill(
                 accountId,
                 dto.getAmount(),
                 dto.getCompanyName(),
-                dto.getAccountHolderBillingId()
+                dto.getAccountHolderBillingId(),
+                token
         );
         return ResponseEntity.ok(tx);
     }
@@ -310,11 +279,13 @@ public Transaction transfer(
     public ResponseEntity<Transaction> payMobile(@RequestBody TransactionDTO dto,
                                                  Authentication authentication) {
         Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+        String token = (String)authentication.getCredentials();
         Transaction tx = transactionService.payMobileBill(
                 accountId,
                 dto.getAmount(),
                 dto.getCompanyName(),
-                dto.getAccountHolderBillingId()
+                dto.getAccountHolderBillingId(),
+                token
         );
         return ResponseEntity.ok(tx);
     }
@@ -323,11 +294,13 @@ public Transaction transfer(
     public ResponseEntity<Transaction> payCreditCard(@RequestBody TransactionDTO dto,
                                                      Authentication authentication) {
         Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+        String token = (String)authentication.getCredentials();
         Transaction tx = transactionService.payCreditCardBill(
                 accountId,
                 dto.getAmount(),
                 dto.getCompanyName(),
-                dto.getAccountHolderBillingId()
+                dto.getAccountHolderBillingId(),
+                token
         );
         return ResponseEntity.ok(tx);
     }
