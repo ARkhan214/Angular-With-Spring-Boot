@@ -1,3 +1,26 @@
+GET http://localhost:8085/api/loans/myloans
+1️⃣ Endpoint
+
+Method: GET
+
+URL: http://localhost:8080/api/loans/myloans
+
+Headers:
+
+Key	Value
+Authorization	Bearer <your_jwt_token_here>
+Content-Type	application/json
+POST http://localhost:8085/api/loans/apply
+{
+  "loanAmount": 100000,
+  "durationInMonths": 12,
+  "loanType": "HOME"
+}
+
+
+
+
+
 Employee Part(fdsfds)
 postman a authorization token lagbe.
 POST http://localhost:8085/api/transactions/tr/2/3               eta diea employee transaction(TRANSFER) korbe.
@@ -272,8 +295,8 @@ POST http://localhost:8085/api/employees/
 
 user 
 { 
-"name":"Sathe Khanom",
-"email":"sathebom550@gmail.com",
+"name":"Fariha Mariam",
+"email":"farihamariam@gmail.com",
 "password":"12345",
 "phoneNumber":"017000566",
 "dateOfBirth":"1995-05-20"

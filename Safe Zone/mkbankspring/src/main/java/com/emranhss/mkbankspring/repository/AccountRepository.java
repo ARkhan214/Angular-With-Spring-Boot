@@ -16,6 +16,7 @@ public interface AccountRepository extends JpaRepository<Accounts,Long> {
     //(connected with AccountResCon Method Number -2)
     Optional<Accounts> findById(Long id);
 
+
     Optional<Accounts> findByUserId(Long userId);
 
     @Query("SELECT ac FROM Accounts ac WHERE ac.user.email = :email")

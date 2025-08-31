@@ -29,7 +29,7 @@ public class Loan {
     private LoanType loanType;
 
     @Enumerated(EnumType.STRING)
-    private LoanStatus status = LoanStatus.PENDING;
+    private LoanStatus status = LoanStatus.ACTIVE;
 
     @Temporal(TemporalType.DATE)
     private Date loanStartDate;

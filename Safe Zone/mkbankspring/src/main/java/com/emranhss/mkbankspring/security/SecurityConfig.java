@@ -59,13 +59,15 @@ public class SecurityConfig {
                                 "/api/employees/**",
                                 "/api/user/reset-password",
                                 "/api/user/forgot-password",
-                                "/api/transactions/pay/water"
+                                "/api/transactions/pay/water",
+                                "/api/loan/**"
 
 
                         )
                         .permitAll()
                                 .requestMatchers("/api/user/profile").authenticated()
                                 .requestMatchers("/api/loans/apply","/api/transactions/statement").hasRole("USER")
+                                .requestMatchers("/api/loans/**").hasAnyRole("USER","ADMIN")
 //                        .requestMatchers("/api/transactions/**","/api/account/").hasRole("USER")
 //                        .requestMatchers("/api/employees/","/api/employees/**","/api/transactions/**","/api/transactions/tr/**").hasRole("EMPLOYEE")
                         .anyRequest().authenticated()
