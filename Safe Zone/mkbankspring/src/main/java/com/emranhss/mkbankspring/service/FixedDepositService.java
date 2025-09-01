@@ -26,17 +26,21 @@ public class FixedDepositService {
     @Autowired
     private TransactionRepository transactionRepository;
 
-    // FD create
+
+
     @Transactional
-    public FixedDepositDTO createFD(Long accountId, double amount, int durationMonths) {
-        if(amount < 50000 || durationMonths > 120) {
+    public FixedDepositDTO createFD(FixedDepositDTO fdDTO, Long accountId, String token) {
+        double amount = fdDTO.getDepositAmount();
+        int durationMonths = fdDTO.getDurationInMonths();
+
+        if (amount < 50000 || durationMonths > 120) {
             throw new RuntimeException("Invalid amount or duration");
         }
 
         Accounts account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
 
-        if(account.getBalance() < amount) {
+        if (account.getBalance() < amount) {
             throw new RuntimeException("Insufficient balance");
         }
 
@@ -53,7 +57,7 @@ public class FixedDepositService {
         fd.setPrematureInterestRate(3.0);
 
         // Maturity
-        Date maturityDate = new Date(fd.getStartDate().getTime() + (long)durationMonths * 30L * 24 * 60 * 60 * 1000);
+        Date maturityDate = new Date(fd.getStartDate().getTime() + (long) durationMonths * 30L * 24 * 60 * 60 * 1000);
         fd.setMaturityDate(maturityDate);
         fd.setMaturityAmount(amount + (amount * interestRate / 100 * durationMonths / 12));
 
@@ -71,10 +75,66 @@ public class FixedDepositService {
         txn.setTransactionTime(new Date());
         txn.setType(TransactionType.FIXED_DEPOSIT);
         txn.setDescription("FD created");
+        txn.setToken(token);
         transactionRepository.save(txn);
 
         return mapToDTO(fd);
     }
+
+
+
+
+
+
+    // FD create
+//    @Transactional
+//    public FixedDepositDTO createFD(Long accountId, double amount, int durationMonths) {
+//        if(amount < 50000 || durationMonths > 120) {
+//            throw new RuntimeException("Invalid amount or duration");
+//        }
+//
+//        Accounts account = accountRepository.findById(accountId)
+//                .orElseThrow(() -> new RuntimeException("Account not found"));
+//
+//        if(account.getBalance() < amount) {
+//            throw new RuntimeException("Insufficient balance");
+//        }
+//
+//        FixedDeposit fd = new FixedDeposit();
+//        fd.setAccount(account);
+//        fd.setDepositAmount(amount);
+//        fd.setDurationInMonths(durationMonths);
+//        fd.setStartDate(new Date());
+//        fd.setStatus(FdStatus.ACTIVE);
+//
+//        // Interest rate
+//        double interestRate = calculateInterestRate(amount, durationMonths);
+//        fd.setInterestRate(interestRate);
+//        fd.setPrematureInterestRate(3.0);
+//
+//        // Maturity
+//        Date maturityDate = new Date(fd.getStartDate().getTime() + (long)durationMonths * 30L * 24 * 60 * 60 * 1000);
+//        fd.setMaturityDate(maturityDate);
+//        fd.setMaturityAmount(amount + (amount * interestRate / 100 * durationMonths / 12));
+//
+//        // Update account balance
+//        account.setBalance(account.getBalance() - amount);
+//        accountRepository.save(account);
+//
+//        // Save FD
+//        fd = fdRepository.save(fd);
+//
+//        // Transaction
+//        Transaction txn = new Transaction();
+//        txn.setAccount(account);
+//        txn.setAmount(amount);
+//        txn.setTransactionTime(new Date());
+//        txn.setType(TransactionType.FIXED_DEPOSIT);
+//        txn.setDescription("FD created");
+//        transactionRepository.save(txn);
+//
+//        return mapToDTO(fd);
+//    }
 
     private double calculateInterestRate(double amount, int durationMonths) {
         if(amount >= 100000) {
