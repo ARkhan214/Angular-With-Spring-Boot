@@ -165,18 +165,30 @@ public class LoanRestController {
         List<Loan> loans = loanService1.getLoansByAccount(accountId);
 
         List<LoanDto> loanDtos = loans.stream().map(loan -> {
+            //data from loanDTO
             LoanDto dto = new LoanDto();
             dto.setId(loan.getId());
             dto.setLoanAmount(loan.getLoanAmount());
+            dto.setInterestRate(loan.getInterestRate());
             dto.setEmiAmount(loan.getEmiAmount());
-            dto.setStatus(loan.getStatus().name());
+            dto.setRemainingAmount(loan.getRemainingAmount());
+            dto.setTotalAlreadyPaidAmount(loan.getTotalAlreadyPaidAmount());
+//            dto.setStatus(loan.getStatus().name());
             dto.setLoanType(loan.getLoanType().name());
+            dto.setLoanStartDate(loan.getLoanStartDate());
+            dto.setLoanMaturityDate(loan.getLoanMaturityDate());
 
+
+
+            //from accDTO
             AccountsDTO accDto = new AccountsDTO();
             accDto.setId(loan.getAccount().getId());
             accDto.setName(loan.getAccount().getName());
+            accDto.setNid(loan.getAccount().getNid());
             accDto.setBalance(loan.getAccount().getBalance());
             accDto.setAccountType(loan.getAccount().getAccountType());
+            accDto.setPhoneNumber(loan.getAccount().getPhoneNumber());
+            accDto.setAddress(loan.getAccount().getAddress());
             dto.setAccount(accDto);
 
             return dto;

@@ -49,6 +49,10 @@ import { InternetBillComponent } from './payments/internet-bill-component/intern
 import { MobileBillComponent } from './payments/mobile-bill-component/mobile-bill-component';
 import { CreditCardBillComponent } from './payments/credit-card-bill-component/credit-card-bill-component';
 import { ApplyLoanComponent } from './loan/apply-loan-component/apply-loan-component';
+import { ViewAllLoans } from './loan/view-all-loans/view-all-loans';
+import { ViewMyLoan } from './loan/view-my-loan/view-my-loan';
+import { PayLoan } from './loan/pay-loan/pay-loan';
+import { AdminLoanApproveComponent } from './loan/admin-loan-approve-component/admin-loan-approve-component';
 
 
 @NgModule({
@@ -94,6 +98,10 @@ import { ApplyLoanComponent } from './loan/apply-loan-component/apply-loan-compo
     MobileBillComponent,
     CreditCardBillComponent,
     ApplyLoanComponent,
+    ViewAllLoans,
+    ViewMyLoan,
+    PayLoan,
+    AdminLoanApproveComponent,
   ],
   imports: [
     BrowserModule,

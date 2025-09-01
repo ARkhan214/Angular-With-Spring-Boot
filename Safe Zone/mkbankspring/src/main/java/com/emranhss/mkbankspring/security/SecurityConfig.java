@@ -60,7 +60,10 @@ public class SecurityConfig {
                                 "/api/user/reset-password",
                                 "/api/user/forgot-password",
                                 "/api/transactions/pay/water",
-                                "/api/loan/**"
+                                "/api/loan/**",
+                                "/api/admin/loans/**",
+                                "/api/fd/create",
+                                "/api/fd/**"
 
 
                         )

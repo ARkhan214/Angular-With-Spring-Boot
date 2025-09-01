@@ -35,6 +35,9 @@ import { ElectricityBillComponent } from './payments/electricity-bill-component/
 import { GasBillComponent } from './payments/gas-bill-component/gas-bill-component';
 import { InternetBillComponent } from './payments/internet-bill-component/internet-bill-component';
 import { ApplyLoanComponent } from './loan/apply-loan-component/apply-loan-component';
+import { ViewAllLoans } from './loan/view-all-loans/view-all-loans';
+import { PayLoan } from './loan/pay-loan/pay-loan';
+import { AdminLoanApproveComponent } from './loan/admin-loan-approve-component/admin-loan-approve-component';
 
 
 
@@ -74,6 +77,9 @@ const routes: Routes = [
   { path: 'gas-bill', component: GasBillComponent },
   { path: 'internet-bill', component: InternetBillComponent },
   { path: 'apply-loan', component: ApplyLoanComponent },
+  { path: 'view-all-loan', component: ViewAllLoans },
+  { path: 'pay-loan', component: PayLoan },
+  { path: 'admin-approval-loan', component: AdminLoanApproveComponent },
 
 
 

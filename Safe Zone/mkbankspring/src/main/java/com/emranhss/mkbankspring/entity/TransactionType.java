@@ -4,6 +4,7 @@ public enum TransactionType {
 
     INITIALBALANCE,
     DEPOSIT,
+    FD_DEPOSIT,
     WITHDRAW,
     FIXED_DEPOSIT,
     TRANSFER,

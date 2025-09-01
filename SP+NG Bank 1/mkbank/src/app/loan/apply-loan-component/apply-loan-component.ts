@@ -65,7 +65,7 @@ export class ApplyLoanComponent {
           this.alertService.success(this.message);
           this.cdr.markForCheck();
           // চাইলে redirect দিতে পারো:
-          // this.router.navigate(['/my-loans']);
+          this.router.navigate(['/view-all-loan']);
         },
         error: (err: any) => {
           console.error(err);

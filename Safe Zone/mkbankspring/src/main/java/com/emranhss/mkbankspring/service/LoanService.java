@@ -1,14 +1,10 @@
 package com.emranhss.mkbankspring.service;
 
-import com.emranhss.mkbankspring.dto.EmiResponseDto;
-import com.emranhss.mkbankspring.dto.LoanPaymentDto;
-import com.emranhss.mkbankspring.dto.LoanRequestDto;
-import com.emranhss.mkbankspring.entity.Accounts;
-import com.emranhss.mkbankspring.entity.Loan;
-import com.emranhss.mkbankspring.entity.LoanStatus;
-import com.emranhss.mkbankspring.entity.LoanType;
+import com.emranhss.mkbankspring.dto.*;
+import com.emranhss.mkbankspring.entity.*;
 import com.emranhss.mkbankspring.repository.AccountRepository;
 import com.emranhss.mkbankspring.repository.LoanRepository;
+import com.emranhss.mkbankspring.repository.TransactionRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +13,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class LoanService implements ILoanService {
@@ -27,6 +24,9 @@ public class LoanService implements ILoanService {
     private AccountService accountService;
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
 
 
 
@@ -68,12 +68,138 @@ public class LoanService implements ILoanService {
         return new EmiResponseDto(emi, totalPayable, interestRate);
     }
 
+    //Loan with approval   start---------------------------failed code
+//    @Override
+//    @Transactional
+//    public Loan applyLoan(Long accountId, LoanRequestDto dto) {
+//        // validation
+//                if (dto.getDurationInMonths() <= 0 || dto.getDurationInMonths() > 60)
+//            throw new IllegalArgumentException("Duration must be between 1 and 60 months");
+//        if (dto.getLoanAmount() <= 0 || dto.getLoanAmount() > 99999999) {
+//            throw new IllegalArgumentException("Loan amount must be > 0 and <= 99,999,999");
+//        }
+//
+//        Accounts account = accountRepository.findById(accountId)
+//                .orElseThrow(() -> new RuntimeException("Account not found"));
+//
+//                LoanType loanType = dto.getLoanType();
+//        double interestRate = getFixedInterestRate(loanType);
+//
+//        double totalInterest = dto.getLoanAmount() * (interestRate / 100.0);
+//        double totalPayable = dto.getLoanAmount() + totalInterest;
+//        double emi = totalPayable / dto.getDurationInMonths();
+//
+//
+//        // Create Loan
+//        Loan loan = new Loan();
+//        loan.setAccount(account);
+//        loan.setLoanAmount(dto.getLoanAmount());
+//        loan.setInterestRate(interestRate);
+//        loan.setDurationInMonths(dto.getDurationInMonths());
+//        loan.setEmiAmount(emi);
+//        loan.setLoanType(loanType);
+//        loan.setStatus(LoanStatus.PENDING);
+//        Date start = new Date();
+//        loan.setLoanStartDate(start);
+//        loan.setLoanMaturityDate(addMonths(start, dto.getDurationInMonths()));
+//        loan.setTotalAlreadyPaidAmount(0.0);
+//        loan.setRemainingAmount(totalPayable);
+//        loan.setUpdatedAt(new Date());
+//
+//        return loanRepository.save(loan);
+//
+//    }
+//
+//
+//
+//    public List<LoanDto> getPendingLoanDTOs() {
+//        List<Loan> loans = loanRepository.findByStatus(LoanStatus.PENDING);
+//
+//        return loans.stream().map(loan -> {
+//            LoanDto dto = new LoanDto();
+//            dto.setId(loan.getId());
+//            dto.setLoanAmount(loan.getLoanAmount());
+//            dto.setEmiAmount(loan.getEmiAmount());
+//            dto.setInterestRate(loan.getInterestRate());
+//            dto.setStatus(loan.getStatus().name());
+//            dto.setLoanType(loan.getLoanType().name());
+//            dto.setLoanStartDate(loan.getLoanStartDate());
+//            dto.setLoanMaturityDate(loan.getLoanMaturityDate());
+//            dto.setTotalAlreadyPaidAmount(loan.getTotalAlreadyPaidAmount());
+//            dto.setRemainingAmount(loan.getRemainingAmount());
+//            dto.setPenaltyRate(loan.getPenaltyRate());
+//            dto.setLastPaymentDate(loan.getLastPaymentDate());
+//            dto.setUpdatedAt(loan.getUpdatedAt());
+//
+//            AccountsDTO accountDTO = new AccountsDTO();
+//            accountDTO.setId(loan.getAccount().getId());
+//            accountDTO.setName(loan.getAccount().getName());
+//            accountDTO.setBalance(loan.getAccount().getBalance());
+//            dto.setAccount(accountDTO);
+//
+//            return dto;
+//        }).collect(Collectors.toList());
+//    }
+//
+//
+//
+//
+//
+//    @Transactional
+//    public Loan approveLoan(Long loanId) {
+//        Loan loan = loanRepository.findById(loanId)
+//                .orElseThrow(() -> new RuntimeException("Loan not found"));
+//
+//        if (loan.getStatus() != LoanStatus.PENDING) {
+//            throw new IllegalStateException("Loan is not in pending state");
+//        }
+//
+//        Accounts account = loan.getAccount();
+//
+//        // ✅ Loan Active
+//        loan.setStatus(LoanStatus.ACTIVE);
+//
+//        // ✅ Account balance update
+//        account.setBalance(account.getBalance() + loan.getLoanAmount());
+//
+//        // ✅ Transaction add
+//        Transaction txn = new Transaction();
+//        txn.setAccount(account);
+//        txn.setAmount(loan.getLoanAmount());
+//        txn.setType(TransactionType.DEPOSIT);
+//        txn.setDescription("Loan Disbursed");
+//        txn.setTransactionTime(new Date());
+//
+//        transactionRepository.save(txn);
+//
+//        return loanRepository.save(loan);
+//    }
+//
+//
+//
+//    @Transactional
+//    public Loan rejectLoan(Long loanId) {
+//        Loan loan = loanRepository.findById(loanId)
+//                .orElseThrow(() -> new RuntimeException("Loan not found"));
+//
+//        if (loan.getStatus() != LoanStatus.PENDING) {
+//            throw new IllegalStateException("Loan is not in pending state");
+//        }
+//
+//        loan.setStatus(LoanStatus.REJECTED);
+//        return loanRepository.save(loan);
+//    }
+    //Loan with approval   end---------------------------failed code
+
+
+
     @Override
     @Transactional
     public Loan applyLoan(Long accountId, LoanRequestDto dto) {
-        if (dto.getDurationInMonths() <= 0) throw new IllegalArgumentException("Duration must be > 0");
-        if (dto.getDurationInMonths() > 60) throw new IllegalArgumentException("Duration cannot exceed 60 months");
-        if (dto.getLoanAmount() <= 0) throw new IllegalArgumentException("Loan amount must be > 0");
+        if (dto.getDurationInMonths() <= 0 || dto.getDurationInMonths() > 60)
+            throw new IllegalArgumentException("Duration must be between 1 and 60 months");
+        if (dto.getLoanAmount() <= 0 || dto.getLoanAmount() > 99999999)
+            throw new IllegalArgumentException("Loan amount must be > 0 and <= 99,999,999");
 
         Accounts account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
@@ -85,6 +211,11 @@ public class LoanService implements ILoanService {
         double totalPayable = dto.getLoanAmount() + totalInterest;
         double emi = totalPayable / dto.getDurationInMonths();
 
+        // Update account balance
+        account.setBalance(account.getBalance() + dto.getLoanAmount());
+        accountRepository.save(account);
+
+        // Create Loan
         Loan loan = new Loan();
         loan.setAccount(account);
         loan.setLoanAmount(dto.getLoanAmount());
@@ -92,7 +223,7 @@ public class LoanService implements ILoanService {
         loan.setDurationInMonths(dto.getDurationInMonths());
         loan.setEmiAmount(emi);
         loan.setLoanType(loanType);
-        loan.setStatus(LoanStatus.PENDING);
+        loan.setStatus(LoanStatus.ACTIVE);
         Date start = new Date();
         loan.setLoanStartDate(start);
         loan.setLoanMaturityDate(addMonths(start, dto.getDurationInMonths()));
@@ -100,8 +231,69 @@ public class LoanService implements ILoanService {
         loan.setRemainingAmount(totalPayable);
         loan.setUpdatedAt(new Date());
 
-        return loanRepository.save(loan);
+        Loan savedLoan = loanRepository.save(loan);
+
+        // Create Transaction for Loan Credit
+        Transaction txn = new Transaction();
+        txn.setAccount(account);
+        txn.setType(TransactionType.DEPOSIT); // Account receives money
+        txn.setTransactionTime(new Date());
+        txn.setAmount(dto.getLoanAmount());
+        txn.setDescription("Loan disbursed: Loan ID " + savedLoan.getId());
+        txn.setReceiverAccount(null); // Receiver not needed for loan credit
+        transactionRepository.save(txn);
+
+        return savedLoan;
     }
+
+
+
+
+
+
+
+//
+//    @Override
+//    @Transactional
+//    public Loan applyLoan(Long accountId, LoanRequestDto dto) {
+//        if (dto.getDurationInMonths() <= 0) throw new IllegalArgumentException("Duration must be > 0");
+//        if (dto.getDurationInMonths() > 60) throw new IllegalArgumentException("Duration cannot exceed 60 months");
+//        if (dto.getLoanAmount() <= 0 || dto.getLoanAmount() > 99999999) {
+//            throw new IllegalArgumentException("Loan amount must be > 0 and <= 99,999,999");
+//        }
+//
+//
+//        Accounts account = accountRepository.findById(accountId)
+//                .orElseThrow(() -> new RuntimeException("Account not found"));
+//
+//        LoanType loanType = dto.getLoanType();
+//        double interestRate = getFixedInterestRate(loanType);
+//
+//        double totalInterest = dto.getLoanAmount() * (interestRate / 100.0);
+//        double totalPayable = dto.getLoanAmount() + totalInterest;
+//        double emi = totalPayable / dto.getDurationInMonths();
+//
+//        Loan loan = new Loan();
+//        loan.setAccount(account);
+//        loan.setLoanAmount(dto.getLoanAmount());
+//        loan.setInterestRate(interestRate);
+//        loan.setDurationInMonths(dto.getDurationInMonths());
+//        loan.setEmiAmount(emi);
+//        loan.setLoanType(loanType);
+//        loan.setStatus(LoanStatus.PENDING);
+//        Date start = new Date();
+//        loan.setLoanStartDate(start);
+//        loan.setLoanMaturityDate(addMonths(start, dto.getDurationInMonths()));
+//        loan.setTotalAlreadyPaidAmount(0.0);
+//        loan.setRemainingAmount(totalPayable);
+//        loan.setUpdatedAt(new Date());
+//
+//        return loanRepository.save(loan);
+//    }
+
+
+
+
 
     @Override
     @Transactional
@@ -145,6 +337,16 @@ public class LoanService implements ILoanService {
                 loan.setStatus(LoanStatus.ACTIVE);
             }
         }
+
+        // Create Transaction for Loan Credit
+        Transaction txn = new Transaction();
+        txn.setAccount(account);
+        txn.setType(TransactionType.TRANSFER); // Account receives money
+        txn.setTransactionTime(new Date());
+        txn.setAmount(paymentDto.getAmount());
+        txn.setDescription("Loan Installment payment ");
+        txn.setReceiverAccount(null); // Receiver not needed for loan credit
+        transactionRepository.save(txn);
 
         return loanRepository.save(loan);
     }

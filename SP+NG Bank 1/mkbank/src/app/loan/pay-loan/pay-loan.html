@@ -1,0 +1,23 @@
+<p>pay-loan works!</p>
+<div class="container mt-3" style="max-width: 500px;">
+  <h3 class="mb-3 text-primary">Pay Loan</h3>
+
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <form (ngSubmit)="payLoan()">
+    <div class="mb-3">
+      <label for="loanId" class="form-label">Loan ID</label>
+      <input type="number" id="loanId" class="form-control" [(ngModel)]="loanId" name="loanId" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="amount" class="form-label">Amount</label>
+      <input type="number" id="amount" class="form-control" [(ngModel)]="amount" name="amount" required>
+    </div>
+
+    <button type="submit" class="btn btn-success w-100" [disabled]="loading">
+      {{ loading ? 'Processing...' : 'Pay Loan' }}
+    </button>
+  </form>
+</div>
