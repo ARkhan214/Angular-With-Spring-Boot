@@ -38,6 +38,8 @@ import { ApplyLoanComponent } from './loan/apply-loan-component/apply-loan-compo
 import { ViewAllLoans } from './loan/view-all-loans/view-all-loans';
 import { PayLoan } from './loan/pay-loan/pay-loan';
 import { AdminLoanApproveComponent } from './loan/admin-loan-approve-component/admin-loan-approve-component';
+import { FixedDeposit } from './model/fixedDeposit.model';
+import { FixedDepositComponent } from './components/fixed-deposit-component/fixed-deposit-component';
 
 
 
@@ -80,6 +82,7 @@ const routes: Routes = [
   { path: 'view-all-loan', component: ViewAllLoans },
   { path: 'pay-loan', component: PayLoan },
   { path: 'admin-approval-loan', component: AdminLoanApproveComponent },
+  { path: 'fd', component: FixedDepositComponent },
 
 
 
