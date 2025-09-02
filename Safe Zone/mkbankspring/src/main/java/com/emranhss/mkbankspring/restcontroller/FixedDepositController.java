@@ -1,13 +1,19 @@
 package com.emranhss.mkbankspring.restcontroller;
 
+import com.emranhss.mkbankspring.dto.AccountsDTO;
 import com.emranhss.mkbankspring.dto.FixedDepositDTO;
+import com.emranhss.mkbankspring.dto.LoanDto;
 import com.emranhss.mkbankspring.entity.Accounts;
+import com.emranhss.mkbankspring.entity.FixedDeposit;
+import com.emranhss.mkbankspring.entity.Loan;
 import com.emranhss.mkbankspring.entity.User;
 import com.emranhss.mkbankspring.repository.AccountRepository;
 import com.emranhss.mkbankspring.repository.UserRepository;
+import com.emranhss.mkbankspring.service.AccountService;
 import com.emranhss.mkbankspring.service.FixedDepositService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +27,10 @@ public class FixedDepositController {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private AccountService accountService;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -52,11 +62,54 @@ public class FixedDepositController {
 //        return fdService.createFD(accountId, amount, durationMonths);
 //    }
 
+//    @GetMapping("/my-fds")
+//    public List<FixedDepositDTO> getMyFDs(HttpServletRequest request) {
+//        Long accountId = (Long) request.getAttribute("accountId");
+//        return fdService.getFDsByAccount(accountId);
+//    }
+
     @GetMapping("/my-fds")
-    public List<FixedDepositDTO> getMyFDs(HttpServletRequest request) {
-        Long accountId = (Long) request.getAttribute("accountId");
-        return fdService.getFDsByAccount(accountId);
+    public ResponseEntity<List<FixedDepositDTO>> getMyFd(Authentication authentication) {
+        Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+        List<FixedDeposit> fds = fdService.getFdByAccount(accountId);
+
+        List<FixedDepositDTO> fdDtos  = fds.stream().map(fd -> {
+            FixedDepositDTO dto = new FixedDepositDTO();
+            dto.setId(fd.getId());
+            dto.setDepositAmount(fd.getDepositAmount());
+            dto.setDurationInMonths(fd.getDurationInMonths());
+            dto.setInterestRate(fd.getInterestRate());
+            dto.setPrematureInterestRate(fd.getPrematureInterestRate());
+            dto.setStartDate(fd.getStartDate());
+            dto.setMaturityDate(fd.getMaturityDate());
+            dto.setMaturityAmount(fd.getMaturityAmount());
+            dto.setPrematureWithdrawalDate(fd.getPrematureWithdrawalDate());
+            dto.setStatus(fd.getStatus() != null ? fd.getStatus().name() : null);
+            dto.setLastUpdatedAt(fd.getfDLustUpdatedAt());
+
+            // account DTO mapping
+            AccountsDTO accDto = new AccountsDTO();
+            accDto.setId(fd.getAccount().getId());
+            accDto.setName(fd.getAccount().getName());
+            accDto.setNid(fd.getAccount().getNid());
+            accDto.setBalance(fd.getAccount().getBalance());
+            accDto.setAccountType(fd.getAccount().getAccountType());
+            accDto.setPhoneNumber(fd.getAccount().getPhoneNumber());
+            accDto.setAddress(fd.getAccount().getAddress());
+
+            dto.setAccount(accDto);
+
+            return dto;
+        }).toList();
+
+        return ResponseEntity.ok(fdDtos);
     }
+
+
+
+
+
+
 
     @PostMapping("/close/{fdId}")
     public FixedDepositDTO closeFD(@PathVariable Long fdId, HttpServletRequest request) {

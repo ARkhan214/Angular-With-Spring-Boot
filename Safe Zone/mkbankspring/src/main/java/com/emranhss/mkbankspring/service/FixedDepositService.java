@@ -215,4 +215,9 @@ public class FixedDepositService {
         dto.setAccount(accountDTO);
         return dto;
     }
+
+//For get ALl FD
+    public List<FixedDeposit> getFdByAccount(Long accountId) {
+        return fdRepository.findByAccountId(accountId);
+    }
 }

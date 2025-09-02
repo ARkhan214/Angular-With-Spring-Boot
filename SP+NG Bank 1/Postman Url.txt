@@ -1,4 +1,5 @@
 http://localhost:8085/api/fd/create
+http://localhost:8085/api/fd/my-fds
 
 GET http://localhost:8085/api/loans/myloans
 1️⃣ Endpoint

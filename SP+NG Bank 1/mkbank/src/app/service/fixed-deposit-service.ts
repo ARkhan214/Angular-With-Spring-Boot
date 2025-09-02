@@ -11,6 +11,8 @@ import { Observable } from 'rxjs';
 export class FixedDepositService {
 
   private baseUrl = 'http://localhost:8085/api/fd/create'  // backend API base
+  private apiUrl = 'http://localhost:8085/api/fd/my-fds';
+
 
   constructor(
     private http: HttpClient,
@@ -34,6 +36,19 @@ export class FixedDepositService {
     });
 
     return this.http.post<FixedDeposit>(`${this.baseUrl}`, fd, { headers });
+  }
+
+
+
+  getMyFDs(): Observable<FixedDeposit[]> {
+    const token = localStorage.getItem('authToken');
+
+    let headers = new HttpHeaders();
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    return this.http.get<FixedDeposit[]>(this.apiUrl, { headers });
   }
 
 
