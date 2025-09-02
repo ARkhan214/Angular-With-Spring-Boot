@@ -1,0 +1,119 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { ChangeDetectorRef, Component, Inject, PLATFORM_ID } from '@angular/core';
+import { AlertService } from '../../service/alert-service';
+import { Router } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
+
+
+@Component({
+  selector: 'app-apply-loan-component',
+  standalone: false,
+  templateUrl: './apply-loan-component.html',
+  styleUrl: './apply-loan-component.css'
+})
+export class ApplyLoanComponent {
+
+  loanAmount!: number;
+  durationInMonths!: number;
+  loanType: string = '';
+
+  message: string = '';
+
+  constructor(
+    private http: HttpClient,
+    private alertService: AlertService,
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
+
+  private getAuthToken(): string {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('authToken') || '';
+    }
+    return '';
+  }
+
+  applyLoan() {
+    if (!this.loanAmount || !this.durationInMonths || !this.loanType) {
+      this.alertService.error('All fields are required!');
+      return;
+    }
+
+    const payload = {
+      loanAmount: this.loanAmount,
+      durationInMonths: this.durationInMonths,
+      loanType: this.loanType
+    };
+
+    const token = this.getAuthToken();
+
+    if (!token) {
+      this.alertService.error('Authentication token not found. Please login again.');
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+
+    this.http.post('http://localhost:8085/api/loans/apply', payload, { headers })
+      .subscribe({
+        next: (res: any) => {
+          this.message = `Loan Applied Successfully! Loan ID: ${res.id}`;
+          this.alertService.success(this.message);
+          this.cdr.markForCheck();
+          // চাইলে redirect দিতে পারো:
+          this.router.navigate(['/view-all-loan']);
+        },
+        error: (err: any) => {
+          console.error(err);
+          this.message = err.error || 'Error applying for loan';
+          this.alertService.error(this.message);
+        }
+      });
+  }
+}
+  
+
+
+
+
+
+
+
+
+
+<p>apply-loan-component works!</p>
+<!-- apply-loan-component.html -->
+<div class="loan-form-container">
+  <h2>Apply for a Loan</h2>
+
+  <div class="form-group">
+    <label for="loanAmount">Loan Amount</label>
+    <input type="number" id="loanAmount" [(ngModel)]="loanAmount" placeholder="Enter loan amount" />
+  </div>
+
+  <div class="form-group">
+    <label for="durationInMonths">Duration (Months)</label>
+    <input type="number" id="durationInMonths" [(ngModel)]="durationInMonths" placeholder="Enter duration in months" />
+  </div>
+
+  <div class="form-group">
+    <label for="loanType">Loan Type</label>
+    <select id="loanType" [(ngModel)]="loanType">
+      <option value="" disabled>Select Loan Type</option>
+      <option value="PERSONAL">Personal</option>
+      <option value="HOME">Home</option>
+      <option value="CAR">Car</option>
+      <option value="EDUCATION">Education</option>
+      <option value="BUSINESS">Business</option>
+    </select>
+  </div>
+
+  <button (click)="applyLoan()">Apply Loan</button>
+
+  <p class="message" *ngIf="message">{{ message }}</p>
+</div>
+

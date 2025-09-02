@@ -1,0 +1,364 @@
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { UserService } from '../../service/user.service';
+import { User } from '../../model/user.model';
+import { AuthResponse } from '../../model/authResponse.model';
+import { AuthService } from '../../service/auth-service';
+import { Role } from '../../model/role.model';
+import { AlertService } from '../../service/alert-service';
+
+@Component({
+  selector: 'app-login',
+  standalone: false,
+  templateUrl: './login.html',
+  styleUrl: './login.css'
+})
+export class Login {
+
+  user: Partial<User> = {
+    email: '',
+    password: ''
+  };
+
+  errorMessage: string = '';
+  successMessage: string = '';
+
+  constructor(
+    private userService: UserService,
+    private router: Router,
+    private authService: AuthService,
+    private alertService:AlertService
+  ) { }
+
+
+onSubmit() {
+    if (!this.user.email || !this.user.password) {
+      this.errorMessage = 'Email and password are required!';
+      return;
+    }
+
+    this.authService.login(this.user.email, this.user.password).subscribe({
+      next: (response: AuthResponse) => {
+        console.log("Login successful:", response);
+        this.alertService.success('Login successful');
+        this.successMessage = response.message;
+        this.errorMessage = '';
+
+        // Decode token for account id if needed
+        const payload = JSON.parse(atob(response.token.split('.')[1]));
+        const accountId = payload.id;
+        console.log("Account id:", accountId);
+
+        // Redirect by role
+        const role: Role = payload.role as Role;
+
+        if (role === Role.ADMIN) {
+          this.router.navigate(['/admin-profile']);
+        } else if (role === Role.EMPLOYEE) {
+          this.router.navigate(['/employee-profile']);
+        } else if (role === Role.USER) {
+          this.router.navigate(['/account-profile']);
+        } else {
+          this.router.navigate(['/']);
+        }
+      },
+      error: (err) => {
+        console.error("Login failed:", err);
+        this.errorMessage = "Invalid email or password!";
+        this.successMessage = '';
+      }
+    });
+  }
+
+
+
+}
+   
+
+
+
+
+
+
+
+
+<section class="py-5" 
+         style="min-height:100vh; display:flex; align-items:center; justify-content:center; 
+                background:linear-gradient(135deg,#eaebef,#a169d9);">
+  <div class="container d-flex justify-content-center align-items-center">
+    <form (ngSubmit)="onSubmit()" 
+          class="p-5 rounded-5 shadow-lg" 
+          style="width: 100%; max-width: 550px;
+                 background: rgba(255, 255, 255, 0.15);
+                 backdrop-filter: blur(15px);
+                 border: 1px solid rgba(255, 255, 255, 0.25);
+                 box-shadow: 0 12px 40px rgba(0,0,0,0.3);">
+      
+      <!-- Title -->
+      <h3 class="mb-4 text-center fw-bold" 
+          style="color:#fff; letter-spacing:1px; font-size:28px;">
+        🔐 Welcome Back  
+      </h3>
+      <p class="text-center mb-4" style="color:#e0e0e0;">
+        Please login to continue to your account
+      </p>
+
+      <!-- Email Input -->
+      <div class="form-outline mb-4">
+        <label class="form-label fw-semibold" style="color:#fff;">Email address</label>
+        <input [(ngModel)]="user.email" 
+               name="email" 
+               type="email" 
+               class="form-control rounded-4 shadow-sm" 
+               style="border:none; background:rgba(255,255,255,0.25); color:#fff; padding:14px;" 
+               placeholder="Enter your email" required />
+      </div>
+
+      <!-- Password Input -->
+      <div class="form-outline mb-4">
+        <label class="form-label fw-semibold" style="color:#fff;">Password</label>
+        <input [(ngModel)]="user.password" 
+               name="password" 
+               type="password" 
+               class="form-control rounded-4 shadow-sm" 
+               style="border:none; background:rgba(255,255,255,0.25); color:#fff; padding:14px;" 
+               placeholder="Enter your password" required />
+      </div>
+
+      <!-- Error / Success Messages -->
+      <div *ngIf="errorMessage" class="mb-3 text-center fw-semibold" style="color:#ffb3b3;">
+        {{ errorMessage }}
+      </div>
+      <div *ngIf="successMessage" class="mb-3 text-center fw-semibold" style="color:#b3ffcc;">
+        {{ successMessage }}
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" 
+              class="btn w-100 fw-bold shadow-lg" 
+              style="padding:14px; border-radius:40px; font-size:18px; letter-spacing:0.5px; 
+                     background:linear-gradient(135deg,#100c0c,#dd2476); 
+                     color:#fff; border:none; transition:all 0.3s;">
+        🚀 Login
+      </button>
+    </form>
+  </div>
+</section>
+   
+
+
+
+
+apply loan ......................
+
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { ChangeDetectorRef, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { AlertService } from '../../service/alert-service';
+import { Router } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+
+@Component({
+  selector: 'app-apply-loan-component',
+  standalone: false,
+  templateUrl: './apply-loan-component.html',
+  styleUrl: './apply-loan-component.css'
+})
+export class ApplyLoanComponent  implements OnInit{
+
+  
+  loanForm!: FormGroup;
+  token: string = '';
+
+  constructor(
+    private fb: FormBuilder,
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+    private alertService: AlertService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
+
+  ngOnInit(): void {
+    this.token = isPlatformBrowser(this.platformId) ? localStorage.getItem('authToken') || '' : '';
+
+    this.loanForm = this.fb.group({
+      loanAmount: [0, Validators.required],
+      durationInMonths: [0, Validators.required],
+      loanType: ['', Validators.required],
+      // Auto-calculated / readonly fields
+      emiAmount: [{ value: 0, disabled: true }],
+      interestRate: [{ value: 0, disabled: true }],
+      totalPayable: [{ value: 0, disabled: true }],
+      status: [{ value: 'ACTIVE', disabled: true }],
+      accountName: [{ value: '', disabled: true }],
+      accountBalance: [{ value: 0, disabled: true }],
+      accountNid: [{ value: '', disabled: true }],
+      accountPhone: [{ value: '', disabled: true }],
+      accountAddress: [{ value: '', disabled: true }],
+      accountType: [{ value: '', disabled: true }]
+    });
+
+    // Auto-fill readonly fields based on user input before submit
+    this.loanForm.valueChanges.subscribe(values => {
+      if (values.loanAmount && values.durationInMonths && values.loanType) {
+        const interestRate = this.getInterestRate(values.loanType);
+        const totalInterest = values.loanAmount * (interestRate / 100);
+        const totalPayable = values.loanAmount + totalInterest;
+        const emi = totalPayable / values.durationInMonths;
+
+        this.loanForm.patchValue({
+          emiAmount: emi,
+          interestRate: interestRate,
+          totalPayable: totalPayable
+        }, { emitEvent: false });
+      }
+    });
+  }
+
+  getInterestRate(type: string): number {
+    switch(type) {
+      case 'PERSONAL': return 10;
+      case 'HOME': return 8;
+      case 'CAR': return 9;
+      case 'EDUCATION': return 5;
+      case 'BUSINESS': return 7;
+      default: return 7;
+    }
+  }
+
+  applyLoan() {
+    
+    if (!this.loanForm.valid) {
+      this.alertService.error('Please fill all required fields!');
+      return;
+    }
+
+    const payload = {
+      loanAmount: this.loanForm.value.loanAmount,
+      durationInMonths: this.loanForm.value.durationInMonths,
+      loanType: this.loanForm.value.loanType
+    };
+
+    if (!this.token) {
+      this.alertService.error('Authentication token missing!');
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${this.token}`
+    });
+
+    this.http.post('http://localhost:8085/api/loans/apply', payload, { headers })
+      .subscribe({
+        next: (res: any) => {
+          // Patch all backend-returned fields to readonly fields
+          this.loanForm.patchValue({
+            emiAmount: res.emiAmount,
+            interestRate: res.interestRate || 0,
+            totalPayable: res.loanAmount + ((res.interestRate || 0)/100 * res.loanAmount),
+            status: res.status
+          }, { emitEvent: false });
+
+          // ===== Patch Account Info =====
+          if(res.account) {
+            this.loanForm.patchValue({
+              accountName: res.account.name,
+              accountBalance: res.account.balance,
+              accountNid: res.account.nid,
+              accountPhone: res.account.phoneNumber,
+              accountAddress: res.account.address,
+              accountType: res.account.accountType
+            }, { emitEvent: false });
+          }
+
+          this.alertService.success(`Loan applied successfully! Loan ID: ${res.id}`);
+          this.cdr.markForCheck();
+        },
+        error: (err: any) => {
+          console.error(err);
+          this.alertService.error(err.error || 'Error applying loan');
+        }
+      });
+  }
+}
+
+
+
+
+
+<form [formGroup]="loanForm" (ngSubmit)="applyLoan()">
+
+  <div>
+    <label>Loan Amount</label>
+    <input type="number" formControlName="loanAmount">
+  </div>
+
+  <div>
+    <label>Duration (Months)</label>
+    <input type="number" formControlName="durationInMonths">
+  </div>
+
+  <div>
+    <label>Loan Type</label>
+    <select formControlName="loanType">
+      <option value="">Select</option>
+      <option value="PERSONAL">Personal</option>
+      <option value="HOME">Home</option>
+      <option value="CAR">Car</option>
+      <option value="EDUCATION">Education</option>
+      <option value="BUSINESS">Business</option>
+    </select>
+  </div>
+
+  <!-- Readonly / auto-filled fields -->
+  <div>
+    <label>EMI Amount</label>
+    <input type="number" formControlName="emiAmount" readonly>
+  </div>
+
+  <div>
+    <label>Interest Rate (%)</label>
+    <input type="number" formControlName="interestRate" readonly>
+  </div>
+
+  <div>
+    <label>Total Payable</label>
+    <input type="number" formControlName="totalPayable" readonly>
+  </div>
+
+  <div>
+    <label>Status</label>
+    <input type="text" formControlName="status" readonly>
+  </div>
+
+  <h4>Account Info</h4>
+  <div>
+    <label>Name</label>
+    <input type="text" formControlName="accountName" readonly>
+  </div>
+  <div>
+    <label>Balance</label>
+    <input type="number" formControlName="accountBalance" readonly>
+  </div>
+  <div>
+    <label>NID</label>
+    <input type="text" formControlName="accountNid" readonly>
+  </div>
+  <div>
+    <label>Phone</label>
+    <input type="text" formControlName="accountPhone" readonly>
+  </div>
+  <div>
+    <label>Address</label>
+    <input type="text" formControlName="accountAddress" readonly>
+  </div>
+  <div>
+    <label>Account Type</label>
+    <input type="text" formControlName="accountType" readonly>
+  </div>
+
+  <button type="submit">Apply Loan</button>
+</form>

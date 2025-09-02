@@ -8,6 +8,7 @@ public class LoanRequestDto {
     private int durationInMonths;
     private LoanType loanType;
 
+
     public LoanRequestDto() {}
 
     public LoanRequestDto(double loanAmount, int durationInMonths, LoanType loanType) {

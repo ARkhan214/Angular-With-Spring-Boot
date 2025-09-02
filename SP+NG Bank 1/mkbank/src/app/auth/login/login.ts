@@ -6,6 +6,8 @@ import { AuthResponse } from '../../model/authResponse.model';
 import { AuthService } from '../../service/auth-service';
 import { Role } from '../../model/role.model';
 import { AlertService } from '../../service/alert-service';
+import { json } from 'stream/consumers';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-login',
@@ -27,11 +29,11 @@ export class Login {
     private userService: UserService,
     private router: Router,
     private authService: AuthService,
-    private alertService:AlertService
+    private alertService: AlertService
   ) { }
 
 
-onSubmit() {
+  onSubmit() {
     if (!this.user.email || !this.user.password) {
       this.errorMessage = 'Email and password are required!';
       return;
@@ -49,6 +51,9 @@ onSubmit() {
         const accountId = payload.id;
         console.log("Account id:", accountId);
 
+
+
+
         // Redirect by role
         const role: Role = payload.role as Role;
 
@@ -57,6 +62,7 @@ onSubmit() {
         } else if (role === Role.EMPLOYEE) {
           this.router.navigate(['/employee-profile']);
         } else if (role === Role.USER) {
+
           this.router.navigate(['/account-profile']);
         } else {
           this.router.navigate(['/']);
@@ -69,6 +75,34 @@ onSubmit() {
       }
     });
   }
+
+
+  // const userInfo = {
+
+
+  //   id: '',
+  //   name: '',
+  //   accountActiveStatus:'',
+  //   accountType:'' ,
+  //   balance: '',
+  //   nid: '',
+  //   phoneNumber: '',
+  //   address: '',
+  //   photo: '',
+  //   dateOfBirth: '', 
+  //   accountOpeningDate: '',
+  //   accountClosingDate: '',
+  //   role: '',
+
+
+  // };
+
+
+
+
+
+
+
 
 
 
