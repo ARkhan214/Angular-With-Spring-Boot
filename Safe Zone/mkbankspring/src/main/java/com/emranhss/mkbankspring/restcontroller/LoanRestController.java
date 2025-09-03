@@ -1,6 +1,7 @@
 package com.emranhss.mkbankspring.restcontroller;
 
 import com.emranhss.mkbankspring.dto.*;
+import com.emranhss.mkbankspring.entity.Accounts;
 import com.emranhss.mkbankspring.entity.Loan;
 import com.emranhss.mkbankspring.service.AccountService;
 import com.emranhss.mkbankspring.service.ILoanService;
@@ -77,6 +78,42 @@ public class LoanRestController {
         }
     }
 
+
+
+    @GetMapping("/apply/init")
+    public ResponseEntity<LoanDto> getLoanInitData(Authentication authentication) {
+        try {
+            // 1️⃣ accountId ber kora
+            Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+            Accounts account = accountService.findAccountById(accountId);
+
+            // 2️⃣ LoanDto(pre-filled default values)
+            LoanDto response = new LoanDto();
+
+            response.setId(null); // এখনো loan create হয়নি, তাই null
+            response.setLoanAmount(0); // user input
+            response.setEmiAmount(0); // backend calculate করবে
+            response.setInterestRate(0); // backend calculate করবে
+            response.setStatus("PENDING"); // default
+            response.setLoanType(""); // user input
+
+            // 3️⃣ AccountDTO set
+            AccountsDTO accountDto = new AccountsDTO();
+            accountDto.setId(account.getId());
+            accountDto.setName(account.getName());
+            accountDto.setBalance(account.getBalance());
+            accountDto.setNid(account.getNid());
+            accountDto.setPhoneNumber(account.getPhoneNumber());
+            accountDto.setAddress(account.getAddress());
+            accountDto.setAccountType(account.getAccountType());
+
+            response.setAccount(accountDto);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
 
 
 
