@@ -1,19 +1,22 @@
-<form [formGroup]="loanForm" (ngSubmit)="applyLoan()">
+<p>apply-loan-component works!</p>
+<!-- apply-loan-component.html -->
+<div class="loan-form-container">
+  <h2>Apply for a Loan</h2>
 
-  <div>
-    <label>Loan Amount</label>
-    <input type="number" formControlName="loanAmount">
+  <div class="form-group">
+    <label for="loanAmount">Loan Amount</label>
+    <input type="number" id="loanAmount" [(ngModel)]="loanAmount" placeholder="Enter loan amount" />
   </div>
 
-  <div>
-    <label>Duration (Months)</label>
-    <input type="number" formControlName="durationInMonths">
+  <div class="form-group">
+    <label for="durationInMonths">Duration (Months)</label>
+    <input type="number" id="durationInMonths" [(ngModel)]="durationInMonths" placeholder="Enter duration in months" />
   </div>
 
-  <div>
-    <label>Loan Type</label>
-    <select formControlName="loanType">
-      <option value="">Select</option>
+  <div class="form-group">
+    <label for="loanType">Loan Type</label>
+    <select id="loanType" [(ngModel)]="loanType">
+      <option value="" disabled>Select Loan Type</option>
       <option value="PERSONAL">Personal</option>
       <option value="HOME">Home</option>
       <option value="CAR">Car</option>
@@ -22,52 +25,7 @@
     </select>
   </div>
 
-  <!-- Readonly / auto-filled fields -->
-  <div>
-    <label>EMI Amount</label>
-    <input type="number" formControlName="emiAmount" readonly>
-  </div>
+  <button (click)="applyLoan()">Apply Loan</button>
 
-  <div>
-    <label>Interest Rate (%)</label>
-    <input type="number" formControlName="interestRate" readonly>
-  </div>
-
-  <div>
-    <label>Total Payable</label>
-    <input type="number" formControlName="totalPayable" readonly>
-  </div>
-
-  <div>
-    <label>Status</label>
-    <input type="text" formControlName="status" readonly>
-  </div>
-
-  <h4>Account Info</h4>
-  <div>
-    <label>Name</label>
-    <input type="text" formControlName="accountName" readonly>
-  </div>
-  <div>
-    <label>Balance</label>
-    <input type="number" formControlName="accountBalance" readonly>
-  </div>
-  <div>
-    <label>NID</label>
-    <input type="text" formControlName="accountNid" readonly>
-  </div>
-  <div>
-    <label>Phone</label>
-    <input type="text" formControlName="accountPhone" readonly>
-  </div>
-  <div>
-    <label>Address</label>
-    <input type="text" formControlName="accountAddress" readonly>
-  </div>
-  <div>
-    <label>Account Type</label>
-    <input type="text" formControlName="accountType" readonly>
-  </div>
-
-  <button type="submit">Apply Loan</button>
-</form>
+  <p class="message" *ngIf="message">{{ message }}</p>
+</div>

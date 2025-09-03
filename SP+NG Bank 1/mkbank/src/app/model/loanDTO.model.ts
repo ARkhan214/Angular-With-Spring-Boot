@@ -19,7 +19,7 @@ export interface LoanDTO {
   emiAmount: number;
   remainingAmount:number;
   totalAlreadyPaidAmount:number;
-  // status: string;
+  status: string;
   loanType: string;
   loanStartDate: Date | string;
   loanMaturityDate:Date | string;

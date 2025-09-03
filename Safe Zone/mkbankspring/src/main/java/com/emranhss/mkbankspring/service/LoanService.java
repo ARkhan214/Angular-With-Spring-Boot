@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class LoanService implements ILoanService {
+public class LoanService{
     @Autowired
     private LoanRepository loanRepository;
 
@@ -30,16 +30,7 @@ public class LoanService implements ILoanService {
 
 
 
-    @Autowired
-    public LoanService(LoanRepository loanRepository, AccountRepository accountRepository) {
-        this.loanRepository = loanRepository;
-        this.accountRepository = accountRepository;
-    }
-
-    /**
-     * Get fixed interest rate per LoanType (yearly %)
-     * You can adjust rates here.
-     */
+    //loan interest rate calculate korar jonno
     private double getFixedInterestRate(LoanType loanType) {
         if (loanType == null) return 10.0; // default
         switch (loanType) {
@@ -52,7 +43,7 @@ public class LoanService implements ILoanService {
         }
     }
 
-    @Override
+    //loan calculate korar jonno
     public EmiResponseDto calculateEmi(double loanAmount, int durationInMonths, String loanTypeStr) {
         if (durationInMonths <= 0) throw new IllegalArgumentException("Duration must be > 0");
         if (durationInMonths > 60) throw new IllegalArgumentException("Duration cannot exceed 60 months");
@@ -193,8 +184,7 @@ public class LoanService implements ILoanService {
 
 
 
-    @Override
-    @Transactional
+//loan apply korar jonno
     public Loan applyLoan(Long accountId, LoanRequestDto dto) {
         if (dto.getDurationInMonths() <= 0 || dto.getDurationInMonths() > 60)
             throw new IllegalArgumentException("Duration must be between 1 and 60 months");
@@ -294,9 +284,7 @@ public class LoanService implements ILoanService {
 
 
 
-
-    @Override
-    @Transactional
+    //loan pay korar jonno
     public Loan payLoan(Long accountId, LoanPaymentDto paymentDto) {
         if (paymentDto.getAmount() <= 0) throw new IllegalArgumentException("Payment amount must be > 0");
 
@@ -351,11 +339,17 @@ public class LoanService implements ILoanService {
         return loanRepository.save(loan);
     }
 
-    @Override
+
     public Loan getLoanById(Long loanId) {
         Optional<Loan> loanOpt = loanRepository.findById(loanId);
         return loanOpt.orElseThrow(() -> new RuntimeException("Loan not found"));
     }
+
+    //login kore account holder eta diea tar sob loan view kortese
+    public List<Loan> getLoansByAccount(Long accountId) {
+        return loanRepository.findByAccountId(accountId);
+    }
+
 
     // helper to add months
     private Date addMonths(Date date, int months) {
@@ -364,15 +358,6 @@ public class LoanService implements ILoanService {
         cal.add(Calendar.MONTH, months);
         return cal.getTime();
     }
-
-
-
-
-
-
-
-
-
 
 
 
@@ -409,9 +394,6 @@ public class LoanService implements ILoanService {
 //
 //    // Account holder view own loans
 
-    public List<Loan> getLoansByAccount(Long accountId) {
-        return loanRepository.findByAccountId(accountId);
-    }
 
 //
 //    // Admin view pending loans

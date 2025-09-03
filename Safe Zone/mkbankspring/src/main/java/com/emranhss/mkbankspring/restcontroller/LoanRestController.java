@@ -15,8 +15,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/loans")
 public class LoanRestController {
-    @Autowired
-    private ILoanService loanService;
+//    @Autowired
+//    private ILoanService loanService;
 
     @Autowired
     private LoanService loanService1;
@@ -24,12 +24,12 @@ public class LoanRestController {
     @Autowired
     private AccountService accountService;
 
-
-    @Autowired
-    public LoanRestController(LoanService loanService, AccountService accountService) {
-        this.loanService = loanService;
-        this.accountService = accountService;
-    }
+//
+//    @Autowired
+//    public LoanRestController(LoanService loanService, AccountService accountService) {
+//        this.loanService1 = loanService;
+//        this.accountService = accountService;
+//    }
 
     /**
      * Calculate EMI (frontend will call this to display EMI before submitting)
@@ -38,7 +38,7 @@ public class LoanRestController {
     @PostMapping("/calculate")
     public ResponseEntity<?> calculateEmi(@RequestBody LoanRequestDto dto) {
         try {
-            EmiResponseDto res = loanService.calculateEmi(dto.getLoanAmount(), dto.getDurationInMonths(), dto.getLoanType().name());
+            EmiResponseDto res = loanService1.calculateEmi(dto.getLoanAmount(), dto.getDurationInMonths(), dto.getLoanType().name());
             return ResponseEntity.ok(res);
         } catch (Exception ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
@@ -51,7 +51,7 @@ public class LoanRestController {
     public ResponseEntity<?> applyLoan(@RequestBody LoanRequestDto dto, Authentication authentication) {
         try {
             Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
-            Loan loan = loanService.applyLoan(accountId, dto);
+            Loan loan = loanService1.applyLoan(accountId, dto);
 
             LoanDto response = new LoanDto();
             response.setId(loan.getId());
@@ -105,7 +105,7 @@ public class LoanRestController {
     public ResponseEntity<?> payLoan(@RequestBody LoanPaymentDto paymentDto, Authentication authentication) {
         try {
             Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
-            Loan updated = loanService.payLoan(accountId, paymentDto);
+            Loan updated = loanService1.payLoan(accountId, paymentDto);
             return ResponseEntity.ok(updated);
         } catch (Exception ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
@@ -118,7 +118,7 @@ public class LoanRestController {
     @GetMapping("/{loanId}")
     public ResponseEntity<?> getLoan(@PathVariable Long loanId, Authentication authentication) {
         try {
-            Loan loan = loanService.getLoanById(loanId);
+            Loan loan = loanService1.getLoanById(loanId);
             // optional: check ownership
             return ResponseEntity.ok(loan);
         } catch (Exception ex) {
@@ -173,7 +173,7 @@ public class LoanRestController {
             dto.setEmiAmount(loan.getEmiAmount());
             dto.setRemainingAmount(loan.getRemainingAmount());
             dto.setTotalAlreadyPaidAmount(loan.getTotalAlreadyPaidAmount());
-//            dto.setStatus(loan.getStatus().name());
+            dto.setStatus(loan.getStatus().name());
             dto.setLoanType(loan.getLoanType().name());
             dto.setLoanStartDate(loan.getLoanStartDate());
             dto.setLoanMaturityDate(loan.getLoanMaturityDate());
