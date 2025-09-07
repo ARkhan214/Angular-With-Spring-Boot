@@ -49,10 +49,21 @@ public class LoanRestController {
 
 
     @PostMapping("/apply")
-    public ResponseEntity<?> applyLoan(@RequestBody LoanRequestDto dto, Authentication authentication) {
+    public ResponseEntity<?> applyLoan(
+            @RequestBody LoanRequestDto dto,
+            @RequestHeader("Authorization") String authHeader,
+            Authentication authentication
+//            Authentication authentication
+    ) {
+
+
         try {
+
+            // Token extract করা
+            String token = authHeader.replace("Bearer ", "");
+
             Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
-            Loan loan = loanService1.applyLoan(accountId, dto);
+            Loan loan = loanService1.applyLoan(accountId, dto,token);
 
             LoanDto response = new LoanDto();
             response.setId(loan.getId());

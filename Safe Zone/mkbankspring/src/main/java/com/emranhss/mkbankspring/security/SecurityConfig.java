@@ -63,7 +63,8 @@ public class SecurityConfig {
                                 "/api/loan/**",
                                 "/api/admin/loans/**",
                                 "/api/fd/create",
-                                "/api/fd/**"
+                                "/api/fd/**",
+                                "/api/dps/**"
 
 
                         )

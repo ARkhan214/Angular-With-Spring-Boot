@@ -9,6 +9,7 @@ public enum TransactionType {
     FIXED_DEPOSIT,
     TRANSFER,
     RECEIVE,
+    DPS_DEPOSIT,
 
     // Bill Payments
     BILL_PAYMENT,              // Generic bill payment

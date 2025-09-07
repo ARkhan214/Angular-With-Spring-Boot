@@ -1,53 +1,31 @@
-<div class="container my-4" style="max-width: 600px; font-family: Arial, sans-serif;">
-  <h2 class="text-center text-primary mb-4">Apply for Loan</h2>
+<p>apply-loan-component works!</p>
+<!-- apply-loan-component.html -->
+<div class="loan-form-container">
+  <h2>Apply for a Loan</h2>
 
-  <!-- Pre-filled Account Info -->
-  <div class="card mb-3 p-3 shadow-sm">
-    <h5>Account Information</h5>
-    <p><strong>Account Name:</strong> {{ accountName }}</p>
-    <p><strong>Account ID:</strong> {{ accountId }}</p>
-    <p><strong>Balance:</strong> {{ balance | number:'1.2-2' }}</p>
-    <p><strong>Account Type:</strong> {{ accountType }}</p>
-    <p><strong>NID:</strong> {{ nid }}</p>
-    <p><strong>Phone:</strong> {{ phoneNumber }}</p>
-    <p><strong>Address:</strong> {{ address }}</p>
+  <div class="form-group">
+    <label for="loanAmount">Loan Amount</label>
+    <input type="number" id="loanAmount" [(ngModel)]="loanAmount" placeholder="Enter loan amount" />
   </div>
 
-  <!-- Loan Application Form -->
-  <div class="form-group mb-3">
-  <label for="loanAmount">Loan Amount</label>
-  <input type="number" id="loanAmount" [(ngModel)]="loanAmount" (input)="calculateEmi()" class="form-control" placeholder="Enter loan amount">
-</div>
-
-<div class="form-group mb-3">
-  <label for="durationInMonths">Duration (Months)</label>
-  <input type="number" id="durationInMonths" [(ngModel)]="durationInMonths" (input)="calculateEmi()" class="form-control" placeholder="Enter duration in months">
-</div>
-
-<div class="form-group mb-3">
-  <label for="loanType">Loan Type</label>
-  <select id="loanType" [(ngModel)]="loanType" (change)="calculateEmi()" class="form-select">
-    <option value="" disabled selected>Select loan type</option>
-    <option value="PERSONAL">Personal</option>
-    <option value="HOME">Home</option>
-    <option value="CAR">Car</option>
-    <option value="EDUCATION">Education</option>
-    <option value="BUSINESS">Business</option>
-  </select>
-</div>
-
-<!-- Calculated EMI info -->
-<div class="card mb-3 p-3 border-info" *ngIf="emiAmount > 0">
-  <p><strong>Interest Rate:</strong> {{ interestRate }}%</p>
-  <p><strong>Total Payable:</strong> {{ totalPayable | number:'1.2-2' }}</p>
-  <p><strong>EMI (per month):</strong> {{ emiAmount | number:'1.2-2' }}</p>
-</div>
-
-<button class="btn btn-primary w-100" (click)="applyLoan()">Apply Loan</button>
-
-
-  <!-- Message -->
-  <div *ngIf="message" class="alert alert-info mt-3">
-    {{ message }}
+  <div class="form-group">
+    <label for="durationInMonths">Duration (Months)</label>
+    <input type="number" id="durationInMonths" [(ngModel)]="durationInMonths" placeholder="Enter duration in months" />
   </div>
+
+  <div class="form-group">
+    <label for="loanType">Loan Type</label>
+    <select id="loanType" [(ngModel)]="loanType">
+      <option value="" disabled>Select Loan Type</option>
+      <option value="PERSONAL">Personal</option>
+      <option value="HOME">Home</option>
+      <option value="CAR">Car</option>
+      <option value="EDUCATION">Education</option>
+      <option value="BUSINESS">Business</option>
+    </select>
+  </div>
+
+  <button (click)="applyLoan()">Apply Loan</button>
+
+  <p class="message" *ngIf="message">{{ message }}</p>
 </div>

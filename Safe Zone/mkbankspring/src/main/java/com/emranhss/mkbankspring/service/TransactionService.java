@@ -317,7 +317,8 @@ public class TransactionService {
                 || tx.getType() == TransactionType.BILL_PAYMENT_INTERNET
                 || tx.getType() == TransactionType.BILL_PAYMENT_GAS
                 || tx.getType() == TransactionType.BILL_PAYMENT_ELECTRICITY
-                || tx.getType() == TransactionType.BILL_PAYMENT_CREDIT_CARD) {
+                || tx.getType() == TransactionType.BILL_PAYMENT_CREDIT_CARD
+                || tx.getType() == TransactionType.DPS_DEPOSIT) {
             return "DEBIT";
         } else {
             return "UNKNOWN";

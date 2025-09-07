@@ -185,7 +185,7 @@ public class LoanService{
 
 
 //loan apply korar jonno
-    public Loan applyLoan(Long accountId, LoanRequestDto dto) {
+    public Loan applyLoan(Long accountId, LoanRequestDto dto,String token) {
         if (dto.getDurationInMonths() <= 0 || dto.getDurationInMonths() > 60)
             throw new IllegalArgumentException("Duration must be between 1 and 60 months");
         if (dto.getLoanAmount() <= 0 || dto.getLoanAmount() > 99999999)
@@ -231,6 +231,7 @@ public class LoanService{
         txn.setAmount(dto.getLoanAmount());
         txn.setDescription("Loan disbursed: Loan ID " + savedLoan.getId());
         txn.setReceiverAccount(null); // Receiver not needed for loan credit
+        txn.setToken(token);
         transactionRepository.save(txn);
 
         return savedLoan;

@@ -10,46 +10,45 @@ public class Dps {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "account_id", nullable = false)
+    @ManyToOne(optional = false)
     private Accounts account;
-    private Double monthlyInstallment;
-    private Integer durationInMonths;
+
+    private double monthlyAmount;
+
+    private int termMonths;
 
     @Temporal(TemporalType.DATE)
-    private Date startDpsDate;
+    private Date startDate;
 
-    // Maturity date of DPS (startDate + duration)
     @Temporal(TemporalType.DATE)
-    private Date dpsMaturityDate;
-    private Double interestRate;
-    private Double maturityAmount;
+    private Date nextDebitDate;
 
-    // Number of installments paid
-    private Integer totalDepositsMade;
-
-    // Status of DPS (ACTIVE, CLOSED, DEFAULTED)
     @Enumerated(EnumType.STRING)
-    private DpsStatus dpsStatus;
+    private DpsStatus status = DpsStatus.ACTIVE;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dpsLastUpdatedAt;
+    private double totalDeposited = 0.0;
+
+    private int missedCount = 0;
+
+    private int monthsPaid = 0;
+
+    private double annualInterestRate;
 
     public Dps() {
     }
 
-    public Dps(Long id, Accounts account, Double monthlyInstallment, Integer durationInMonths, Date startDpsDate, Date dpsMaturityDate, Double interestRate, Double maturityAmount, Integer totalDepositsMade, DpsStatus dpsStatus, Date dpsLastUpdatedAt) {
+    public Dps(Long id, Accounts account, double monthlyAmount, int termMonths, Date startDate, Date nextDebitDate, DpsStatus status, double totalDeposited, int missedCount, int monthsPaid, double annualInterestRate) {
         this.id = id;
         this.account = account;
-        this.monthlyInstallment = monthlyInstallment;
-        this.durationInMonths = durationInMonths;
-        this.startDpsDate = startDpsDate;
-        this.dpsMaturityDate = dpsMaturityDate;
-        this.interestRate = interestRate;
-        this.maturityAmount = maturityAmount;
-        this.totalDepositsMade = totalDepositsMade;
-        this.dpsStatus = dpsStatus;
-        this.dpsLastUpdatedAt = dpsLastUpdatedAt;
+        this.monthlyAmount = monthlyAmount;
+        this.termMonths = termMonths;
+        this.startDate = startDate;
+        this.nextDebitDate = nextDebitDate;
+        this.status = status;
+        this.totalDeposited = totalDeposited;
+        this.missedCount = missedCount;
+        this.monthsPaid = monthsPaid;
+        this.annualInterestRate = annualInterestRate;
     }
 
     public Long getId() {
@@ -68,75 +67,75 @@ public class Dps {
         this.account = account;
     }
 
-    public Double getMonthlyInstallment() {
-        return monthlyInstallment;
+    public double getMonthlyAmount() {
+        return monthlyAmount;
     }
 
-    public void setMonthlyInstallment(Double monthlyInstallment) {
-        this.monthlyInstallment = monthlyInstallment;
+    public void setMonthlyAmount(double monthlyAmount) {
+        this.monthlyAmount = monthlyAmount;
     }
 
-    public Integer getDurationInMonths() {
-        return durationInMonths;
+    public int getTermMonths() {
+        return termMonths;
     }
 
-    public void setDurationInMonths(Integer durationInMonths) {
-        this.durationInMonths = durationInMonths;
+    public void setTermMonths(int termMonths) {
+        this.termMonths = termMonths;
     }
 
-    public Date getStartDpsDate() {
-        return startDpsDate;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setStartDpsDate(Date startDpsDate) {
-        this.startDpsDate = startDpsDate;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
-    public Date getDpsMaturityDate() {
-        return dpsMaturityDate;
+    public Date getNextDebitDate() {
+        return nextDebitDate;
     }
 
-    public void setDpsMaturityDate(Date dpsMaturityDate) {
-        this.dpsMaturityDate = dpsMaturityDate;
+    public void setNextDebitDate(Date nextDebitDate) {
+        this.nextDebitDate = nextDebitDate;
     }
 
-    public Double getInterestRate() {
-        return interestRate;
+    public DpsStatus getStatus() {
+        return status;
     }
 
-    public void setInterestRate(Double interestRate) {
-        this.interestRate = interestRate;
+    public void setStatus(DpsStatus status) {
+        this.status = status;
     }
 
-    public Double getMaturityAmount() {
-        return maturityAmount;
+    public double getTotalDeposited() {
+        return totalDeposited;
     }
 
-    public void setMaturityAmount(Double maturityAmount) {
-        this.maturityAmount = maturityAmount;
+    public void setTotalDeposited(double totalDeposited) {
+        this.totalDeposited = totalDeposited;
     }
 
-    public Integer getTotalDepositsMade() {
-        return totalDepositsMade;
+    public int getMissedCount() {
+        return missedCount;
     }
 
-    public void setTotalDepositsMade(Integer totalDepositsMade) {
-        this.totalDepositsMade = totalDepositsMade;
+    public void setMissedCount(int missedCount) {
+        this.missedCount = missedCount;
     }
 
-    public DpsStatus getDpsStatus() {
-        return dpsStatus;
+    public int getMonthsPaid() {
+        return monthsPaid;
     }
 
-    public void setDpsStatus(DpsStatus dpsStatus) {
-        this.dpsStatus = dpsStatus;
+    public void setMonthsPaid(int monthsPaid) {
+        this.monthsPaid = monthsPaid;
     }
 
-    public Date getDpsLastUpdatedAt() {
-        return dpsLastUpdatedAt;
+    public double getAnnualInterestRate() {
+        return annualInterestRate;
     }
 
-    public void setDpsLastUpdatedAt(Date dpsLastUpdatedAt) {
-        this.dpsLastUpdatedAt = dpsLastUpdatedAt;
+    public void setAnnualInterestRate(double annualInterestRate) {
+        this.annualInterestRate = annualInterestRate;
     }
 }

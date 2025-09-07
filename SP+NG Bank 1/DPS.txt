@@ -1,0 +1,13 @@
+---------------Create DPS-------------------
+POST     http://localhost:8085/api/dps/create
+Autharization---->Bearer Token
+Headers---->Content-Type:application/json
+Body------->
+{
+  "monthlyInstallment": 5000,
+  "durationInMonths": 12
+}
+
+-----------------Payment DPS-------------
+POST  http://localhost:8085/api/dps/pay/1
+Content-Type: application/json
