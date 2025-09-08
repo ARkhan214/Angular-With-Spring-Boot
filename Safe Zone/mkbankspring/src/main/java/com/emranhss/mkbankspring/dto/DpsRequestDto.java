@@ -2,7 +2,7 @@ package com.emranhss.mkbankspring.dto;
 
 public class DpsRequestDto {
     private double monthlyInstallment; // মাসিক জমা
-    private int durationInMonths;      // DPS এর মেয়াদ (মাসে)
+    private int durationInMonths; // DPS এর মেয়াদ (মাসে)
 
     public DpsRequestDto() {
     }

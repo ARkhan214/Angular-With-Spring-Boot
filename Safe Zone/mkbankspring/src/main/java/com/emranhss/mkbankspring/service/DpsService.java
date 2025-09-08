@@ -3,9 +3,11 @@ package com.emranhss.mkbankspring.service;
 import com.emranhss.mkbankspring.dto.DpsRequestDto;
 import com.emranhss.mkbankspring.entity.*;
 import com.emranhss.mkbankspring.repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +30,27 @@ public class DpsService {
     private TransactionRepository transactionRepository;
 
     // creat dps
+//    public Dps createDps(DpsRequestDto requestDto, Long accountId) {
+//        Accounts account = accountRepository.findById(accountId)
+//                .orElseThrow(() -> new RuntimeException("Account not found"));
+//
+//        double interestRate = getInterestRateByTerm(requestDto.getDurationInMonths());
+//
+//        Dps dpsAccount = new Dps();
+//        dpsAccount.setAccount(account);
+//        dpsAccount.setMonthlyAmount(requestDto.getMonthlyInstallment());
+//        dpsAccount.setTermMonths(requestDto.getDurationInMonths());
+//        dpsAccount.setAnnualInterestRate(interestRate);
+//        dpsAccount.setStartDate(new Date());
+//        dpsAccount.setStatus(DpsStatus.ACTIVE);
+//        dpsAccount.setMonthsPaid(0);
+//
+//        return dpsAccountRepository.save(dpsAccount);
+//    }
+
+
+
+    @Transactional
     public Dps createDps(DpsRequestDto requestDto, Long accountId) {
         Accounts account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
@@ -39,12 +62,26 @@ public class DpsService {
         dpsAccount.setMonthlyAmount(requestDto.getMonthlyInstallment());
         dpsAccount.setTermMonths(requestDto.getDurationInMonths());
         dpsAccount.setAnnualInterestRate(interestRate);
-        dpsAccount.setStartDate(new Date());
-        dpsAccount.setStatus(DpsStatus.ACTIVE);
+
+        Date startDate = new Date();
+        dpsAccount.setStartDate(startDate);
+
+        // nextDebitDate = startDate + 1 month
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(startDate);
+        cal.add(Calendar.MONTH, 1);
+        dpsAccount.setNextDebitDate(cal.getTime());
+
+        dpsAccount.setStatus(DpsStatus.ACTIVE);// ✅ ensure status comes
+
         dpsAccount.setMonthsPaid(0);
+        dpsAccount.setMissedCount(0);
+        dpsAccount.setTotalDeposited(0.0);
 
         return dpsAccountRepository.save(dpsAccount);
     }
+
+
 
 
     //interest rate

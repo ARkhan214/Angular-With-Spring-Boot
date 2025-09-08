@@ -9,5 +9,5 @@ Body------->
 }
 
 -----------------Payment DPS-------------
-POST  http://localhost:8085/api/dps/pay/1
+POST  http://localhost:8085/api/dps/pay/1			id ta hobe dps entity er id ,account holder er id na.
 Content-Type: application/json
