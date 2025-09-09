@@ -37,6 +37,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req -> req
                         .requestMatchers(
                                 "/images/**",
+                                "/error",
                                 "/api/employees/profile",
                                 "/api/user/**",
                                 "/api/transactions/*/deposits",
@@ -46,7 +47,7 @@ public class SecurityConfig {
                                 "/api/account/**",
                                 "/api/user/login",
                                 "/api/user/login/**",
-                                "/images/**",
+
                                 "/api/user/active/**",
                                 "/api/transactions/account/**",
                                 "/api/transactions/**",

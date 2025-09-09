@@ -1,5 +1,7 @@
 package com.emranhss.mkbankspring.service;
 
+import com.emranhss.mkbankspring.dto.AccountsDTO;
+import com.emranhss.mkbankspring.dto.DpsDTO;
 import com.emranhss.mkbankspring.dto.DpsRequestDto;
 import com.emranhss.mkbankspring.entity.*;
 import com.emranhss.mkbankspring.repository.*;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DpsService {
@@ -49,39 +52,47 @@ public class DpsService {
 //    }
 
 
-
     @Transactional
-    public Dps createDps(DpsRequestDto requestDto, Long accountId) {
+    public Dps createDps(Dps dps, Long accountId) {
+
         Accounts account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
 
-        double interestRate = getInterestRateByTerm(requestDto.getDurationInMonths());
+        System.out.println(account + "111111111111111111111111111");
 
-        Dps dpsAccount = new Dps();
-        dpsAccount.setAccount(account);
-        dpsAccount.setMonthlyAmount(requestDto.getMonthlyInstallment());
-        dpsAccount.setTermMonths(requestDto.getDurationInMonths());
-        dpsAccount.setAnnualInterestRate(interestRate);
+        double interestRate = getInterestRateByTerm(dps.getTermMonths());
+
+        Dps newDps = new Dps();
+        newDps.setAccount(account);
+//        newDps.setMonthlyAmount(dps.getMonthsPaid());
+        newDps.setMonthlyAmount(dps.getMonthlyAmount());
+        newDps.setMonthsPaid(dps.getMonthsPaid());
+//        newDps.setTermMonths(dps.getTermMonths());
+        newDps.setTermMonths(dps.getTermMonths());
+        newDps.setAnnualInterestRate(interestRate);
+
 
         Date startDate = new Date();
-        dpsAccount.setStartDate(startDate);
+        newDps.setStartDate(startDate);
 
         // nextDebitDate = startDate + 1 month
         Calendar cal = Calendar.getInstance();
         cal.setTime(startDate);
         cal.add(Calendar.MONTH, 1);
-        dpsAccount.setNextDebitDate(cal.getTime());
 
-        dpsAccount.setStatus(DpsStatus.ACTIVE);// ✅ ensure status comes
 
-        dpsAccount.setMonthsPaid(0);
-        dpsAccount.setMissedCount(0);
-        dpsAccount.setTotalDeposited(0.0);
+        newDps.setNextDebitDate(cal.getTime());
 
-        return dpsAccountRepository.save(dpsAccount);
+        newDps.setStatus(DpsStatus.ACTIVE);
+
+        newDps.setMonthsPaid(0);
+        newDps.setMissedCount(0);
+        newDps.setTotalDeposited(0.0);
+
+        System.out.println(newDps + "2222222222222222222222222");
+
+        return dpsAccountRepository.save(newDps);
     }
-
-
 
 
     //interest rate
@@ -92,7 +103,7 @@ public class DpsService {
     }
 
     //monthly payments
-    public void processMonthlyPayment(Long dpsId,String token) {
+    public void processMonthlyPayment(Long dpsId, String token) {
         Dps dpsAccount = dpsAccountRepository.findById(dpsId)
                 .orElseThrow(() -> new RuntimeException("DPS not found"));
 
@@ -104,6 +115,7 @@ public class DpsService {
 
         account.setBalance(account.getBalance() - amount);
         dpsAccount.setMonthsPaid(dpsAccount.getMonthsPaid() + 1);
+        dpsAccount.setTotalDeposited(dpsAccount.getTotalDeposited() + amount);
 
         DpsPayment payment = new DpsPayment();
         payment.setDps(dpsAccount);
@@ -114,13 +126,13 @@ public class DpsService {
 
         Transaction txn = new Transaction();
         txn.setAccount(account);
-        System.out.println("Account number "+ account);
+        System.out.println("Account number " + account);
         txn.setAmount(amount);
         txn.setTransactionTime(new Date());
         txn.setType(TransactionType.DPS_DEPOSIT);
         txn.setDescription("DPS Payment");
         txn.setToken(token);
-        System.out.println("token----------"+token);
+        System.out.println("token----------" + token);
         transactionRepository.save(txn);
 
 
@@ -217,9 +229,46 @@ public class DpsService {
 
     //===========================View Part
     // ✅ Login account এর সব DPS দেখার জন্য
-    public List<Dps> getDpsByAccountId(Long accountId) {
-        return dpsAccountRepository.findByAccountId(accountId);
+//    public List<Dps> getDpsByAccountId(Long accountId) {
+//        return dpsAccountRepository.findByAccountId(accountId);
+//    }
+
+    public List<DpsDTO> getDpsByAccountId(Long accountId) {
+        List<Dps> dpsList = dpsAccountRepository.findByAccountId(accountId);
+
+        return dpsList.stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
     }
+
+    // Entity → DTO mapping method according to your DpsDTO
+    private DpsDTO mapToDto(Dps dps) {
+        if (dps == null) return null;
+
+        Long accId = null;
+        String accName = null;
+        Accounts acc = dps.getAccount();
+        if (acc != null) {
+            accId = acc.getId();
+            accName = acc.getName();
+        }
+
+        return new DpsDTO(
+                dps.getId(),
+                accId,
+                accName,
+                dps.getMonthlyAmount(),
+                dps.getTermMonths(),
+                dps.getStartDate(),
+                dps.getNextDebitDate(),
+                dps.getStatus(),
+                dps.getTotalDeposited(),
+                dps.getMissedCount(),
+                dps.getMonthsPaid(),
+                dps.getAnnualInterestRate()
+        );
+    }
+
 
     // ✅ এক DPS এর বিস্তারিত view
     public Dps getDpsById(Long dpsId, Long accountId) {

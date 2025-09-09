@@ -19,6 +19,8 @@ public class AccountsDTO {
     private String role;
 
     public AccountsDTO() {
+
+
     }
 
     public AccountsDTO(Long id, String name, boolean accountActiveStatus, String accountType, double balance, String nid, String phoneNumber, String address, String photo, Date dateOfBirth, Date accountOpeningDate, Date accountClosingDate, String role) {
@@ -35,6 +37,10 @@ public class AccountsDTO {
         this.accountOpeningDate = accountOpeningDate;
         this.accountClosingDate = accountClosingDate;
         this.role = role;
+    }
+
+    public AccountsDTO(Long id, String name, double balance, String accountType) {
+
     }
 
     public Long getId() {

@@ -9,13 +9,25 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+//    @Value("${image.upload.dir}")
+//    private String uploadDir;
+//
+//    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//       registry.addResourceHandler("/images/**")
+//               .addResourceLocations("file:/" + uploadDir);
+//    }
+
+
     @Value("${image.upload.dir}")
     private String uploadDir;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-       registry.addResourceHandler("/images/**")
-               .addResourceLocations("file:/" + uploadDir);
+        // Ensure proper file path
+        String resourceLocation = "file:" + System.getProperty("user.dir") + "/" + uploadDir + "/";
+        registry.addResourceHandler("/images/**")
+                .addResourceLocations(resourceLocation);
     }
 
 }

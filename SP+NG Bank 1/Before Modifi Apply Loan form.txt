@@ -64,7 +64,6 @@ export class ApplyLoanComponent {
           this.message = `Loan Applied Successfully! Loan ID: ${res.id}`;
           this.alertService.success(this.message);
           this.cdr.markForCheck();
-          // চাইলে redirect দিতে পারো:
           this.router.navigate(['/view-all-loan']);
         },
         error: (err: any) => {
@@ -75,12 +74,10 @@ export class ApplyLoanComponent {
       });
   }
 }
-  
 
 
 
-
-
+-----------------------------------
 
 
 
@@ -118,35 +115,13 @@ export class ApplyLoanComponent {
 </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-----------------------------------------ts-------------------------
-
-
-
+=========================2nd =======================
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ChangeDetectorRef, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { AlertService } from '../../service/alert-service';
 import { Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 
 @Component({
@@ -157,198 +132,527 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class ApplyLoanComponent  implements OnInit{
 
-  
-  loanForm!: FormGroup;
-  token: string = '';
+// User input
+  loanAmount!: number;
+  durationInMonths!: number;
+  loanType: string = '';
+
+  // Pre-filled data
+  accountId!: number;
+  accountName: string = '';
+  balance!: number;
+  accountType: string = '';
+  nid: string = '';
+  phoneNumber: string = '';
+  address: string = '';
+
+    // Calculated fields
+  emiAmount: number = 0;
+  totalPayable: number = 0;
+  interestRate: number = 0;
+
+  message: string = '';
+
+
+    // Loan type interest rates
+  private interestRates: { [key: string]: number } = {
+    PERSONAL: 12,
+    HOME: 8,
+    CAR: 9,
+    EDUCATION: 6,
+    BUSINESS: 14
+  };
+
 
   constructor(
-    private fb: FormBuilder,
     private http: HttpClient,
+    private alertService: AlertService,
     private cdr: ChangeDetectorRef,
     private router: Router,
-    private alertService: AlertService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
   ngOnInit(): void {
-    this.token = isPlatformBrowser(this.platformId) ? localStorage.getItem('authToken') || '' : '';
-
-    this.loanForm = this.fb.group({
-      loanAmount: [0, Validators.required],
-      durationInMonths: [0, Validators.required],
-      loanType: ['', Validators.required],
-      // Auto-calculated / readonly fields
-      emiAmount: [{ value: 0, disabled: true }],
-      interestRate: [{ value: 0, disabled: true }],
-      totalPayable: [{ value: 0, disabled: true }],
-      status: [{ value: 'ACTIVE', disabled: true }],
-      accountName: [{ value: '', disabled: true }],
-      accountBalance: [{ value: 0, disabled: true }],
-      accountNid: [{ value: '', disabled: true }],
-      accountPhone: [{ value: '', disabled: true }],
-      accountAddress: [{ value: '', disabled: true }],
-      accountType: [{ value: '', disabled: true }]
-    });
-
-    // Auto-fill readonly fields based on user input before submit
-    this.loanForm.valueChanges.subscribe(values => {
-      if (values.loanAmount && values.durationInMonths && values.loanType) {
-        const interestRate = this.getInterestRate(values.loanType);
-        const totalInterest = values.loanAmount * (interestRate / 100);
-        const totalPayable = values.loanAmount + totalInterest;
-        const emi = totalPayable / values.durationInMonths;
-
-        this.loanForm.patchValue({
-          emiAmount: emi,
-          interestRate: interestRate,
-          totalPayable: totalPayable
-        }, { emitEvent: false });
-      }
-    });
+    this.loadInitData();
   }
 
-  getInterestRate(type: string): number {
-    switch(type) {
-      case 'PERSONAL': return 10;
-      case 'HOME': return 8;
-      case 'CAR': return 9;
-      case 'EDUCATION': return 5;
-      case 'BUSINESS': return 7;
-      default: return 7;
+  
+     // EMI calculation function
+  calculateEmi(): void {
+    if (!this.loanAmount || !this.durationInMonths || !this.loanType) {
+      this.emiAmount = 0;
+      this.totalPayable = 0;
+      this.interestRate = 0;
+      return;
     }
+
+    this.interestRate = this.interestRates[this.loanType] || 10;
+    const totalInterest = this.loanAmount * (this.interestRate / 100);
+    this.totalPayable = this.loanAmount + totalInterest;
+    this.emiAmount = this.totalPayable / this.durationInMonths;
+  }
+
+  private getAuthToken(): string {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('authToken') || '';
+    }
+    return '';
+  }
+
+  loadInitData() {
+    const token = this.getAuthToken();
+    if (!token) {
+      this.alertService.error('Authentication token not found. Please login again.');
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    this.http.get<any>('http://localhost:8085/api/loans/apply/init', { headers })
+      .subscribe({
+        next: (res) => {
+          // Pre-fill account & loan info
+          this.accountId = res.account.id;
+          this.accountName = res.account.name;
+          this.balance = res.account.balance;
+          this.accountType = res.account.accountType;
+          this.nid = res.account.nid;
+          this.phoneNumber = res.account.phoneNumber;
+          this.address = res.account.address;
+
+          // Optional: default values
+          this.loanAmount = 0;
+          this.durationInMonths = 0;
+          this.loanType = '';
+        },
+        error: (err) => {
+          console.error(err);
+          this.alertService.error('Failed to load initial loan data');
+        }
+      });
   }
 
   applyLoan() {
-    
-    if (!this.loanForm.valid) {
-      this.alertService.error('Please fill all required fields!');
+    if (!this.loanAmount || !this.durationInMonths || !this.loanType) {
+      this.alertService.error('All fields are required!');
       return;
     }
 
     const payload = {
-      loanAmount: this.loanForm.value.loanAmount,
-      durationInMonths: this.loanForm.value.durationInMonths,
-      loanType: this.loanForm.value.loanType
+      loanAmount: this.loanAmount,
+      durationInMonths: this.durationInMonths,
+      loanType: this.loanType
     };
 
-    if (!this.token) {
-      this.alertService.error('Authentication token missing!');
+    const token = this.getAuthToken();
+    if (!token) {
+      this.alertService.error('Authentication token not found. Please login again.');
       return;
     }
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${this.token}`
+      'Authorization': `Bearer ${token}`
     });
 
     this.http.post('http://localhost:8085/api/loans/apply', payload, { headers })
       .subscribe({
         next: (res: any) => {
-          // Patch all backend-returned fields to readonly fields
-          this.loanForm.patchValue({
-            emiAmount: res.emiAmount,
-            interestRate: res.interestRate || 0,
-            totalPayable: res.loanAmount + ((res.interestRate || 0)/100 * res.loanAmount),
-            status: res.status
-          }, { emitEvent: false });
-
-          // ===== Patch Account Info =====
-          if(res.account) {
-            this.loanForm.patchValue({
-              accountName: res.account.name,
-              accountBalance: res.account.balance,
-              accountNid: res.account.nid,
-              accountPhone: res.account.phoneNumber,
-              accountAddress: res.account.address,
-              accountType: res.account.accountType
-            }, { emitEvent: false });
-          }
-
-          this.alertService.success(`Loan applied successfully! Loan ID: ${res.id}`);
+          this.message = `Loan Applied Successfully! Loan ID: ${res.id}`;
+          this.alertService.success(this.message);
           this.cdr.markForCheck();
+          this.router.navigate(['/view-all-loan']);
         },
         error: (err: any) => {
           console.error(err);
-          this.alertService.error(err.error || 'Error applying loan');
+          this.message = err.error || 'Error applying for loan';
+          this.alertService.error(this.message);
         }
       });
   }
+
+}
+
+
+---------------------------------------------------
+
+<div class="container my-4" style="max-width: 700px; font-family: Arial, sans-serif;">
+  <h2 class="text-center text-primary mb-4">Apply for Loan</h2>
+
+  <form>
+    <!-- Pre-filled Account Info -->
+    <h5 class="mb-3">Account Information</h5>
+
+    <div class="row mb-2">
+      <div class="col-md-6">
+        <label>Account Name</label>
+        <input type="text" [value]="accountName" class="form-control" readonly>
+      </div>
+      <div class="col-md-6">
+        <label>Account ID</label>
+        <input type="text" [value]="accountId" class="form-control" readonly>
+      </div>
+    </div>
+
+    <div class="row mb-2">
+      <div class="col-md-6">
+        <label>Balance</label>
+        <input type="text" [value]="balance | number:'1.2-2'" class="form-control" readonly>
+      </div>
+      <div class="col-md-6">
+        <label>Account Type</label>
+        <input type="text" [value]="accountType" class="form-control" readonly>
+      </div>
+    </div>
+
+    <div class="row mb-2">
+      <div class="col-md-6">
+        <label>NID</label>
+        <input type="text" [value]="nid" class="form-control" readonly>
+      </div>
+      <div class="col-md-6">
+        <label>Phone Number</label>
+        <input type="text" [value]="phoneNumber" class="form-control" readonly>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label>Address</label>
+      <input type="text" [value]="address" class="form-control" readonly>
+    </div>
+
+    <hr class="my-3">
+
+    <!-- Loan Inputs -->
+    <h5 class="mb-3">Loan Details</h5>
+
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label for="loanAmount">Loan Amount</label>
+        <input type="number" id="loanAmount" [(ngModel)]="loanAmount" (input)="calculateEmi()" class="form-control" placeholder="Enter loan amount">
+      </div>
+      <div class="col-md-4">
+        <label for="durationInMonths">Duration (Months)</label>
+        <input type="number" id="durationInMonths" [(ngModel)]="durationInMonths" (input)="calculateEmi()" class="form-control" placeholder="Enter duration">
+      </div>
+      <div class="col-md-4">
+        <label for="loanType">Loan Type</label>
+        <select id="loanType" [(ngModel)]="loanType" (change)="calculateEmi()" class="form-select">
+          <option value="" disabled selected>Select type</option>
+          <option value="PERSONAL">Personal</option>
+          <option value="HOME">Home</option>
+          <option value="CAR">Car</option>
+          <option value="EDUCATION">Education</option>
+          <option value="BUSINESS">Business</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Calculated EMI Info -->
+    <div class="border rounded p-3 mb-3 bg-light" *ngIf="emiAmount > 0">
+      <h6>Loan Summary</h6>
+      <div class="row">
+        <div class="col-md-4 mb-2">
+          <strong>Interest Rate:</strong>
+          <p>{{ interestRate }}%</p>
+        </div>
+        <div class="col-md-4 mb-2">
+          <strong>Total Payable:</strong>
+          <p>{{ totalPayable | number:'1.2-2' }}</p>
+        </div>
+        <div class="col-md-4 mb-2">
+          <strong>EMI (per month):</strong>
+          <p>{{ emiAmount | number:'1.2-2' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="btn btn-primary w-100" (click)="applyLoan()">Apply Loan</button>
+
+    <!-- Message -->
+    <div *ngIf="message" class="alert alert-info mt-3">
+      {{ message }}
+    </div>
+  </form>
+</div>
+
+
+---------------------------
+=============================
+
+
+<div class="container my-4" style="max-width: 700px; font-family: Arial, sans-serif;">
+  <h2 class="text-center text-primary mb-4">Apply for Loan</h2>
+
+  <form>
+    <!-- Pre-filled Account Info -->
+    <h5 class="mb-3">Account Information</h5>
+
+    <div class="row mb-2">
+      <div class="col-md-6">
+        <label>Account Name</label>
+        <input type="text" [value]="accountName" class="form-control" readonly>
+      </div>
+      <div class="col-md-6">
+        <label>Account ID</label>
+        <input type="text" [value]="accountId" class="form-control" readonly>
+      </div>
+    </div>
+
+    <div class="row mb-2">
+      <div class="col-md-6">
+        <label>Balance</label>
+        <input type="text" [value]="balance | number:'1.2-2'" class="form-control" readonly>
+      </div>
+      <div class="col-md-6">
+        <label>Account Type</label>
+        <input type="text" [value]="accountType" class="form-control" readonly>
+      </div>
+    </div>
+
+    <div class="row mb-2">
+      <div class="col-md-6">
+        <label>NID</label>
+        <input type="text" [value]="nid" class="form-control" readonly>
+      </div>
+      <div class="col-md-6">
+        <label>Phone Number</label>
+        <input type="text" [value]="phoneNumber" class="form-control" readonly>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label>Address</label>
+      <input type="text" [value]="address" class="form-control" readonly>
+    </div>
+
+    <hr class="my-3">
+
+    <!-- Loan Inputs -->
+    <h5 class="mb-3">Loan Details</h5>
+
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label for="loanAmount">Loan Amount</label>
+        <input type="number" id="loanAmount" [(ngModel)]="loanAmount" name="loanAmount" (input)="calculateEmi()" class="form-control" placeholder="Enter loan amount">
+      </div>
+      <div class="col-md-4">
+        <label for="durationInMonths">Duration (Months)</label>
+        <input type="number" id="durationInMonths" [(ngModel)]="durationInMonths" name="durationInMonths" (input)="calculateEmi()" class="form-control" placeholder="Enter duration">
+      </div>
+      <div class="col-md-4">
+        <label for="loanType">Loan Type</label>
+        <select id="loanType" [(ngModel)]="loanType" name="loanType" (change)="calculateEmi()" class="form-select">
+          <option value="" disabled>Select type</option>
+          <option value="PERSONAL">Personal</option>
+          <option value="HOME">Home</option>
+          <option value="CAR">Car</option>
+          <option value="EDUCATION">Education</option>
+          <option value="BUSINESS">Business</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Calculated EMI Info -->
+    <div class="border rounded p-3 mb-3 bg-light" *ngIf="emi > 0 || totalPayable > 0">
+      <h6>Loan Summary</h6>
+      <div class="row">
+        <div class="col-md-4 mb-2">
+          <strong>Interest Rate:</strong>
+          <p>{{ interestRate }}%</p>
+        </div>
+        <div class="col-md-4 mb-2">
+          <strong>Total Payable:</strong>
+          <p>{{ totalPayable | number:'1.2-2' }}</p>
+        </div>
+        <div class="col-md-4 mb-2">
+          <strong>EMI (per month):</strong>
+          <p>{{ emi | number:'1.2-2' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="btn btn-primary w-100" (click)="applyLoan()">Apply Loan</button>
+
+    <!-- Message -->
+    <div *ngIf="message" class="alert alert-info mt-3">
+      {{ message }}
+    </div>
+  </form>
+</div>
+-----------------------------
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { ChangeDetectorRef, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { AlertService } from '../../service/alert-service';
+import { Router } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
+
+
+@Component({
+  selector: 'app-apply-loan-component',
+  standalone: false,
+  templateUrl: './apply-loan-component.html',
+  styleUrl: './apply-loan-component.css'
+})
+export class ApplyLoanComponent  implements OnInit{
+
+// User input
+  loanAmount!: number;
+  durationInMonths!: number;
+  loanType: string = '';
+
+  // Pre-filled data
+  accountId!: number;
+  accountName: string = '';
+  balance!: number;
+  accountType: string = '';
+  nid: string = '';
+  phoneNumber: string = '';
+  address: string = '';
+
+  // Calculated fields
+  emi: number = 0;
+  totalPayable: number = 0;
+  interestRate: number = 0;
+
+  message: string = '';
+
+  constructor(
+    private http: HttpClient,
+    private alertService: AlertService,
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
+
+  ngOnInit(): void {
+    this.loadInitData();
+  }
+
+  private getAuthToken(): string {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('authToken') || '';
+    }
+    return '';
+  }
+
+  // EMI calculation via backend
+  calculateEmi(): void {
+    if (!this.loanAmount || !this.durationInMonths || !this.loanType) {
+      this.emi = 0;
+      this.totalPayable = 0;
+      this.interestRate = 0;
+      return;
+    }
+
+    const token = this.getAuthToken();
+    if (!token) return;
+
+    const payload = {
+      loanAmount: this.loanAmount,
+      durationInMonths: this.durationInMonths,
+      loanType: this.loanType
+    };
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+
+    this.http.post<any>('http://localhost:8085/api/loans/calculate', payload, { headers })
+      .subscribe({
+        next: (res) => {
+           console.log('EMI Response:', res);
+          this.emi = res.emi;
+           console.log('EMI Response:', res);
+          this.totalPayable = res.totalPayable;
+          this.interestRate = res.interestRate;
+          this.cdr.markForCheck();
+        },
+        error: (err) => {
+          console.error('EMI calculation failed', err);
+        }
+      });
+  }
+
+  loadInitData() {
+    const token = this.getAuthToken();
+    if (!token) {
+      this.alertService.error('Authentication token not found. Please login again.');
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    this.http.get<any>('http://localhost:8085/api/loans/apply/init', { headers })
+      .subscribe({
+        next: (res) => {
+          // Pre-fill account & loan info
+          this.accountId = res.account.id;
+          this.accountName = res.account.name;
+          this.balance = res.account.balance;
+          this.accountType = res.account.accountType;
+          this.nid = res.account.nid;
+          this.phoneNumber = res.account.phoneNumber;
+          this.address = res.account.address;
+
+          // Optional: default values
+          this.loanAmount = 0;
+          this.durationInMonths = 0;
+          this.loanType = '';
+        },
+        error: (err) => {
+          console.error(err);
+          this.alertService.error('Failed to load initial loan data');
+        }
+      });
+  }
+
+  applyLoan() {
+    if (!this.loanAmount || !this.durationInMonths || !this.loanType) {
+      this.alertService.error('All fields are required!');
+      return;
+    }
+
+    const payload = {
+      loanAmount: this.loanAmount,
+      durationInMonths: this.durationInMonths,
+      loanType: this.loanType
+    };
+
+    const token = this.getAuthToken();
+    if (!token) {
+      this.alertService.error('Authentication token not found. Please login again.');
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+
+    this.http.post('http://localhost:8085/api/loans/apply', payload, { headers })
+      .subscribe({
+        next: (res: any) => {
+          this.message = `Loan Applied Successfully! Loan ID: ${res.id}`;
+          this.alertService.success(this.message);
+          this.cdr.markForCheck();
+          this.router.navigate(['/view-all-loan']);
+        },
+        error: (err: any) => {
+          console.error(err);
+          this.message = err.error || 'Error applying for loan';
+          this.alertService.error(this.message);
+        }
+      });
+  }
+
 }
 
 
 
-
----------------------------html----------------------------
-<form [formGroup]="loanForm" (ngSubmit)="applyLoan()">
-
-  <div>
-    <label>Loan Amount</label>
-    <input type="number" formControlName="loanAmount">
-  </div>
-
-  <div>
-    <label>Duration (Months)</label>
-    <input type="number" formControlName="durationInMonths">
-  </div>
-
-  <div>
-    <label>Loan Type</label>
-    <select formControlName="loanType">
-      <option value="">Select</option>
-      <option value="PERSONAL">Personal</option>
-      <option value="HOME">Home</option>
-      <option value="CAR">Car</option>
-      <option value="EDUCATION">Education</option>
-      <option value="BUSINESS">Business</option>
-    </select>
-  </div>
-
-  <!-- Readonly / auto-filled fields -->
-  <div>
-    <label>EMI Amount</label>
-    <input type="number" formControlName="emiAmount" readonly>
-  </div>
-
-  <div>
-    <label>Interest Rate (%)</label>
-    <input type="number" formControlName="interestRate" readonly>
-  </div>
-
-  <div>
-    <label>Total Payable</label>
-    <input type="number" formControlName="totalPayable" readonly>
-  </div>
-
-  <div>
-    <label>Status</label>
-    <input type="text" formControlName="status" readonly>
-  </div>
-
-  <h4>Account Info</h4>
-  <div>
-    <label>Name</label>
-    <input type="text" formControlName="accountName" readonly>
-  </div>
-  <div>
-    <label>Balance</label>
-    <input type="number" formControlName="accountBalance" readonly>
-  </div>
-  <div>
-    <label>NID</label>
-    <input type="text" formControlName="accountNid" readonly>
-  </div>
-  <div>
-    <label>Phone</label>
-    <input type="text" formControlName="accountPhone" readonly>
-  </div>
-  <div>
-    <label>Address</label>
-    <input type="text" formControlName="accountAddress" readonly>
-  </div>
-  <div>
-    <label>Account Type</label>
-    <input type="text" formControlName="accountType" readonly>
-  </div>
-
-  <button type="submit">Apply Loan</button>
-</form>
+make a html select dropdown with same name value for bangladeshi all water supplier

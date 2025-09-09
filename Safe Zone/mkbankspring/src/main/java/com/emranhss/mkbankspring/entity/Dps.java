@@ -24,7 +24,7 @@ public class Dps {
     private Date nextDebitDate;
 
     @Enumerated(EnumType.STRING)
-    private DpsStatus status = DpsStatus.ACTIVE;
+    private DpsStatus status;
 
     private double totalDeposited = 0.0;
 
@@ -137,5 +137,23 @@ public class Dps {
 
     public void setAnnualInterestRate(double annualInterestRate) {
         this.annualInterestRate = annualInterestRate;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Dps{" +
+                "id=" + id +
+                ", account=" + account +
+                ", monthlyAmount=" + monthlyAmount +
+                ", termMonths=" + termMonths +
+                ", startDate=" + startDate +
+                ", nextDebitDate=" + nextDebitDate +
+                ", status=" + status +
+                ", totalDeposited=" + totalDeposited +
+                ", missedCount=" + missedCount +
+                ", monthsPaid=" + monthsPaid +
+                ", annualInterestRate=" + annualInterestRate +
+                '}';
     }
 }

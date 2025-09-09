@@ -1,5 +1,6 @@
 package com.emranhss.mkbankspring.restcontroller;
 
+import com.emranhss.mkbankspring.dto.DpsDTO;
 import com.emranhss.mkbankspring.dto.DpsPaymentDto;
 import com.emranhss.mkbankspring.dto.DpsRequestDto;
 import com.emranhss.mkbankspring.entity.Dps;
@@ -21,9 +22,11 @@ public class DpsController {
     @Autowired
     private AccountService accountService;
 
-    // ✅ নতুন DPS খোলা (login account)
+
     @PostMapping("/create")
-    public Dps createDps(@RequestBody DpsRequestDto requestDto, Authentication authentication) {
+    public Dps createDps(@RequestBody Dps requestDto, Authentication authentication) {
+
+
         Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
         return dpsService.createDps(requestDto, accountId);
     }
@@ -60,15 +63,23 @@ public class DpsController {
 
 
     //==============View Part
-    // ✅ Login account এর সব DPS দেখার API
+    //  Login account এর সব DPS দেখার API
+//    @GetMapping("/my-dps")
+//    public ResponseEntity<List<Dps>> getMyDps(Authentication authentication) {
+//        Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+//        List<Dps> dpsList = dpsService.getDpsByAccountId(accountId);
+//        return ResponseEntity.ok(dpsList);
+//    }
+
     @GetMapping("/my-dps")
-    public ResponseEntity<List<Dps>> getMyDps(Authentication authentication) {
+    public ResponseEntity<List<DpsDTO>> getMyDps(Authentication authentication) {
         Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
-        List<Dps> dpsList = dpsService.getDpsByAccountId(accountId);
+        List<DpsDTO> dpsList = dpsService.getDpsByAccountId(accountId);
         return ResponseEntity.ok(dpsList);
     }
 
-    // ✅ Login account এর এক DPS এর বিস্তারিত view
+
+    //  Login account এর এক DPS এর বিস্তারিত view
     @GetMapping("/view/{dpsId}")
     public ResponseEntity<Dps> getDps(@PathVariable Long dpsId, Authentication authentication) {
         Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
