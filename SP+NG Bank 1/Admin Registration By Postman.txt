@@ -12,3 +12,16 @@ Content Type--application/json,multipart/form-data
   "phoneNumber": "01711111111",
   "dateOfBirth": "2000-01-01"
 }
+
+
+EMAIL:=
+farihamariam@gmail.com
+mdrahimkhan107107@gmail.com
+parvejmd4469@gmail.com
+sadiar.rahman970@gmail.com
+mr.t.imran11@gmail.com
+halimaaktershemanto@gmail.com
+sathekhanom550@gmail.com
+cmrejaulkarim@gmail.com
+rimunna322@gmail.com 
+mdatiqulislam59@gmail.com

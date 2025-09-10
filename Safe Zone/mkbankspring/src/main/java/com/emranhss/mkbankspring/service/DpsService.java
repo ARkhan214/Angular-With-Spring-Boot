@@ -61,6 +61,7 @@ public class DpsService {
         System.out.println(account + "111111111111111111111111111");
 
         double interestRate = getInterestRateByTerm(dps.getTermMonths());
+        double maturityAmount = dps.getMonthlyAmount() * dps.getTermMonths() * (1 + interestRate / 100);
 
         Dps newDps = new Dps();
         newDps.setAccount(account);
@@ -88,12 +89,32 @@ public class DpsService {
         newDps.setMonthsPaid(0);
         newDps.setMissedCount(0);
         newDps.setTotalDeposited(0.0);
+        newDps.setMaturityAmount(maturityAmount);
 
         System.out.println(newDps + "2222222222222222222222222");
 
         return dpsAccountRepository.save(newDps);
     }
 
+
+    // ✅ এখন Email দিয়ে খুঁজবে (username আসলে email হবে authentication থেকে)
+    public AccountsDTO getAccountByUsername(String username) {
+        Accounts account = accountRepository.findByUserEmail(username)
+                .orElseThrow(() -> new RuntimeException("Account not found for user: " + username));
+
+        return new AccountsDTO(
+                account.getId(),
+                account.getName(),
+                account.getBalance(),
+                account.getAccountType(),
+                account.getNid(),
+                account.getPhoneNumber(),
+                account.getAddress()
+        );
+    }
+
+
+    //--------------
 
     //interest rate
     private double getInterestRateByTerm(int durationInMonths) {
@@ -265,7 +286,8 @@ public class DpsService {
                 dps.getTotalDeposited(),
                 dps.getMissedCount(),
                 dps.getMonthsPaid(),
-                dps.getAnnualInterestRate()
+                dps.getAnnualInterestRate(),
+                dps.getMaturityAmount()
         );
     }
 

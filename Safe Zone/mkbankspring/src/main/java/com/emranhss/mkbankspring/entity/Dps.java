@@ -34,10 +34,12 @@ public class Dps {
 
     private double annualInterestRate;
 
+    private double maturityAmount;
+
     public Dps() {
     }
 
-    public Dps(Long id, Accounts account, double monthlyAmount, int termMonths, Date startDate, Date nextDebitDate, DpsStatus status, double totalDeposited, int missedCount, int monthsPaid, double annualInterestRate) {
+    public Dps(Long id, Accounts account, double monthlyAmount, int termMonths, Date startDate, Date nextDebitDate, DpsStatus status, double totalDeposited, int missedCount, int monthsPaid, double annualInterestRate, double maturityAmount) {
         this.id = id;
         this.account = account;
         this.monthlyAmount = monthlyAmount;
@@ -49,6 +51,7 @@ public class Dps {
         this.missedCount = missedCount;
         this.monthsPaid = monthsPaid;
         this.annualInterestRate = annualInterestRate;
+        this.maturityAmount = maturityAmount;
     }
 
     public Long getId() {
@@ -139,6 +142,13 @@ public class Dps {
         this.annualInterestRate = annualInterestRate;
     }
 
+    public double getMaturityAmount() {
+        return maturityAmount;
+    }
+
+    public void setMaturityAmount(double maturityAmount) {
+        this.maturityAmount = maturityAmount;
+    }
 
     @Override
     public String toString() {
@@ -154,6 +164,7 @@ public class Dps {
                 ", missedCount=" + missedCount +
                 ", monthsPaid=" + monthsPaid +
                 ", annualInterestRate=" + annualInterestRate +
+                ", maturityAmount=" + maturityAmount +
                 '}';
     }
 }

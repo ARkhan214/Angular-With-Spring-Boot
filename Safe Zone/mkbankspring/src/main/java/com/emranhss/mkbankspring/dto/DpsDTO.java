@@ -17,11 +17,12 @@ public class DpsDTO {
     private int missedCount;
     private int monthsPaid;
     private double annualInterestRate;
+    private double maturityAmount;
 
     public DpsDTO() {
     }
 
-    public DpsDTO(Long id, Long accountId, String accountName, double monthlyAmount, int termMonths, Date startDate, Date nextDebitDate, DpsStatus status, double totalDeposited, int missedCount, int monthsPaid, double annualInterestRate) {
+    public DpsDTO(Long id, Long accountId, String accountName, double monthlyAmount, int termMonths, Date startDate, Date nextDebitDate, DpsStatus status, double totalDeposited, int missedCount, int monthsPaid, double annualInterestRate, double maturityAmount) {
         this.id = id;
         this.accountId = accountId;
         this.accountName = accountName;
@@ -34,6 +35,7 @@ public class DpsDTO {
         this.missedCount = missedCount;
         this.monthsPaid = monthsPaid;
         this.annualInterestRate = annualInterestRate;
+        this.maturityAmount = maturityAmount;
     }
 
     public Long getId() {
@@ -130,5 +132,13 @@ public class DpsDTO {
 
     public void setAnnualInterestRate(double annualInterestRate) {
         this.annualInterestRate = annualInterestRate;
+    }
+
+    public double getMaturityAmount() {
+        return maturityAmount;
+    }
+
+    public void setMaturityAmount(double maturityAmount) {
+        this.maturityAmount = maturityAmount;
     }
 }

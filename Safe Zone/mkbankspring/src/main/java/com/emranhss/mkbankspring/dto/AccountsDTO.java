@@ -43,6 +43,20 @@ public class AccountsDTO {
 
     }
 
+
+    // 7 parameter constructor
+    public AccountsDTO(Long id, String name, double balance, String accountType,
+                       String nid, String phoneNumber, String address) {
+        this.id = id;
+        this.name = name;
+        this.balance = balance;
+        this.accountType = accountType;
+        this.nid = nid;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+    }
+
+
     public Long getId() {
         return id;
     }

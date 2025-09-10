@@ -1,5 +1,6 @@
 package com.emranhss.mkbankspring.restcontroller;
 
+import com.emranhss.mkbankspring.dto.AccountsDTO;
 import com.emranhss.mkbankspring.dto.DpsDTO;
 import com.emranhss.mkbankspring.dto.DpsPaymentDto;
 import com.emranhss.mkbankspring.dto.DpsRequestDto;
@@ -30,6 +31,16 @@ public class DpsController {
         Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
         return dpsService.createDps(requestDto, accountId);
     }
+
+    // 👉 My Account Info from DPS controller
+    @GetMapping("/my-account")
+    public ResponseEntity<AccountsDTO> getMyAccount(Authentication authentication) {
+        String username = authentication.getName(); // সাধারণত email থাকে
+        AccountsDTO accountDto = dpsService.getAccountByUsername(username);
+        return ResponseEntity.ok(accountDto);
+    }
+// ---------
+
 
     @PostMapping("/pay/{dpsId}")
     public String processPayment(

@@ -41,6 +41,8 @@ import { AdminLoanApproveComponent } from './loan/admin-loan-approve-component/a
 import { FixedDeposit } from './model/fixedDeposit.model';
 import { FixedDepositComponent } from './components/fixed-deposit-component/fixed-deposit-component';
 import { ViewAllFd } from './components/view-all-fd/view-all-fd';
+import { DpsComponent } from './components/dps-component/dps-component';
+import { DpsPayComponent } from './components/dps-pay-component/dps-pay-component';
 
 
 
@@ -85,6 +87,8 @@ const routes: Routes = [
   { path: 'admin-approval-loan', component: AdminLoanApproveComponent },
   { path: 'fd', component: FixedDepositComponent },
   { path: 'view-all-fd', component: ViewAllFd },
+  { path: 'dps', component: DpsComponent },
+  { path: 'dps-pay', component: DpsPayComponent },
 
 
 

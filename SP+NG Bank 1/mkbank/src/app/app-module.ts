@@ -54,6 +54,7 @@ import { ViewMyLoan } from './loan/view-my-loan/view-my-loan';
 import { PayLoan } from './loan/pay-loan/pay-loan';
 import { AdminLoanApproveComponent } from './loan/admin-loan-approve-component/admin-loan-approve-component';
 import { ViewAllFd } from './components/view-all-fd/view-all-fd';
+import { DpsPayComponent } from './components/dps-pay-component/dps-pay-component';
 
 
 @NgModule({
@@ -104,6 +105,7 @@ import { ViewAllFd } from './components/view-all-fd/view-all-fd';
     PayLoan,
     AdminLoanApproveComponent,
     ViewAllFd,
+    DpsPayComponent,
   ],
   imports: [
     BrowserModule,
