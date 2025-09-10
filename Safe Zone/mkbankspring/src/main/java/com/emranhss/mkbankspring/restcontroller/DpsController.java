@@ -53,6 +53,20 @@ public class DpsController {
         return "Monthly DPS payment successful!";
     }
 
+
+    //---------------------st---
+    @GetMapping("/{dpsId}")
+    public ResponseEntity<DpsDTO> getDpsById(
+            @PathVariable Long dpsId,
+            Authentication authentication) {
+
+        Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+        DpsDTO dps = dpsService.getSingleDpsById(dpsId, accountId);
+        return ResponseEntity.ok(dps);
+    }
+
+    //--------------------end----
+
     @PostMapping("/penalty")
     public String processPenaltyPayment(@RequestBody DpsPaymentDto paymentDto) {
         dpsService.applyPenalty(paymentDto.getDpsId(), paymentDto.getPenaltyPercent());
@@ -71,16 +85,6 @@ public class DpsController {
         return "DPS force-closed due to non-payment!";
     }
 
-
-
-    //==============View Part
-    //  Login account এর সব DPS দেখার API
-//    @GetMapping("/my-dps")
-//    public ResponseEntity<List<Dps>> getMyDps(Authentication authentication) {
-//        Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
-//        List<Dps> dpsList = dpsService.getDpsByAccountId(accountId);
-//        return ResponseEntity.ok(dpsList);
-//    }
 
     @GetMapping("/my-dps")
     public ResponseEntity<List<DpsDTO>> getMyDps(Authentication authentication) {

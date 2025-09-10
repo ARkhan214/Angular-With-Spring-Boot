@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { UserService } from '../../service/user.service';
 import { AuthService } from '../../service/auth-service';
 import { Role } from '../../model/role.model';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-sidebar',
@@ -17,27 +18,39 @@ export class Sidebar implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private cdr: ChangeDetectorRef,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
-  //   ngOnInit(): void {
-  //   this.userService.currentUser$.subscribe(user=>{
-  //     this.userRole = user?.role || '';
-  //   })
-  // }
-
+  //eta amar first silo.eta kaj kore.
   // ngOnInit(): void {
-  //   this.userRole = this.authService.getUserRole();
-  //   console.log('Sidebar loaded with role:', this.userRole);
+  //   this.authService.userRole$.subscribe(role => {
+  //     this.userRole = role;
+  //     console.log('Sidebar loaded with role:', this.userRole);
+  //   });
   // }
 
+  //eta sadier vi er theke ansi etao kaj kore.(etar kaj sidebar er error remove kora)
   ngOnInit(): void {
-    this.authService.userRole$.subscribe(role => {
-      this.userRole = role;
-      console.log('Sidebar loaded with role:', this.userRole);
-    });
-  }
 
+    if (isPlatformBrowser(this.platformId)) {
+      //  Safe to access localStorage in browser
+      this.userRole = localStorage.getItem('userRole');
+
+      this.authService.userRole$.subscribe(role => {
+        this.userRole = role;
+        console.log('Sidebar loaded with role:', this.userRole);
+        this.cdr.markForCheck();
+      });
+
+      // Optional: reload from localStorage on refresh
+      const roleFromStorage = localStorage.getItem('userRole');
+      if (roleFromStorage) {
+        this.userRole = roleFromStorage;
+      }
+    }
+  }
 
 
   logout() {
@@ -57,8 +70,8 @@ export class Sidebar implements OnInit {
     return this.userRole === Role.EMPLOYEE;
   }
 
-  
-    isLoggIn(): boolean {
+
+  isLoggIn(): boolean {
     const token = this.authService.getToken();
     if (token && !this.authService.isTokenExpired(token)) {
       return true;
@@ -67,17 +80,4 @@ export class Sidebar implements OnInit {
     return false;
 
   }
-
-  //    userType: string = '';
-
-  // constructor(
-  //   private userService: UserService
-  // ){}
-
-  // ngOnInit(): void {
-  //   this.userService.currentUser$.subscribe(user=>{
-  //     this.userType = user?.type || '';
-  //   })
-  // }
-
 }

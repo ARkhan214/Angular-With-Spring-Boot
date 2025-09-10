@@ -1,3 +1,27 @@
+####-->10-09-2025
+kaj holo sidebar er error remove kora
+ngOnInit(): void {
+
+     if (isPlatformBrowser(this.platformId)) {
+      //  Safe to access localStorage in browser
+      this.userRole = localStorage.getItem('userRole');
+
+    this.authService.userRole$.subscribe(role => {
+      this.userRole = role;
+      console.log('Sidebar loaded with role:', this.userRole);
+      this.cdr.markForCheck();
+    });
+
+      // Optional: reload from localStorage on refresh
+      const roleFromStorage = localStorage.getItem('userRole');
+      if (roleFromStorage) {
+        this.userRole = roleFromStorage;
+      }
+    }
+  }
+--------------------------------------------------
+
+
 ts.....
 
 

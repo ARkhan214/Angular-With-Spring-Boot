@@ -32,26 +32,7 @@ public class DpsService {
     @Autowired
     private TransactionRepository transactionRepository;
 
-    // creat dps
-//    public Dps createDps(DpsRequestDto requestDto, Long accountId) {
-//        Accounts account = accountRepository.findById(accountId)
-//                .orElseThrow(() -> new RuntimeException("Account not found"));
-//
-//        double interestRate = getInterestRateByTerm(requestDto.getDurationInMonths());
-//
-//        Dps dpsAccount = new Dps();
-//        dpsAccount.setAccount(account);
-//        dpsAccount.setMonthlyAmount(requestDto.getMonthlyInstallment());
-//        dpsAccount.setTermMonths(requestDto.getDurationInMonths());
-//        dpsAccount.setAnnualInterestRate(interestRate);
-//        dpsAccount.setStartDate(new Date());
-//        dpsAccount.setStatus(DpsStatus.ACTIVE);
-//        dpsAccount.setMonthsPaid(0);
-//
-//        return dpsAccountRepository.save(dpsAccount);
-//    }
-
-
+//creat dps------------------
     @Transactional
     public Dps createDps(Dps dps, Long accountId) {
 
@@ -65,10 +46,8 @@ public class DpsService {
 
         Dps newDps = new Dps();
         newDps.setAccount(account);
-//        newDps.setMonthlyAmount(dps.getMonthsPaid());
         newDps.setMonthlyAmount(dps.getMonthlyAmount());
         newDps.setMonthsPaid(dps.getMonthsPaid());
-//        newDps.setTermMonths(dps.getTermMonths());
         newDps.setTermMonths(dps.getTermMonths());
         newDps.setAnnualInterestRate(interestRate);
 
@@ -97,7 +76,7 @@ public class DpsService {
     }
 
 
-    // ✅ এখন Email দিয়ে খুঁজবে (username আসলে email হবে authentication থেকে)
+    //  এখন Email দিয়ে খুঁজবে (username আসলে email হবে authentication থেকে)
     public AccountsDTO getAccountByUsername(String username) {
         Accounts account = accountRepository.findByUserEmail(username)
                 .orElseThrow(() -> new RuntimeException("Account not found for user: " + username));
@@ -128,8 +107,13 @@ public class DpsService {
         Dps dpsAccount = dpsAccountRepository.findById(dpsId)
                 .orElseThrow(() -> new RuntimeException("DPS not found"));
 
+        if (dpsAccount.getStatus() == DpsStatus.CLOSED) {
+            throw new RuntimeException("DPS is closed. No further payments allowed.");
+        }
+
         Accounts account = dpsAccount.getAccount();
         double amount = dpsAccount.getMonthlyAmount();
+
 
         if (account.getBalance() < amount)
             throw new RuntimeException("Insufficient balance for monthly DPS payment.");
@@ -138,12 +122,14 @@ public class DpsService {
         dpsAccount.setMonthsPaid(dpsAccount.getMonthsPaid() + 1);
         dpsAccount.setTotalDeposited(dpsAccount.getTotalDeposited() + amount);
 
+
+
         DpsPayment payment = new DpsPayment();
         payment.setDps(dpsAccount);
         payment.setPaymentDate(new Date());
-        payment.setAmount(amount);
         payment.setPenalty(0.0);
-
+        payment.setAmount(amount);
+        payment.setNote("DPS Payment For DPS ID "+ dpsId);
 
         Transaction txn = new Transaction();
         txn.setAccount(account);
@@ -151,16 +137,36 @@ public class DpsService {
         txn.setAmount(amount);
         txn.setTransactionTime(new Date());
         txn.setType(TransactionType.DPS_DEPOSIT);
-        txn.setDescription("DPS Payment");
+        txn.setDescription("DPS Payment For DPS ID "+ dpsId);
         txn.setToken(token);
         System.out.println("token----------" + token);
         transactionRepository.save(txn);
 
-
         dpsPaymentRepository.save(payment);
+
+
+        if (dpsAccount.getMonthsPaid() >= dpsAccount.getTermMonths()) {
+            dpsAccount.setStatus(DpsStatus.CLOSED);
+            //account close hole maturity ammount soho taka balance a add hobe.
+            account.setBalance(account.getBalance() + dpsAccount.getMaturityAmount());
+            Transaction transaction = new Transaction();
+            transaction.setAccount(account);
+            transaction.setAmount(dpsAccount.getMaturityAmount());
+            transaction.setTransactionTime(new Date());
+            transaction.setType(TransactionType.DEPOSIT);
+            transaction.setDescription("Deposit maturity Ammount from DPS ID "+dpsId);
+            transaction.setToken(token);
+            transactionRepository.save(transaction);
+
+        }
+
         accountRepository.save(account);
         dpsAccountRepository.save(dpsAccount);
     }
+
+
+
+
 
     //apply penalty
     public void applyPenalty(Long dpsId, double penaltyPercent) {
@@ -292,7 +298,7 @@ public class DpsService {
     }
 
 
-    // ✅ এক DPS এর বিস্তারিত view
+    // এক DPS এর বিস্তারিত view
     public Dps getDpsById(Long dpsId, Long accountId) {
         Dps dps = dpsAccountRepository.findById(dpsId)
                 .orElseThrow(() -> new RuntimeException("DPS not found"));
@@ -303,4 +309,18 @@ public class DpsService {
 
         return dps;
     }
+
+
+    //---------------------st---
+    public DpsDTO getSingleDpsById(Long dpsId, Long accountId) {
+        Dps dps = dpsAccountRepository.findById(dpsId)
+                .orElseThrow(() -> new RuntimeException("DPS not found"));
+
+        if (!dps.getAccount().getId().equals(accountId)) {
+            throw new RuntimeException("You are not authorized to view this DPS");
+        }
+
+        return mapToDto(dps); // entity → dto
+    }
+
 }

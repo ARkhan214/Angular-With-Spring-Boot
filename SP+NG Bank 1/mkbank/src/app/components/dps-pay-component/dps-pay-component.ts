@@ -1,4 +1,4 @@
-import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertService } from '../../service/alert-service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -10,9 +10,10 @@ import { isPlatformBrowser } from '@angular/common';
   templateUrl: './dps-pay-component.html',
   styleUrl: './dps-pay-component.css'
 })
-export class DpsPayComponent {
+export class DpsPayComponent implements OnInit {
 
-  dpsId: number | null = null;
+  dpsId: number | null = null;           // DPS ID input
+  dpsData: any = null;                   // DPS details loaded from backend
   successMessage: string = '';
   errorMessage: string = '';
   loading: boolean = false;
@@ -21,10 +22,23 @@ export class DpsPayComponent {
     private alertService: AlertService,
     private router: Router,
     private http: HttpClient,
+    private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
-  // ✅ Token Getter
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      const savedDpsId = localStorage.getItem('dpsId');
+      if (savedDpsId) {
+        this.dpsId = Number(savedDpsId);
+      }
+
+      if (this.dpsId) {
+        this.fetchDpsDetails();
+      }
+    }
+  }
+
   private getAuthToken(): string {
     if (isPlatformBrowser(this.platformId)) {
       return localStorage.getItem('authToken') || '';
@@ -32,7 +46,36 @@ export class DpsPayComponent {
     return '';
   }
 
-  // ✅ Pay DPS Monthly
+  fetchDpsDetails(): void {
+    if (!this.dpsId) {
+      this.errorMessage = 'Please enter DPS ID';
+      this.dpsData = null;
+      return;
+    }
+
+    const token = this.getAuthToken();
+    if (!token) {
+      this.alertService.error('Authentication token not found. Please login again.');
+      return;
+    }
+
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+    this.http.get(`http://localhost:8085/api/dps/${this.dpsId}`, { headers })
+      .subscribe({
+        next: (res: any) => {
+          this.dpsData = res;
+          this.errorMessage = '';
+          this.cdr.markForCheck();
+        },
+        error: (err: any) => {
+          console.error(err);
+          this.errorMessage = err.error || 'DPS not found';
+          this.dpsData = null;
+        }
+      });
+  }
+
   payDps(): void {
     if (!this.dpsId) {
       this.errorMessage = 'Please enter valid DPS ID';
@@ -50,36 +93,41 @@ export class DpsPayComponent {
     this.errorMessage = '';
     this.successMessage = '';
 
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
 
-    this.http.post(`http://localhost:8085/api/dps/pay/${this.dpsId}`, {}, { 
-      headers,
-      responseType:'text'
-     })
+    this.http.post(`http://localhost:8085/api/dps/pay/${this.dpsId}`, {}, { headers, responseType: 'text' })
       .subscribe({
         next: (res: any) => {
-          this.successMessage = res.successMessage || 'Monthly DPS payment successful!';
+          this.successMessage = res || 'Monthly DPS payment successful!';
           this.alertService.success(this.successMessage);
-          this.resetForm();
+          this.dpsData = null;
+          this.dpsId = null;
+          this.cdr.markForCheck();
           this.loading = false;
         },
         error: (err: any) => {
           console.error(err);
-          this.errorMessage = err.error || 'Payment failed';
-          this.alertService.error(this.errorMessage);
+
+          // Backend থেকে DPS closed exception handle
+          if (err.status === 500 && err.error.includes('DPS is closed')) {
+            this.errorMessage = '❌ This DPS is already closed. No further payments allowed.';
+            this.alertService.error(this.errorMessage);
+          } else {
+            this.errorMessage = err.error || '⚠ Payment failed. Please try again.';
+            this.alertService.error(this.errorMessage);
+          }
+
           this.loading = false;
         }
-      });
+        });
   }
 
-  // ✅ Reset Method
-resetForm(): void {
-  this.dpsId = null;
-  this.successMessage = '';
-  this.errorMessage = '';
-  this.loading = false;
-}
+  resetForm(): void {
+    this.dpsId = null;
+    this.dpsData = null;
+    this.successMessage = '';
+    this.errorMessage = '';
+    this.loading = false;
+  }
 
 }

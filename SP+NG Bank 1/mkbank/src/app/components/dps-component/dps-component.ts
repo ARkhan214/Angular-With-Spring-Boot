@@ -45,7 +45,7 @@ export class DpsComponent {
     this.loadMyDps();
   }
 
-  // ✅ Token Getter
+  //  Token Getter
   private getAuthToken(): string {
     if (isPlatformBrowser(this.platformId)) {
       return localStorage.getItem('authToken') || '';
@@ -53,7 +53,7 @@ export class DpsComponent {
     return '';
   }
 
-  // ✅ Account & Preload Data (যদি backend থেকে আলাদা GET API লাগে, সেটা পরে add করা যাবে)
+  //  Account & Preload Data (যদি backend থেকে আলাদা GET API লাগে, সেটা পরে add করা যাবে)
   loadInitData() {
     const token = this.getAuthToken();
     if (!token) {
@@ -86,7 +86,7 @@ export class DpsComponent {
   }
 
 
-  // ✅ Preview Calculation
+  //  Preview Calculation
   calculatePreview() {
     if (!this.termMonths || !this.monthlyAmount) {
       this.calculatedInterestRate = 0;
@@ -106,7 +106,7 @@ export class DpsComponent {
 
 
 
-  // ✅ DPS Create
+  //  DPS Create
   createDps() {
     if (!this.monthlyAmount || !this.termMonths) {
       this.alertService.error('All fields are required!');
@@ -145,7 +145,7 @@ export class DpsComponent {
       });
   }
 
-  // ✅ My DPS List Load
+  //  My DPS List Load
   loadMyDps() {
     const token = this.getAuthToken();
     if (!token) {
