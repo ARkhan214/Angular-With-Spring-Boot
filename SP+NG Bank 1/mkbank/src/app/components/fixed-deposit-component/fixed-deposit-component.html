@@ -39,30 +39,14 @@
         </div>
       </div>
 
-      <!-- Deposit Input -->
-      <div class="form-group mb-3">
-        <label class="form-label fw-semibold">Deposit Amount</label>
-        <input 
-          type="number" 
-          [(ngModel)]="depositAmount"
-          (input)="calculatePreview()"
-          class="form-control" 
-          placeholder="Enter deposit amount"
-          style="border-radius: 10px; padding: 10px;"
-        />
-      </div>
+      <input type="number" [(ngModel)]="depositAmount" (blur)="calculatePreview()" class="form-control"
+        placeholder="Enter deposit amount" style="border-radius: 10px; padding: 10px;" />
 
       <!-- Duration Input -->
       <div class="form-group mb-3">
         <label class="form-label fw-semibold">Duration (Months)</label>
-        <input 
-          type="number" 
-          [(ngModel)]="durationInMonths"
-          (input)="calculatePreview()"
-          class="form-control" 
-          placeholder="Enter duration in months"
-          style="border-radius: 10px; padding: 10px;"
-        />
+        <input type="number" [(ngModel)]="durationInMonths" (blur)="calculatePreview()" class="form-control"
+          placeholder="Enter duration in months" style="border-radius: 10px; padding: 10px;" />
       </div>
 
       <!-- Preview -->

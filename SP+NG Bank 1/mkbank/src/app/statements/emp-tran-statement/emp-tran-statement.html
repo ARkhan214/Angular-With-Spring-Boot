@@ -91,8 +91,8 @@
     <tbody>
       <tr *ngFor="let tx of transactions">
         <td>{{ tx.id }}</td>
-        <td>{{ tx.accountHolderName }}</td>
-        <td>{{ tx.receiverAccountName ? tx.receiverAccountName : '-' }}</td>
+        <td>{{ tx.account.name }}</td>
+        <td>{{ tx.receiverAccount?.name}}</td>
         <td [ngClass]="{'debit': tx.type === 'DEBIT', 'credit': tx.type === 'CREDIT'}">
           {{ tx.type }}
         </td>

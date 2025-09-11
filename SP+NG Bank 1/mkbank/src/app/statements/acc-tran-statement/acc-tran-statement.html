@@ -54,32 +54,65 @@
     <table class="table table-striped table-bordered">
       <thead class="table-dark">
         <tr>
-          <th>ID</th>
-          <th>Account Holder</th>
+          <th>Trans Date</th>
+          <th>Particulars</th>
+          <th>Instrument No</th>
+
           <th>Receiver</th>
           <th>Type</th>
           <th>Transaction Type</th>
-          <th>Amount</th>
-          <th>Date</th>
-          <th>Description</th>
+          <th>Withdraw Amount</th>
+          <th>Deposit Amount</th>
+          <th>Balance</th>
+
+
           <th>Company Name</th>
           <th>Billing ID</th>
         </tr>
       </thead>
       <tbody>
+      <tbody>
+
         <tr *ngFor="let tx of transactions">
-          <td>{{ tx.id }}</td>
-          <td>{{ tx.accountHolderName }}</td>
-          <td>{{ tx.receiverAccountName ? tx.receiverAccountName : '-' }}</td>
-          <td [ngClass]="{'debit': tx.type === 'DEBIT', 'credit': tx.type === 'CREDIT'}">{{ tx.type }}</td>
-          <td>{{ tx.transactionType }}</td>
-          <td>{{ tx.amount | number:'1.2-2' }}</td>
           <td>{{ tx.transactionTime | date:'short' }}</td>
           <td>{{ tx.description }}</td>
+          <td>{{ tx.id }}</td>
+
+          <td>{{ tx.receiverAccount?.name }}</td>
+          <td [ngClass]="{'debit': tx.type === 'DEBIT', 'credit': tx.type === 'CREDIT'}">
+            {{ tx.type }}
+          </td>
+          <td>{{ tx.transactionType }}</td>
+
+          <!-- Withdraw Amount (only if DEBIT) -->
+          <td>
+            <span *ngIf="tx.type === 'DEBIT'">{{ tx.amount | number:'1.2-2' }}</span>
+          </td>
+
+          <!-- Deposit Amount (only if CREDIT) -->
+          <td>
+            <span *ngIf="tx.type === 'CREDIT'">{{ tx.amount | number:'1.2-2' }}</span>
+          </td>
+
+          <!-- Always show total Amount -->
+          <td>{{ tx.account.balance| number:'1.2-2' }}</td>
+
           <td>{{ tx.companyName }}</td>
           <td>{{ tx.accountHolderBillingId }}</td>
         </tr>
+
+        <!-- Totals Row -->
+        <tr class="table-secondary fw-bold">
+          <td colspan="6" class="text-end">Totals</td>
+          <td>{{ totalWithdraw | number:'1.2-2' }}</td>
+          <td>{{ totalDeposit | number:'1.2-2' }}</td>
+          <td>{{ totalBalance | number:'1.2-2' }}</td>
+          <td colspan="2"></td>
+        </tr>
+
+
       </tbody>
+
     </table>
   </div>
 

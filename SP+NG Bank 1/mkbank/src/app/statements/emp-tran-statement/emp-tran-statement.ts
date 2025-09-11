@@ -113,8 +113,8 @@ export class EmpTranStatement implements OnInit {
       pdf.setFontSize(14);
       pdf.text('Transaction Statement', 105, 16, { align: 'center' }); // Statement title
       pdf.setFontSize(12);
-      pdf.text(`Account Holder: ${this.transactions[0].accountHolderName}`, 14, 24);
-      pdf.text(`Account ID: ${this.transactions[0].id || this.transactions[0].id}`, 14, 30);
+      pdf.text(`Account Holder: ${this.transactions[0].account.name}`, 14, 24);
+      pdf.text(`Account ID: ${this.transactions[0].account.id}`, 14, 30);
 
       // ---------- Add Table Image ----------
       let position = 35; // leave space for header

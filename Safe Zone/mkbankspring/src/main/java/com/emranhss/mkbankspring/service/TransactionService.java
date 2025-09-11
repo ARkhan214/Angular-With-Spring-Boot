@@ -1,5 +1,6 @@
 package com.emranhss.mkbankspring.service;
 
+import com.emranhss.mkbankspring.dto.AccountsDTO;
 import com.emranhss.mkbankspring.dto.TransactionDTO;
 import com.emranhss.mkbankspring.entity.Accounts;
 import com.emranhss.mkbankspring.entity.Transaction;
@@ -35,7 +36,7 @@ public class TransactionService {
 
 
     // Method for Deposit & withdraw Taka (connected with TransactionResCon Method Number -1)
-    public Transaction addTransaction(Transaction transaction, Long id,String token) {
+    public Transaction addTransaction(Transaction transaction, Long id, String token) {
 
         Accounts sender = accountRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Account not found!"));
@@ -50,12 +51,10 @@ public class TransactionService {
         System.out.println("Sender current balance: " + newBalance);
 
 
-        if (transaction.getType() == TransactionType. INITIALBALANCE) {
+        if (transaction.getType() == TransactionType.INITIALBALANCE) {
             newBalance = transaction.getAmount();
             System.out.println("Sender current balance: " + newBalance);
-        }
-
-        else if (transaction.getType() == TransactionType.DEPOSIT) {
+        } else if (transaction.getType() == TransactionType.DEPOSIT) {
             newBalance += transaction.getAmount();
 
         } else if (transaction.getType() == TransactionType.WITHDRAW) {
@@ -71,11 +70,11 @@ public class TransactionService {
 
         transaction.setAccount(sender);
         transaction.setTransactionTime(new Date());
-        System.out.println(token+"111111111111111111111111111111111111");
+        System.out.println(token + "111111111111111111111111111111111111");
 
         transaction.setToken(token);
 
-        System.out.println(token+"2222222222222222222222222");
+        System.out.println(token + "2222222222222222222222222");
 
         Transaction savedTransaction = transactionRepository.save(transaction);
 
@@ -87,8 +86,8 @@ public class TransactionService {
     }
 
 
-//For Transfer
-    public Transaction onlyTransfer(Transaction transaction, Long senderId,Long receiverId ,String token) {
+    //For Transfer
+    public Transaction onlyTransfer(Transaction transaction, Long senderId, Long receiverId, String token) {
 
         Accounts sender = accountRepository.findById(senderId)
                 .orElseThrow(() -> new RuntimeException("Sender account not found!"));
@@ -102,7 +101,7 @@ public class TransactionService {
 
         if (transaction.getType() == TransactionType.TRANSFER) {
 
-            if (!receiver.isAccountActiveStatus()){
+            if (!receiver.isAccountActiveStatus()) {
                 throw new RuntimeException("Receiver account is closed!");
             }
             if (!sender.isAccountActiveStatus()) {
@@ -119,7 +118,7 @@ public class TransactionService {
 
             //update reciver balance
             double receiverBalance = receiver.getBalance();     //receiver balance find
-            receiverBalance +=transaction.getAmount();          //receiver balance update
+            receiverBalance += transaction.getAmount();          //receiver balance update
             receiver.setBalance(receiverBalance);               //save receiver new balance
             accountRepository.save(receiver);
 
@@ -128,7 +127,7 @@ public class TransactionService {
             transaction.setTransactionTime(new Date());
             transaction.setToken(token);
 
-            this.cashIN(receiverId,transaction.getAmount());     // Send receiver email
+            this.cashIN(receiverId, transaction.getAmount());     // Send receiver email
         }
         return transactionRepository.save(transaction);
 
@@ -171,25 +170,20 @@ public class TransactionService {
     }
 
 
-
     // Save or update transaction
-    public Transaction saveTransaction(Transaction transaction){
+    public Transaction saveTransaction(Transaction transaction) {
         return transactionRepository.save(transaction);
     }
 
 
-
-
     // Get all transactions(connected with TransactionResCon Method Number -2)
-    public List<Transaction> getAllTransactions(){
+    public List<Transaction> getAllTransactions() {
         return transactionRepository.findAll();
     }
 
 
-
-
     // Get transactions by Account ID
-    public Transaction getTransactionByAccountId(Long accountId){
+    public Transaction getTransactionByAccountId(Long accountId) {
         return transactionRepository.findById(accountId).get();
     }
 
@@ -232,16 +226,12 @@ public class TransactionService {
     }
 
 
-
-
-
-
     public void sendTransactionEmail(Transaction transaction) {
         Accounts accounts = transaction.getAccount();
         User user = accounts.getUser();  // account holder
 
         String subject = "Transaction Confirmation";
-        String mailText =  "<!DOCTYPE html>"
+        String mailText = "<!DOCTYPE html>"
                 + "<html>"
                 + "<head>"
                 + "<style>"
@@ -259,7 +249,7 @@ public class TransactionService {
                 + "    </div>"
                 + "    <div class='content'>"
                 + "<p>Dear " + user.getName() + ",</p>"
-                + "<p>TK " + transaction.getAmount() + " " + transaction.getType() + " successful on " + transaction.getTransactionTime() + " From Account ID: "+accounts.getId()+" Your Current balance is "+ accounts.getBalance()+"</p>"
+                + "<p>TK " + transaction.getAmount() + " " + transaction.getType() + " successful on " + transaction.getTransactionTime() + " From Account ID: " + accounts.getId() + " Your Current balance is " + accounts.getBalance() + "</p>"
                 + "<p>Thanks for staying with us.</p>"
                 + "    <div class='footer'>"
                 + "      <p> Sincerely,</p>"
@@ -277,8 +267,32 @@ public class TransactionService {
     }
 
 
-
     //Transcation Statement
+//    public List<TransactionDTO> getTransactionsByAccountID(Long accountId) {
+//        List<Transaction> transactions =
+//                transactionRepository.findByAccountIdOrderByTransactionTimeDesc(accountId);
+//
+//        return transactions.stream().map(tx -> {
+//            String nature = getTransactionNature(tx); // DEBIT / CREDIT নির্ধারণ
+//
+//            return new TransactionDTO(
+//                    tx.getId(),
+//                    tx.getAccount().getName(),   // Account holder name
+//                    tx.getReceiverAccount() != null ? tx.getReceiverAccount().getId() : null,   // Receiver ID
+//                    tx.getReceiverAccount() != null ? tx.getReceiverAccount().getName() : null, // Receiver Name
+//                    nature,
+//                    tx.getType().name(),
+//                    tx.getAmount(),
+//                    tx.getTransactionTime(),
+//                    tx.getDescription(),
+//                    tx.getCompanyName(),
+//                    tx.getAccountHolderBillingId()
+//
+//            );
+//        }).toList();
+//    }
+
+
     public List<TransactionDTO> getTransactionsByAccountID(Long accountId) {
         List<Transaction> transactions =
                 transactionRepository.findByAccountIdOrderByTransactionTimeDesc(accountId);
@@ -286,11 +300,50 @@ public class TransactionService {
         return transactions.stream().map(tx -> {
             String nature = getTransactionNature(tx); // DEBIT / CREDIT নির্ধারণ
 
+            // Convert sender account → AccountsDTO
+            Accounts sender = tx.getAccount();
+            AccountsDTO senderDTO = new AccountsDTO(
+                    sender.getId(),
+                    sender.getName(),
+                    sender.isAccountActiveStatus(),
+                    sender.getAccountType(),
+                    sender.getBalance(),
+                    sender.getNid(),
+                    sender.getPhoneNumber(),
+                    sender.getAddress(),
+                    sender.getPhoto(),
+                    sender.getDateOfBirth(),
+                    sender.getAccountOpeningDate(),
+                    sender.getAccountClosingDate(),
+                    sender.getRole() != null ? sender.getRole().name() : null
+            );
+
+            // Convert receiver account → AccountsDTO (if exists)
+            AccountsDTO receiverDTO = null;
+            if (tx.getReceiverAccount() != null) {
+                Accounts receiver = tx.getReceiverAccount();
+                receiverDTO = new AccountsDTO(
+                        receiver.getId(),
+                        receiver.getName(),
+                        receiver.isAccountActiveStatus(),
+                        receiver.getAccountType(),
+                        receiver.getBalance(),
+                        receiver.getNid(),
+                        receiver.getPhoneNumber(),
+                        receiver.getAddress(),
+                        receiver.getPhoto(),
+                        receiver.getDateOfBirth(),
+                        receiver.getAccountOpeningDate(),
+                        receiver.getAccountClosingDate(),
+                        receiver.getRole() != null ? receiver.getRole().name() : null
+                );
+            }
+
+            // Build full TransactionDTO
             return new TransactionDTO(
                     tx.getId(),
-                    tx.getAccount().getName(),   // Account holder name
-                    tx.getReceiverAccount() != null ? tx.getReceiverAccount().getId() : null,   // Receiver ID
-                    tx.getReceiverAccount() != null ? tx.getReceiverAccount().getName() : null, // Receiver Name
+                    senderDTO,
+                    receiverDTO,
                     nature,
                     tx.getType().name(),
                     tx.getAmount(),
@@ -298,10 +351,10 @@ public class TransactionService {
                     tx.getDescription(),
                     tx.getCompanyName(),
                     tx.getAccountHolderBillingId()
-
             );
         }).toList();
     }
+
 
     // Debit / Credit Logic
     private String getTransactionNature(Transaction tx) {
@@ -330,79 +383,240 @@ public class TransactionService {
 
 
     //TransactionStatement Filter for Employee with giving Id
- public List<TransactionDTO> getTransactionsByAccountIDWithFilter(
-         Long accountId,
-         String startDateStr,
-         String endDateStr,
-         String type,
-         String transactionType
- ) {
-     final Date startDate;
-     final Date endDate;
+//    public List<TransactionDTO> getTransactionsByAccountIDWithFilter(
+//            Long accountId,
+//            String startDateStr,
+//            String endDateStr,
+//            String type,
+//            String transactionType
+//    ) {
+//        final Date startDate;
+//        final Date endDate;
+//
+//        try {
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//            startDate = (startDateStr != null) ? sdf.parse(startDateStr) : null;
+//            endDate = (endDateStr != null) ? sdf.parse(endDateStr) : null;
+//        } catch (Exception e) {
+//            throw new RuntimeException("Invalid date format. Use yyyy-MM-dd", e);
+//        }
+//
+//        List<Transaction> transactions = transactionRepository.findByAccountIdOrderByTransactionTimeDesc(accountId);
+//
+//        return transactions.stream()
+//                .filter(tx -> (startDate == null || !tx.getTransactionTime().before(startDate)))
+//                .filter(tx -> (endDate == null || !tx.getTransactionTime().after(endDate)))
+//                .filter(tx -> (type == null || getTransactionNature(tx).equalsIgnoreCase(type)))
+//                .filter(tx -> (transactionType == null || tx.getType().name().equalsIgnoreCase(transactionType)))
+//                .map(tx -> new TransactionDTO(
+//                        tx.getId(),
+//                        tx.getAccount().getName(),
+//                        tx.getReceiverAccount() != null ? tx.getReceiverAccount().getId() : null,
+//                        tx.getReceiverAccount() != null ? tx.getReceiverAccount().getName() : null,
+//                        getTransactionNature(tx),
+//                        tx.getType().name(),
+//                        tx.getAmount(),
+//                        tx.getTransactionTime(),
+//                        tx.getDescription(),
+//                        tx.getCompanyName(),
+//                        tx.getAccountHolderBillingId()
+//                ))
+//                .collect(Collectors.toList());
+//    }
 
-     try {
-         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-         startDate = (startDateStr != null) ? sdf.parse(startDateStr) : null;
-         endDate = (endDateStr != null) ? sdf.parse(endDateStr) : null;
-     } catch (Exception e) {
-         throw new RuntimeException("Invalid date format. Use yyyy-MM-dd", e);
-     }
 
-     List<Transaction> transactions = transactionRepository.findByAccountIdOrderByTransactionTimeDesc(accountId);
+    public List<TransactionDTO> getTransactionsByAccountIDWithFilter(
+            Long accountId,
+            String startDateStr,
+            String endDateStr,
+            String type,
+            String transactionType
+    ) {
+        final Date startDate;
+        final Date endDate;
 
-     return transactions.stream()
-             .filter(tx -> (startDate == null || !tx.getTransactionTime().before(startDate)))
-             .filter(tx -> (endDate == null || !tx.getTransactionTime().after(endDate)))
-             .filter(tx -> (type == null || getTransactionNature(tx).equalsIgnoreCase(type)))
-             .filter(tx -> (transactionType == null || tx.getType().name().equalsIgnoreCase(transactionType)))
-             .map(tx -> new TransactionDTO(
-                     tx.getId(),
-                     tx.getAccount().getName(),
-                     tx.getReceiverAccount() != null ? tx.getReceiverAccount().getId() : null,
-                     tx.getReceiverAccount() != null ? tx.getReceiverAccount().getName() : null,
-                     getTransactionNature(tx),
-                     tx.getType().name(),
-                     tx.getAmount(),
-                     tx.getTransactionTime(),
-                     tx.getDescription(),
-                     tx.getCompanyName(),
-                     tx.getAccountHolderBillingId()
-             ))
-             .collect(Collectors.toList());
- }
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            startDate = (startDateStr != null) ? sdf.parse(startDateStr) : null;
+            endDate = (endDateStr != null) ? sdf.parse(endDateStr) : null;
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid date format. Use yyyy-MM-dd", e);
+        }
 
-
-//TransactionStatement Filter for Account Holder without giving Id
-    public List<TransactionDTO> getFilteredTransactions(Long accountId, Date startDate, Date endDate, String type, String transactionType) {
         List<Transaction> transactions = transactionRepository.findByAccountIdOrderByTransactionTimeDesc(accountId);
 
-        // Java Stream  filter apply
+        return transactions.stream()
+                .filter(tx -> (startDate == null || !tx.getTransactionTime().before(startDate)))
+                .filter(tx -> (endDate == null || !tx.getTransactionTime().after(endDate)))
+                .filter(tx -> (type == null || getTransactionNature(tx).equalsIgnoreCase(type)))
+                .filter(tx -> (transactionType == null || tx.getType().name().equalsIgnoreCase(transactionType)))
+                .map(tx -> {
+                    // sender account → DTO
+                    Accounts sender = tx.getAccount();
+                    AccountsDTO senderDTO = new AccountsDTO(
+                            sender.getId(),
+                            sender.getName(),
+                            sender.isAccountActiveStatus(),
+                            sender.getAccountType(),
+                            sender.getBalance(),
+                            sender.getNid(),
+                            sender.getPhoneNumber(),
+                            sender.getAddress(),
+                            sender.getPhoto(),
+                            sender.getDateOfBirth(),
+                            sender.getAccountOpeningDate(),
+                            sender.getAccountClosingDate(),
+                            sender.getRole() != null ? sender.getRole().name() : null
+                    );
+
+                    // receiver account → DTO
+                    AccountsDTO receiverDTO = null;
+                    if (tx.getReceiverAccount() != null) {
+                        Accounts receiver = tx.getReceiverAccount();
+                        receiverDTO = new AccountsDTO(
+                                receiver.getId(),
+                                receiver.getName(),
+                                receiver.isAccountActiveStatus(),
+                                receiver.getAccountType(),
+                                receiver.getBalance(),
+                                receiver.getNid(),
+                                receiver.getPhoneNumber(),
+                                receiver.getAddress(),
+                                receiver.getPhoto(),
+                                receiver.getDateOfBirth(),
+                                receiver.getAccountOpeningDate(),
+                                receiver.getAccountClosingDate(),
+                                receiver.getRole() != null ? receiver.getRole().name() : null
+                        );
+                    }
+
+                    return new TransactionDTO(
+                            tx.getId(),
+                            senderDTO,
+                            receiverDTO,
+                            getTransactionNature(tx),   // DEBIT / CREDIT
+                            tx.getType().name(),
+                            tx.getAmount(),
+                            tx.getTransactionTime(),
+                            tx.getDescription(),
+                            tx.getCompanyName(),
+                            tx.getAccountHolderBillingId()
+                    );
+                })
+                .collect(Collectors.toList());
+    }
+
+
+
+    //TransactionStatement Filter for Account Holder without giving Id
+
+    public List<TransactionDTO> getFilteredTransactions(
+            Long accountId,
+            Date startDate,
+            Date endDate,
+            String type,
+            String transactionType
+    ) {
+        List<Transaction> transactions = transactionRepository.findByAccountIdOrderByTransactionTimeDesc(accountId);
+
         return transactions.stream()
                 .filter(tx -> (startDate == null || !tx.getTransactionTime().before(startDate)))
                 .filter(tx -> (endDate == null || !tx.getTransactionTime().after(endDate)))
                 .filter(tx -> (type == null || type.isEmpty() || getTransactionNature(tx).equalsIgnoreCase(type)))
                 .filter(tx -> (transactionType == null || transactionType.isEmpty() || tx.getType().name().equalsIgnoreCase(transactionType)))
-                .map(tx -> new TransactionDTO(
-                        tx.getId(),
-                        tx.getAccount().getName(),
-                        tx.getReceiverAccount() != null ? tx.getReceiverAccount().getId() : null,
-                        tx.getReceiverAccount() != null ? tx.getReceiverAccount().getName() : null,
-                        getTransactionNature(tx),
-                        tx.getType().name(),
-                        tx.getAmount(),
-                        tx.getTransactionTime(),
-                        tx.getDescription(),
-                        tx.getCompanyName(),
-                        tx.getAccountHolderBillingId()
-                ))
+                .map(tx -> {
+                    // sender account → DTO
+                    Accounts sender = tx.getAccount();
+                    AccountsDTO senderDTO = new AccountsDTO(
+                            sender.getId(),
+                            sender.getName(),
+                            sender.isAccountActiveStatus(),
+                            sender.getAccountType(),
+                            sender.getBalance(),
+                            sender.getNid(),
+                            sender.getPhoneNumber(),
+                            sender.getAddress(),
+                            sender.getPhoto(),
+                            sender.getDateOfBirth(),
+                            sender.getAccountOpeningDate(),
+                            sender.getAccountClosingDate(),
+                            sender.getRole() != null ? sender.getRole().name() : null
+                    );
+
+                    // receiver account → DTO (nullable)
+                    AccountsDTO receiverDTO = null;
+                    if (tx.getReceiverAccount() != null) {
+                        Accounts receiver = tx.getReceiverAccount();
+                        receiverDTO = new AccountsDTO(
+                                receiver.getId(),
+                                receiver.getName(),
+                                receiver.isAccountActiveStatus(),
+                                receiver.getAccountType(),
+                                receiver.getBalance(),
+                                receiver.getNid(),
+                                receiver.getPhoneNumber(),
+                                receiver.getAddress(),
+                                receiver.getPhoto(),
+                                receiver.getDateOfBirth(),
+                                receiver.getAccountOpeningDate(),
+                                receiver.getAccountClosingDate(),
+                                receiver.getRole() != null ? receiver.getRole().name() : null
+                        );
+                    }
+
+                    return new TransactionDTO(
+                            tx.getId(),
+                            senderDTO,
+                            receiverDTO,
+                            getTransactionNature(tx),   // DEBIT / CREDIT
+                            tx.getType().name(),
+                            tx.getAmount(),
+                            tx.getTransactionTime(),
+                            tx.getDescription(),
+                            tx.getCompanyName(),
+                            tx.getAccountHolderBillingId()
+                    );
+                })
                 .toList();
     }
 
 
 
 
+
+
+
+
+
+
+//    public List<TransactionDTO> getFilteredTransactions(Long accountId, Date startDate, Date endDate, String type, String transactionType) {
+//        List<Transaction> transactions = transactionRepository.findByAccountIdOrderByTransactionTimeDesc(accountId);
+//
+//        // Java Stream  filter apply
+//        return transactions.stream()
+//                .filter(tx -> (startDate == null || !tx.getTransactionTime().before(startDate)))
+//                .filter(tx -> (endDate == null || !tx.getTransactionTime().after(endDate)))
+//                .filter(tx -> (type == null || type.isEmpty() || getTransactionNature(tx).equalsIgnoreCase(type)))
+//                .filter(tx -> (transactionType == null || transactionType.isEmpty() || tx.getType().name().equalsIgnoreCase(transactionType)))
+//                .map(tx -> new TransactionDTO(
+//                        tx.getId(),
+//                        tx.getAccount().getName(),
+//                        tx.getReceiverAccount() != null ? tx.getReceiverAccount().getId() : null,
+//                        tx.getReceiverAccount() != null ? tx.getReceiverAccount().getName() : null,
+//                        getTransactionNature(tx),
+//                        tx.getType().name(),
+//                        tx.getAmount(),
+//                        tx.getTransactionTime(),
+//                        tx.getDescription(),
+//                        tx.getCompanyName(),
+//                        tx.getAccountHolderBillingId()
+//                ))
+//                .toList();
+//    }
+
+
     //payment er jonno
-     //Common method for all bill payments
+    //Common method for all bill payments
 
     @Transactional
     protected Transaction processBillPayment(Long accountId,
@@ -441,27 +655,27 @@ public class TransactionService {
 
     // =================== Specific Bill Payment Methods ===================
 
-    public Transaction payElectricityBill(Long accountId, double amount, String companyName, String customerBillingId,String token) {
-        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_ELECTRICITY,token);
+    public Transaction payElectricityBill(Long accountId, double amount, String companyName, String customerBillingId, String token) {
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_ELECTRICITY, token);
     }
 
-    public Transaction payGasBill(Long accountId, double amount, String companyName, String customerBillingId,String token) {
-        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_GAS,token);
+    public Transaction payGasBill(Long accountId, double amount, String companyName, String customerBillingId, String token) {
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_GAS, token);
     }
 
-    public Transaction payWaterBill(Long accountId, double amount, String companyName, String customerBillingId,String token) {
-        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_WATER,token);
+    public Transaction payWaterBill(Long accountId, double amount, String companyName, String customerBillingId, String token) {
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_WATER, token);
     }
 
-    public Transaction payInternetBill(Long accountId, double amount, String companyName, String customerBillingId,String token) {
-        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_INTERNET,token);
+    public Transaction payInternetBill(Long accountId, double amount, String companyName, String customerBillingId, String token) {
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_INTERNET, token);
     }
 
-    public Transaction payMobileBill(Long accountId, double amount, String companyName, String customerBillingId,String token) {
-        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_MOBILE,token);
+    public Transaction payMobileBill(Long accountId, double amount, String companyName, String customerBillingId, String token) {
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_MOBILE, token);
     }
 
-    public Transaction payCreditCardBill(Long accountId, double amount, String companyName, String customerBillingId,String token) {
-        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_CREDIT_CARD,token);
+    public Transaction payCreditCardBill(Long accountId, double amount, String companyName, String customerBillingId, String token) {
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_CREDIT_CARD, token);
     }
 }

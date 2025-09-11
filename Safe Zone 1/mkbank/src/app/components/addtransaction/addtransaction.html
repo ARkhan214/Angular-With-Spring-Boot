@@ -1,0 +1,50 @@
+<div class="transaction-form-container">
+  <h2 class="text-center text-primary mb-4">💸 Bank Transfer</h2>
+
+  <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()" class="transaction-form">
+
+    <!-- Transaction Type -->
+    <div class="form-group mb-3">
+      <label>Transaction Type</label>
+      <select formControlName="type" class="form-select">
+        <!-- <option [ngValue]="transactionType.DEPOSIT">Deposit</option> -->
+        <!-- <option [ngValue]="transactionType.WITHDRAW">Withdraw</option> -->
+        <option [ngValue]="transactionType.TRANSFER">Transfer</option>
+      </select>
+      <div *ngIf="transactionForm.get('type')?.invalid && transactionForm.get('type')?.touched" class="text-danger">
+        Transaction type is required.
+      </div>
+    </div>
+
+    <!-- Receiver Account -->
+    <div class="form-group mb-3">
+      <label>Receiver Account ID</label>
+      <input type="number" formControlName="receiverId" class="form-control" placeholder="Enter Receiver Account ID">
+      <div *ngIf="transactionForm.get('receiverId')?.invalid && transactionForm.get('receiverId')?.touched" class="text-danger">
+        Receiver Account ID is required for transfer.
+      </div>
+    </div>
+
+    <!-- Amount -->
+    <div class="form-group mb-3">
+      <label>Amount</label>
+      <input type="number" formControlName="amount" class="form-control" placeholder="Enter Amount">
+      <div *ngIf="transactionForm.get('amount')?.invalid && transactionForm.get('amount')?.touched" class="text-danger">
+        Amount must be greater than 0.
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="form-group mb-3">
+      <label>Description</label>
+      <textarea formControlName="description" class="form-control" rows="3" placeholder="Optional"></textarea>
+    </div>
+
+    <!-- Buttons -->
+    <div class="d-flex justify-content-between">
+      <button type="submit" class="btn btn-success mr-3" [disabled]="transactionForm.invalid">Submit</button>
+      <button type="button" class="btn btn-secondary" (click)="resetForm()">Reset</button>
+    </div>
+
+  </form>
+</div>
