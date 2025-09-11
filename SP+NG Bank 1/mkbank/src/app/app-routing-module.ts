@@ -43,6 +43,7 @@ import { FixedDepositComponent } from './components/fixed-deposit-component/fixe
 import { ViewAllFd } from './components/view-all-fd/view-all-fd';
 import { DpsComponent } from './components/dps-component/dps-component';
 import { DpsPayComponent } from './components/dps-pay-component/dps-pay-component';
+import { ViewAllDPS } from './components/view-all-dps/view-all-dps';
 
 
 
@@ -89,6 +90,7 @@ const routes: Routes = [
   { path: 'view-all-fd', component: ViewAllFd },
   { path: 'dps', component: DpsComponent },
   { path: 'dps-pay', component: DpsPayComponent },
+  { path: 'view-all-dps', component: ViewAllDPS },
 
 
 

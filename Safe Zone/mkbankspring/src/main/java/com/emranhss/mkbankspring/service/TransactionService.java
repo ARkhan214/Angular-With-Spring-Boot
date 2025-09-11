@@ -307,10 +307,13 @@ public class TransactionService {
     private String getTransactionNature(Transaction tx) {
         if (tx.getType() == TransactionType.INITIALBALANCE
                 || tx.getType() == TransactionType.DEPOSIT
-                || tx.getType() == TransactionType.RECEIVE) {
+                || tx.getType() == TransactionType.RECEIVE
+                || tx.getType() == TransactionType.FIXED_DEPOSIT_CLOSED
+        ) {
             return "CREDIT";
         } else if (tx.getType() == TransactionType.WITHDRAW
                 || tx.getType() == TransactionType.FIXED_DEPOSIT
+                || tx.getType() == TransactionType.FD_CLOSED_PENALTY
                 || tx.getType() == TransactionType.TRANSFER
                 || tx.getType() == TransactionType.BILL_PAYMENT_MOBILE
                 || tx.getType() == TransactionType.BILL_PAYMENT_WATER

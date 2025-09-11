@@ -20,7 +20,7 @@ export class FixedDeposit {
 
 
 
-  id?: number;
+  id!: number;
   depositAmount?: number;
   durationInMonths?: number;
   interestRate?: number;

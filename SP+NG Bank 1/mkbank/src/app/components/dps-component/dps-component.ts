@@ -42,7 +42,7 @@ export class DpsComponent {
 
   ngOnInit(): void {
     this.loadInitData();
-    this.loadMyDps();
+    // this.loadMyDps();
   }
 
   //  Token Getter
@@ -135,7 +135,8 @@ export class DpsComponent {
           this.message = `DPS Created Successfully! DPS ID: ${res.id}`;
           this.alertService.success(this.message);
           this.cdr.markForCheck();
-          this.loadMyDps(); // create হলে সাথে সাথে refresh হবে
+          this.router.navigate(['/view-all-dps'])
+          // this.loadMyDps(); // create হলে সাথে সাথে refresh হবে
         },
         error: (err: any) => {
           console.error(err);
@@ -146,27 +147,27 @@ export class DpsComponent {
   }
 
   //  My DPS List Load
-  loadMyDps() {
-    const token = this.getAuthToken();
-    if (!token) {
-      this.alertService.error('Authentication token not found. Please login again.');
-      return;
-    }
+  // loadMyDps() {
+  //   const token = this.getAuthToken();
+  //   if (!token) {
+  //     this.alertService.error('Authentication token not found. Please login again.');
+  //     return;
+  //   }
 
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
+  //   const headers = new HttpHeaders({
+  //     'Authorization': `Bearer ${token}`
+  //   });
 
-    this.http.get<any[]>('http://localhost:8085/api/dps/my-dps', { headers })
-      .subscribe({
-        next: (res) => {
-          this.dpsList = res;
-          this.cdr.markForCheck();
-        },
-        error: (err) => {
-          console.error(err);
-          this.alertService.error('Failed to load your DPS list');
-        }
-      });
-  }
+  //   this.http.get<any[]>('http://localhost:8085/api/dps/my-dps', { headers })
+  //     .subscribe({
+  //       next: (res) => {
+  //         this.dpsList = res;
+  //         this.cdr.markForCheck();
+  //       },
+  //       error: (err) => {
+  //         console.error(err);
+  //         this.alertService.error('Failed to load your DPS list');
+  //       }
+  //     });
+  // }
 }

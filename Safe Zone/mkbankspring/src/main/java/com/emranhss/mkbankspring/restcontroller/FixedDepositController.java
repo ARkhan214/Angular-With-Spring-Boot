@@ -111,9 +111,16 @@ public class FixedDepositController {
 
 
 
-    @PostMapping("/close/{fdId}")
-    public FixedDepositDTO closeFD(@PathVariable Long fdId, HttpServletRequest request) {
-        Long accountId = (Long) request.getAttribute("accountId");
-        return fdService.closeFD(fdId, accountId);
+    @PostMapping("/close/{fdId}/{accountId}")
+    public FixedDepositDTO closeFD(
+            @PathVariable Long fdId,
+            @PathVariable Long accountId,
+            Authentication authentication
+    ) {
+        String token = (String) authentication.getCredentials(); // raw JWT
+        System.out.println("FD ID: " + fdId + ", Account ID: " + accountId);
+        return fdService.closeFD(fdId, accountId,token);
     }
+
+
 }

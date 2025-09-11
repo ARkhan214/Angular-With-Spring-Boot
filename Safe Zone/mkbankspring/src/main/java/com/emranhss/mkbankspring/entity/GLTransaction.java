@@ -14,6 +14,7 @@ public class GLTransaction {
     private double amount;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 50)
     private GLType type;
 
     private String description;

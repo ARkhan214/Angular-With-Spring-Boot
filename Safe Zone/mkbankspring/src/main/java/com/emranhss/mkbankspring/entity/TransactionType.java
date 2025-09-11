@@ -7,6 +7,8 @@ public enum TransactionType {
     FD_DEPOSIT,
     WITHDRAW,
     FIXED_DEPOSIT,
+    FIXED_DEPOSIT_CLOSED,
+    FD_CLOSED_PENALTY,
     TRANSFER,
     RECEIVE,
     DPS_DEPOSIT,
@@ -19,4 +21,5 @@ public enum TransactionType {
     BILL_PAYMENT_INTERNET,     // Internet / broadband bill payment
     BILL_PAYMENT_MOBILE,       // Mobile recharge / postpaid bill payment
     BILL_PAYMENT_CREDIT_CARD   // Credit card bill payment
+
 }

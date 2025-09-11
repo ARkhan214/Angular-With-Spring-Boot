@@ -108,7 +108,7 @@ export class DpsPayComponent implements OnInit {
         error: (err: any) => {
           console.error(err);
 
-          // Backend থেকে DPS closed exception handle
+          // Backend DPS closed exception handle
           if (err.status === 500 && err.error.includes('DPS is closed')) {
             this.errorMessage = '❌ This DPS is already closed. No further payments allowed.';
             this.alertService.error(this.errorMessage);

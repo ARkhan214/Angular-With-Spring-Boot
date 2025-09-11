@@ -6,6 +6,7 @@ import com.emranhss.mkbankspring.dto.TransactionDTO;
 import com.emranhss.mkbankspring.entity.*;
 import com.emranhss.mkbankspring.repository.AccountRepository;
 import com.emranhss.mkbankspring.repository.FixedDepositRepository;
+import com.emranhss.mkbankspring.repository.GLTransactionRepository;
 import com.emranhss.mkbankspring.repository.TransactionRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +27,18 @@ public class FixedDepositService {
     @Autowired
     private TransactionRepository transactionRepository;
 
-
+    @Autowired
+private GLTransactionRepository glTransactionRepository;
 
     @Transactional
     public FixedDepositDTO createFD(FixedDepositDTO fdDTO, Long accountId, String token) {
         double amount = fdDTO.getDepositAmount();
         int durationMonths = fdDTO.getDurationInMonths();
 
-        if (amount < 50000 || durationMonths > 120) {
+        if (amount < 49999 || durationMonths < 12 || durationMonths > 120) {
             throw new RuntimeException("Invalid amount or duration");
         }
+
 
         Accounts account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
@@ -153,37 +156,115 @@ public class FixedDepositService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
-    public FixedDepositDTO closeFD(Long fdId, Long accountId) {
-        FixedDeposit fd = fdRepository.findByIdAndAccountId(fdId, accountId)
-                .orElseThrow(() -> new RuntimeException("FD not found"));
+//    @Transactional
+//    public FixedDepositDTO closeFD(Long fdId, Long accountId) {
+//        FixedDeposit fd = fdRepository.findByIdAndAccountId(fdId, accountId)
+//                .orElseThrow(() -> new RuntimeException("FD not found"));
+//
+//        Accounts account = fd.getAccount();
+//        double finalAmount = fd.getMaturityAmount();
+//
+//        if(fd.getMaturityDate().after(new Date())) {
+//            finalAmount = fd.getDepositAmount() + (fd.getDepositAmount() * fd.getPrematureInterestRate() / 100 * fd.getDurationInMonths() / 12);
+//        }
+//
+//        account.setBalance(account.getBalance() + finalAmount);
+//        accountRepository.save(account);
+//
+//        fd.setStatus(FdStatus.CLOSED);
+//        fd.setPrematureWithdrawalDate(new Date());
+//        fd.setfDLustUpdatedAt(new Date());
+//        fdRepository.save(fd);
+//
+//        Transaction txn = new Transaction();
+//        txn.setAccount(account);
+//        txn.setAmount(fd.getDepositAmount());
+//        txn.setTransactionTime(new Date());
+//        txn.setType(TransactionType.FIXED_DEPOSIT);
+//        txn.setDescription("FD closed");
+//        transactionRepository.save(txn);
+//
+//        return mapToDTO(fd);
+//    }
 
-        Accounts account = fd.getAccount();
-        double finalAmount = fd.getMaturityAmount();
+//-----------------------
+@Transactional
+public FixedDepositDTO closeFD(Long fdId, Long accountId,String token) {
+    // Find FD by ID and Account ID
+    FixedDeposit fd = fdRepository.findByIdAndAccountId(fdId, accountId)
+            .orElseThrow(() -> new RuntimeException("FD not found"));
 
-        if(fd.getMaturityDate().after(new Date())) {
-            finalAmount = fd.getDepositAmount() + (fd.getDepositAmount() * fd.getPrematureInterestRate() / 100 * fd.getDurationInMonths() / 12);
-        }
+    Accounts account = fd.getAccount();
+    double finalAmount = fd.getDepositAmount(); // Default: principal only
+    double penaltyAmount = 0.0;
 
-        account.setBalance(account.getBalance() + finalAmount);
-        accountRepository.save(account);
+    Date today = new Date();
+    long diffInMillis = today.getTime() - fd.getStartDate().getTime();
+    long diffInDays = diffInMillis / (1000 * 60 * 60 * 24);
 
-        fd.setStatus(FdStatus.CLOSED);
-        fd.setPrematureWithdrawalDate(new Date());
-        fd.setfDLustUpdatedAt(new Date());
-        fdRepository.save(fd);
 
-        Transaction txn = new Transaction();
-        txn.setAccount(account);
-        txn.setAmount(fd.getDepositAmount());
-        txn.setTransactionTime(new Date());
-        txn.setType(TransactionType.FIXED_DEPOSIT);
-        txn.setDescription("FD closed");
-        transactionRepository.save(txn);
 
-        return mapToDTO(fd);
+
+    // Update FD status
+    fd.setStatus(FdStatus.CLOSED);
+    fd.setPrematureWithdrawalDate(today);
+    fd.setfDLustUpdatedAt(today);
+    fdRepository.save(fd);
+
+    // Record transaction
+    Transaction txn = new Transaction();
+    txn.setAccount(account);
+    txn.setAmount(fd.getDepositAmount());
+    txn.setTransactionTime(today);
+    txn.setType(TransactionType.FIXED_DEPOSIT_CLOSED);
+    txn.setDescription("FD closed");
+    txn.setToken(token);
+    transactionRepository.save(txn);
+    //--------
+    if (diffInDays < 30) {
+        // FD closed within 30 days → 0% interest + 100 penalty
+        penaltyAmount = 100.0;
+
+        // Create GL transaction for penalty
+        GLTransaction glTxn = new GLTransaction();
+        glTxn.setAmount(penaltyAmount);
+        glTxn.setType(GLType.FD_CLOSED_PENALTY);
+        glTxn.setDescription("FD closed within 30 days, penalty applied");
+        glTransactionRepository.save(glTxn);
+
+        Transaction txn1 = new Transaction();
+        txn1.setAccount(account);
+        txn1.setAmount(penaltyAmount);
+        txn1.setTransactionTime(today);
+        txn1.setType(TransactionType.FD_CLOSED_PENALTY);
+        txn1.setDescription("FD closed With Panalty.Panalty Fee is "+penaltyAmount+" taka");
+        txn1.setToken(token);
+        transactionRepository.save(txn1);
+
+
+    } else if (fd.getMaturityDate().after(today)) {
+        // Premature withdrawal after 30 days but before maturity
+        finalAmount = fd.getDepositAmount() +
+                (fd.getDepositAmount() * fd.getPrematureInterestRate() / 100 * fd.getDurationInMonths() / 12);
+    } else {
+        // FD matured normally
+        finalAmount = fd.getMaturityAmount();
     }
 
+    // Update account balance (subtract penalty if any)
+    account.setBalance(account.getBalance() + finalAmount - penaltyAmount);
+    //--------
+    accountRepository.save(account);
+
+
+    // Return DTO
+    return mapToDTO(fd);
+}
+
+
+
+
+    //-------------------
     private FixedDepositDTO mapToDTO(FixedDeposit fd) {
         FixedDepositDTO dto = new FixedDepositDTO();
         dto.setId(fd.getId());

@@ -51,5 +51,18 @@ export class FixedDepositService {
     return this.http.get<FixedDeposit[]>(this.apiUrl, { headers });
   }
 
+  //   closeFD(fdId: number, accountId: number): Observable<FixedDeposit> {
+  //   return this.http.post<FixedDeposit>(`http://localhost:8085/api/fd/close/${fdId}/${accountId}`, {});
+  // }
+
+
+  // fixed-deposit-service.ts
+closeFD(fdId: number, accountId: number, headers: any) {
+  return this.http.post(
+    `http://localhost:8085/api/fd/close/${fdId}/${accountId}`,
+    {}, // Body empty
+    { headers } // Pass Authorization header
+  );
+}
 
 }
