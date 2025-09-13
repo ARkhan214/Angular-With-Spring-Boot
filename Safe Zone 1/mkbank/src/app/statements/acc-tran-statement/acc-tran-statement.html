@@ -1,4 +1,4 @@
-<div class="transaction-container p-4 border rounded shadow-sm bg-white">
+<div class=" p-4 border rounded shadow-sm bg-white">
   <h2 class="mb-4">Transaction Statement</h2>
 
   <!-- Loading & Error Messages -->
@@ -93,7 +93,7 @@
           </td>
 
           <!-- Always show total Amount -->
-          <td>{{ tx.account.balance| number:'1.2-2' }}</td>
+        <td>{{ tx.runningBalance | number:'1.2-2' }}</td>
 
           <td>{{ tx.companyName }}</td>
           <td>{{ tx.accountHolderBillingId }}</td>

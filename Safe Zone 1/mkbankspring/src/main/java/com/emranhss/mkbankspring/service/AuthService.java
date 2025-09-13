@@ -183,35 +183,41 @@ public class AuthService {
     }
 
 
-    // for account save or update or registration (connected with AccountResCon Method Number -1)
+    // Account Save or update or registration (connected with AccountResCon Method Number -1)
     public void registerAccount(User user, MultipartFile imageFile, Accounts accountData) {
+        // Handle profile image upload for both User and Account
         if (imageFile != null && !imageFile.isEmpty()) {
-
-            String filename = saveImage(imageFile, user);
-            String accountPhoto = saveImageForAccount(imageFile, accountData);
+            String filename = saveImage(imageFile, user);                       // Save user profile photo
+            String accountPhoto = saveImageForAccount(imageFile, accountData);  // Save account photo
             accountData.setPhoto(accountPhoto);
             user.setPhoto(filename);
-
         }
+
         // Encode password before saving User
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole(Role.USER);
-        user.setActive(true);
+        user.setRole(Role.USER);           // Default role = USER
+        user.setActive(true);              // Set user as active
         User savedUser = userRepository.save(user);
 
-
+        // Link account with this saved user
         accountData.setUser(savedUser);
-
         accountService.save(accountData);
-        //for add initialDeposit ad first Transaction
+
+        // Auto-login step: Generate JWT token for this newly registered user
+        String jwtToken = jwtService.generateToken(savedUser);
+        saveUserToken(jwtToken, savedUser); // Save token into Token table in DB
+
+
+        // If account has an initial balance, create the first transaction
         if (accountData.getBalance() > 0) {
             Transaction initialDeposit = new Transaction();
-            initialDeposit.setAmount(accountData.getBalance());
-            initialDeposit.setType(TransactionType.INITIALBALANCE);
-            initialDeposit.setDescription("Initial deposit");
-            transactionService.addTransaction(initialDeposit, accountData.getId(),null);
+            initialDeposit.setAmount(accountData.getBalance());         // Initial balance amount
+            initialDeposit.setType(TransactionType.INITIALBALANCE);     // Mark as INITIALBALANCE type
+            initialDeposit.setDescription("Initial deposit");           // Description for clarity
+            initialDeposit.setToken(jwtToken);                          // Attach the same JWT token
+            transactionService.addTransaction(initialDeposit, accountData.getId(),jwtToken);
         }
-
+        // Send activation email to the user after successful registration
         sendActivationEmail(savedUser);
     }
 

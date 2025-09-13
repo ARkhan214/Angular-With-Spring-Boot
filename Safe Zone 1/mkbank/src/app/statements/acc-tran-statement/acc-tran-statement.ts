@@ -63,28 +63,53 @@ export class AccTranStatement implements OnInit {
     });
   }
 
+computeTotals() {
+  this.totalWithdraw = 0;
+  this.totalDeposit = 0;
+  this.totalBalance = 0;
 
+  let runningBalance = 0;
 
-  computeTotals() {
-    this.totalWithdraw = 0;
-    this.totalDeposit = 0;
-    this.totalBalance = 0;
-
-    for (let tx of this.transactions) {
-      if (tx.type === 'DEBIT') {
-        this.totalWithdraw += tx.amount!;
-      } else if (tx.type === 'CREDIT') {
-        this.totalDeposit += tx.amount!;
-      }
-
-      this.totalBalance = tx.account.balance ?? tx.account.balance; // last balance
+  for (let tx of this.transactions) {
+    if (tx.type === 'DEBIT') {
+      this.totalWithdraw += tx.amount!;
+      runningBalance -= tx.amount!;
+    } else if (tx.type === 'CREDIT') {
+      this.totalDeposit += tx.amount!;
+      runningBalance += tx.amount!;
     }
 
-    console.log(this.totalWithdraw + "1111111111111111111111111");
-    console.log(this.totalDeposit + "22222222222222222222222222");
-    console.log(this.totalBalance + "333333333333333333333333333");
-
+    // প্রতিটি ট্রানজেকশনের জন্য running balance সেট
+    tx.runningBalance = runningBalance;
   }
+
+  this.totalBalance = runningBalance;
+}
+
+
+
+
+
+  // computeTotals() {
+  //   this.totalWithdraw = 0;
+  //   this.totalDeposit = 0;
+  //   this.totalBalance = 0;
+
+  //   for (let tx of this.transactions) {
+  //     if (tx.type === 'DEBIT') {
+  //       this.totalWithdraw += tx.amount!;
+  //     } else if (tx.type === 'CREDIT') {
+  //       this.totalDeposit += tx.amount!;
+  //     }
+
+  //     this.totalBalance = tx.account.balance ?? tx.account.balance; // last balance
+  //   }
+
+  //   console.log(this.totalWithdraw + "  --1111111111111111111111111");
+  //   console.log(this.totalDeposit + "   --22222222222222222222222222");
+  //   console.log(this.totalBalance + "   --333333333333333333333333333");
+
+  // }
 
 
 
@@ -112,6 +137,8 @@ export class AccTranStatement implements OnInit {
       }
     });
   }
+
+
   //For Traansaction Statement Filter End------------
 
 
@@ -188,43 +215,91 @@ export class AccTranStatement implements OnInit {
 
 
 
-  exportPDF() {
-    if (!this.transactions || this.transactions.length === 0) {
-      console.error('No transactions to export.');
-      return;
-    }
+  // exportPDF() {
+  //   if (!this.transactions || this.transactions.length === 0) {
+  //     console.error('No transactions to export.');
+  //     return;
+  //   }
 
-    const data = this.transactionTable?.nativeElement;
-    if (data) {
-      html2canvas(data, { scale: 2 }).then(canvas => { // scale 2 improves image clarity
-        const imgWidth = 180; // Leave 15mm margin on both sides for A4
-        const pageHeight = 295;
-        const imgHeight = canvas.height * imgWidth / canvas.width;
-        const contentDataURL = canvas.toDataURL('image/png');
+  //   const data = this.transactionTable?.nativeElement;
+  //   if (data) {
+  //     html2canvas(data, { scale: 2 }).then(canvas => { // scale 2 improves image clarity
+  //       const imgWidth = 180; // Leave 15mm margin on both sides for A4
+  //       const pageHeight = 295;
+  //       const imgHeight = canvas.height * imgWidth / canvas.width;
+  //       const contentDataURL = canvas.toDataURL('image/png');
 
-        const pdf = new jsPDF('p', 'mm', 'a4');
+  //       const pdf = new jsPDF('p', 'mm', 'a4');
 
-        // ---------- Add Title/Header ----------
-        pdf.setFontSize(18);
-        pdf.text('MK Bank', 105, 15, { align: 'center' });
-        pdf.setFontSize(14);
-        pdf.text('Transaction Statement', 105, 25, { align: 'center' });
-        pdf.setFontSize(12);
-        pdf.text(`Account Holder: ${this.transactions[0].account.name}`, 15, 35);
-        pdf.text(`Account ID: ${this.transactions[0].account.id}`, 15, 42);
+  //       // ---------- Add Title/Header ----------
+  //       pdf.setFontSize(18);
+  //       pdf.text('MK Bank', 105, 15, { align: 'center' });
+  //       pdf.setFontSize(14);
+  //       pdf.text('Transaction Statement', 105, 25, { align: 'center' });
+  //       pdf.setFontSize(12);
+  //       pdf.text(`Account Holder: ${this.transactions[0].account.name}`, 15, 35);
+  //       pdf.text(`Account ID: ${this.transactions[0].account.id}`, 15, 42);
 
-        // ---------- Add Table Image ----------
-        let position = 50; // Leave space for header
-        pdf.addImage(contentDataURL, 'PNG', 15, position, imgWidth, imgHeight); // 15mm left margin
+  //       // ---------- Add Table Image ----------
+  //       let position = 50; // Leave space for header
+  //       pdf.addImage(contentDataURL, 'PNG', 15, position, imgWidth, imgHeight); // 15mm left margin
 
-        pdf.save('transaction-statement.pdf');
-      });
-    } else {
-      console.error('Table element not found for PDF export');
-    }
+  //       pdf.save('transaction-statement.pdf');
+  //     });
+  //   } else {
+  //     console.error('Table element not found for PDF export');
+  //   }
+  // }
+
+
+exportPDF() {
+  if (!this.transactions || this.transactions.length === 0) {
+    console.error('No transactions to export.');
+    return;
   }
 
+  const data = this.transactionTable?.nativeElement;
+  if (!data) {
+    console.error('Table element not found for PDF export');
+    return;
+  }
 
+  html2canvas(data, { scale: 2 }).then(canvas => {
+    const imgWidth = 180; // Table image width
+    const imgHeight = canvas.height * imgWidth / canvas.width;
+    const contentDataURL = canvas.toDataURL('image/png');
+
+    const pdf = new jsPDF('p', 'mm', 'a4');
+
+    // ---------- Header ----------
+    pdf.setTextColor(0, 51, 102); // Dark blue
+    pdf.setFontSize(20);
+    pdf.text('MK Bank', 105, 15, { align: 'center' });
+
+    pdf.setTextColor(0, 0, 0); // Black for subtitle
+    pdf.setFontSize(16);
+    pdf.text('Transaction Statement', 105, 25, { align: 'center' });
+
+    // ---------- Account Info ----------
+    const account = this.transactions[0].account;
+
+    pdf.setFontSize(12);
+    pdf.setTextColor(0, 0, 0); // black text
+    pdf.text(`Account Holder: ${account.name}`, 15, 35);
+    pdf.text(`Customer ID: ${account.id}`, 15, 42);
+    pdf.text(`Address: ${account.address}`, 15, 49);
+    pdf.text(`Account Type: ${account.accountType}`, 15, 56);
+    pdf.text(`Opening Date: ${account.accountOpeningDate}`, 15, 63);
+    pdf.text(`Telephone: ${account.phoneNumber}`, 15, 70);
+
+    // ---------- Add Table Image ----------
+    const tableY = 75; // Leave space after header
+    pdf.addImage(contentDataURL, 'PNG', 15, tableY, imgWidth, imgHeight);
+
+    // Save PDF
+    pdf.save('transaction-statement.pdf');
+  });
+}
 
 
 }

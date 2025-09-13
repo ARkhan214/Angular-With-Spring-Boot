@@ -38,6 +38,9 @@ export class TransactionDTO {
     companyName?: string;
     accountHolderBillingId?: string;
 
+    
+  // Extra field for frontend use
+ runningBalance?: number;
 
 
 }

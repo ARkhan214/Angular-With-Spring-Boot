@@ -78,6 +78,10 @@
               <input type="text" class="form-control" [value]="loanData.interestRate" readonly>
             </div>
           </div>
+          <div>
+            <img [src]="'http://localhost:8085/images/account/' + loanData.account.photo" alt="Account Photo"
+              class="rounded-circle img-thumbnail me-3" width="80" height="80" />
+          </div>
         </form>
       </div>
 

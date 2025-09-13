@@ -88,7 +88,8 @@ public class DpsService {
                 account.getAccountType(),
                 account.getNid(),
                 account.getPhoneNumber(),
-                account.getAddress()
+                account.getAddress(),
+                account.getPhoto()
         );
     }
 

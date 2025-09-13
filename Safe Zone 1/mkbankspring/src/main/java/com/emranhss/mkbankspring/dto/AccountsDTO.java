@@ -46,7 +46,7 @@ public class AccountsDTO {
 
     // 7 parameter constructor
     public AccountsDTO(Long id, String name, double balance, String accountType,
-                       String nid, String phoneNumber, String address) {
+                       String nid, String phoneNumber, String address,String photo) {
         this.id = id;
         this.name = name;
         this.balance = balance;
@@ -54,6 +54,8 @@ public class AccountsDTO {
         this.nid = nid;
         this.phoneNumber = phoneNumber;
         this.address = address;
+        this.photo = photo;
+
     }
 
 

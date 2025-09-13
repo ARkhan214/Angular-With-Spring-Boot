@@ -41,7 +41,7 @@
           <td>{{ emp.retirementDate | date:'shortDate' }}</td>
           <td>{{ emp.role }}</td>
           <td>
-            <img *ngIf="emp.photo" [src]="emp.photo" alt="Employee Photo" class="employee-photo">
+            <img *ngIf="emp.photo" [src]="'http://localhost:8085/images/employee/'+emp.photo" alt="Employee Photo" class="employee-photo">
             <span *ngIf="!emp.photo">-</span>
           </td>
         </tr>

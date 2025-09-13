@@ -340,11 +340,100 @@ public class LoanService{
         return loanRepository.save(loan);
     }
 
+//-------------start---------------------
 
-    public Loan getLoanById(Long loanId) {
-        Optional<Loan> loanOpt = loanRepository.findById(loanId);
-        return loanOpt.orElseThrow(() -> new RuntimeException("Loan not found"));
+
+    public LoanDto getLoanDtoById(Long loanId) {
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new RuntimeException("Loan not found"));
+
+        // Account entity থেকে AccountsDTO বানানো
+        Accounts account = loan.getAccount();
+        AccountsDTO accountDTO = null;
+
+        if (account != null) {
+            accountDTO = new AccountsDTO(
+                    account.getId(),
+                    account.getName(),
+                    account.getBalance(),
+                    account.getAccountType(),
+                    account.getNid(),
+                    account.getPhoneNumber(),
+                    account.getAddress(),
+                    account.getPhoto()
+            );
+        }
+
+        // LoanDto বানানো
+        return new LoanDto(
+                loan.getId(),
+                loan.getLoanAmount(),
+                loan.getEmiAmount(),
+                loan.getInterestRate(),
+                loan.getStatus().toString(),
+                loan.getLoanType().toString(),
+                loan.getLoanStartDate(),
+                loan.getLoanMaturityDate(),
+                loan.getTotalAlreadyPaidAmount(),
+                loan.getRemainingAmount(),
+                loan.getPenaltyRate(),
+                loan.getLastPaymentDate(),
+                loan.getUpdatedAt(),
+                accountDTO
+        );
     }
+
+
+
+//    public LoanDto getLoanById(Long loanId) {
+//        Loan loan = loanRepository.findById(loanId)
+//                .orElseThrow(() -> new RuntimeException("Loan not found with ID: " + loanId));
+//
+//        // 👉 Convert Loan → LoanDto
+//        return mapToDto(loan);
+//    }
+//
+//    private LoanDto mapToDto(Loan loan) {
+//        Accounts account = loan.getAccount();
+//
+//        // Account → AccountsDTO
+//        AccountsDTO accountDto = new AccountsDTO(
+//                account.getId(),
+//                account.getName(),
+//                account.getBalance(),
+//                account.getAccountType(),
+//                account.getPhoneNumber(),
+//                account.getAddress(),
+//                account.getPhoto()
+//        );
+//
+//        // Loan → LoanDto
+//        LoanDto dto = new LoanDto(
+//                loan.getId(),
+//                loan.getLoanAmount(),
+//                loan.getEmiAmount(),
+//                loan.getInterestRate(),
+//                loan.getStatus().toString(),  // Enum to → String
+//                loan.getLoanType().toString(),
+//                loan.getLoanStartDate(),
+//                loan.getLoanMaturityDate(),
+//                loan.getTotalAlreadyPaidAmount(),
+//                loan.getRemainingAmount(),
+//                loan.getPenaltyRate(),
+//                loan.getLastPaymentDate(),
+//                loan.getUpdatedAt(),
+//                accountDto
+//        );
+//
+//        return dto;
+//    }
+
+
+
+    //----------------------------end----------------
+
+
+
 
     //login kore account holder eta diea tar sob loan view kortese
     public List<Loan> getLoansByAccount(Long accountId) {

@@ -62,10 +62,13 @@ export class PayLoan {
 
   const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
 
-  this.http.get(`http://localhost:8085/api/loans/${this.loanId}`, {headers})
+  this.http.get(`http://localhost:8085/api/loans/${this.loanId}`, {
+    headers
+})
     .subscribe({
       next: (res: any) => {
         this.loanData = res;
+        console.log('Data----------------'+res);
         this.errorMessage = '';
         this.cdr.markForCheck();
       },

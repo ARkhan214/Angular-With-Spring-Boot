@@ -43,16 +43,16 @@ export class Viewallusercomponent implements OnInit {
 
 
 
-  filterUser(): void {
-    if (this.searchUserId === null) {
-      this.filteredUser = [...this.users]; // reset
-    } else {
-      this.filteredUser = this.users.filter(acc =>
-        acc.id === this.searchUserId
-      );
-    }
-    this.cdr.markForCheck();
-  }
+  // filterUser(): void {
+  //   if (this.searchUserId === null) {
+  //     this.filteredUser = [...this.users]; // reset
+  //   } else {
+  //     this.filteredUser = this.users.filter(acc =>
+  //       acc.id === this.searchUserId
+  //     );
+  //   }
+  //   this.cdr.markForCheck();
+  // }
 
 
 

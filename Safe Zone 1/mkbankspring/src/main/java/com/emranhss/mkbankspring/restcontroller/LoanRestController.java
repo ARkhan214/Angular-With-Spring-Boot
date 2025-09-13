@@ -25,17 +25,6 @@ public class LoanRestController {
     @Autowired
     private AccountService accountService;
 
-//
-//    @Autowired
-//    public LoanRestController(LoanService loanService, AccountService accountService) {
-//        this.loanService1 = loanService;
-//        this.accountService = accountService;
-//    }
-
-    /**
-     * Calculate EMI (frontend will call this to display EMI before submitting)
-     * POST /api/loans/calculate
-     */
     @PostMapping("/calculate")
     public ResponseEntity<?> calculateEmi(@RequestBody LoanRequestDto dto) {
         try {
@@ -145,10 +134,8 @@ public class LoanRestController {
 //        }
 //    }
 
-    /**
-     * Make payment towards a loan.
-     * POST /api/loans/pay
-     */
+
+ //Make payment towards a loan
     @PostMapping("/pay")
     public ResponseEntity<?> payLoan(@RequestBody LoanPaymentDto paymentDto, Authentication authentication) {
         try {
@@ -160,50 +147,15 @@ public class LoanRestController {
         }
     }
 
-    /**
-     * Get loan details
-     */
-    @GetMapping("/{loanId}")
-    public ResponseEntity<?> getLoan(@PathVariable Long loanId, Authentication authentication) {
-        try {
-            Loan loan = loanService1.getLoanById(loanId);
-            // optional: check ownership
-            return ResponseEntity.ok(loan);
-        } catch (Exception ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        }
+
+    //----------------------srart Get loan details-----------
+
+    @GetMapping("/{id}")
+    public ResponseEntity<LoanDto> getLoanById(@PathVariable Long id) {
+        LoanDto loanDto = loanService1.getLoanDtoById(id);
+        return ResponseEntity.ok(loanDto);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // Account holder apply for a loan
-//    @PostMapping("apply")
-//    public ResponseEntity<Loan> applyLoan(@RequestBody Loan loan, Authentication authentication) {
-//        // Get account id from logged-in user
-//        Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
-//        Loan appliedLoan = loanService.applyLoan(accountId, loan);
-//        return ResponseEntity.ok(appliedLoan);
-//    }
-//
-//    // Account holder view own loans
-
-//    @GetMapping("/myloans")
-//    public ResponseEntity<List<Loan>> getMyLoans(Authentication authentication) {
-//        Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
-//        List<Loan> loans = loanService1.getLoansByAccount(accountId);
-//        return ResponseEntity.ok(loans);
-//    }
+    //-------------end-------------
 
 
 
