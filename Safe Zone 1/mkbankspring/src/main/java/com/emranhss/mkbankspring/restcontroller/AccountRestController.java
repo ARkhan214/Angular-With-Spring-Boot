@@ -102,9 +102,15 @@ public class AccountRestController {
     public AccountsDTO getProfile(Authentication authentication) {
         return accountService.getProfileByEmail(authentication.getName());
     }
+    //---------Receiver data load start
 
-
-
+    // ✅ Receiver account details by ID
+    @GetMapping("receiver/{receiverId}")
+    public ResponseEntity<AccountsDTO> getReceiverAccount(@PathVariable Long receiverId) {
+        AccountsDTO dto = accountService.getReceiverAccountById(receiverId);
+        return ResponseEntity.ok(dto);
+    }
+    //----------Receiver data load end
 }
 
 

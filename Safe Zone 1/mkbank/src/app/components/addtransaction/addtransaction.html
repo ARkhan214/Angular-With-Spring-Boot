@@ -1,50 +1,81 @@
-<div class="transaction-form-container">
-  <h2 class="text-center text-primary mb-4">💸 Bank Transfer</h2>
+<div class="transaction-container p-4 border rounded shadow-sm bg-white">
 
-  <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()" class="transaction-form">
+  <h2 class="mb-4">New Transaction</h2>
+
+  <!-- Transaction Form -->
+  <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()">
 
     <!-- Transaction Type -->
-    <div class="form-group mb-3">
-      <label>Transaction Type</label>
-      <select formControlName="type" class="form-select">
-        <!-- <option [ngValue]="transactionType.DEPOSIT">Deposit</option> -->
-        <!-- <option [ngValue]="transactionType.WITHDRAW">Withdraw</option> -->
-        <option [ngValue]="transactionType.TRANSFER">Transfer</option>
+    <div class="mb-3">
+      <label for="type" class="form-label">Transaction Type</label>
+      <select id="type" class="form-select" formControlName="type">
+        <option value="">-- Select Type --</option>
+        <option [value]="transactionType.DEPOSIT">Deposit</option>
+        <option [value]="transactionType.WITHDRAW">Withdraw</option>
+        <option [value]="transactionType.TRANSFER">Transfer</option>
       </select>
-      <div *ngIf="transactionForm.get('type')?.invalid && transactionForm.get('type')?.touched" class="text-danger">
-        Transaction type is required.
-      </div>
-    </div>
-
-    <!-- Receiver Account -->
-    <div class="form-group mb-3">
-      <label>Receiver Account ID</label>
-      <input type="number" formControlName="receiverId" class="form-control" placeholder="Enter Receiver Account ID">
-      <div *ngIf="transactionForm.get('receiverId')?.invalid && transactionForm.get('receiverId')?.touched" class="text-danger">
-        Receiver Account ID is required for transfer.
-      </div>
     </div>
 
     <!-- Amount -->
-    <div class="form-group mb-3">
-      <label>Amount</label>
-      <input type="number" formControlName="amount" class="form-control" placeholder="Enter Amount">
-      <div *ngIf="transactionForm.get('amount')?.invalid && transactionForm.get('amount')?.touched" class="text-danger">
-        Amount must be greater than 0.
-      </div>
+    <div class="mb-3">
+      <label for="amount" class="form-label">Amount</label>
+      <input type="number" id="amount" class="form-control" formControlName="amount" placeholder="Enter amount">
     </div>
 
     <!-- Description -->
-    <div class="form-group mb-3">
-      <label>Description</label>
-      <textarea formControlName="description" class="form-control" rows="3" placeholder="Optional"></textarea>
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <textarea id="description" class="form-control" rows="2" formControlName="description" placeholder="Optional note..."></textarea>
     </div>
 
-    <!-- Buttons -->
-    <div class="d-flex justify-content-between">
-      <button type="submit" class="btn btn-success mr-3" [disabled]="transactionForm.invalid">Submit</button>
-      <button type="button" class="btn btn-secondary" (click)="resetForm()">Reset</button>
+    <!-- Receiver ID (only for transfer) -->
+    <div class="mb-3" *ngIf="transactionForm.get('type')?.value === transactionType.TRANSFER">
+      <label for="receiverId" class="form-label">Receiver Account ID</label>
+      <input type="number" id="receiverId" class="form-control" formControlName="receiverId" placeholder="Enter receiver account ID">
     </div>
 
+    <!-- Receiver Account Info -->
+    <div *ngIf="transactionForm.get('type')?.value === transactionType.TRANSFER">
+      <div *ngIf="loadingReceiver" class="alert alert-info">
+        Loading receiver account...
+      </div>
+
+      <div *ngIf="receiverAccount" class="card mt-3 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Receiver Account Details</h5>
+          <div class="d-flex align-items-center mb-3">
+            <img *ngIf="receiverAccount.photo" [src]="'http://localhost:8085/images/account/' + receiverAccount.photo" alt="Photo" class="rounded-circle me-3" width="60" height="60">
+            <div>
+              <p class="mb-0"><strong>Name:</strong> {{ receiverAccount.name }}</p>
+              <p class="mb-0"><strong>Balance:</strong> {{ receiverAccount.balance | currency:'BDT' }}</p>
+              <p class="mb-0"><strong>Account Type:</strong> {{ receiverAccount.accountType }}</p>
+              <p class="mb-0">
+                <strong>Status:</strong>
+                <span class="badge" [ngClass]="receiverAccount.accountActiveStatus ? 'bg-success' : 'bg-danger'">
+                  {{ receiverAccount.accountActiveStatus ? 'Active' : 'Closed' }}
+                </span>
+              </p>
+            </div>
+          </div>
+
+          <p><strong>NID:</strong> {{ receiverAccount.nid }}</p>
+          <p><strong>Phone:</strong> {{ receiverAccount.phoneNumber }}</p>
+          <p><strong>Address:</strong> {{ receiverAccount.address }}</p>
+          <p><strong>DOB:</strong> {{ receiverAccount.dateOfBirth | date }}</p>
+          <p><strong>Opened:</strong> {{ receiverAccount.accountOpeningDate | date }}</p>
+          <p *ngIf="receiverAccount.accountClosingDate"><strong>Closed:</strong> {{ receiverAccount.accountClosingDate | date }}</p>
+          <p><strong>Role:</strong> {{ receiverAccount.role }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary mt-3 w-100" [disabled]="transactionForm.invalid">
+      Submit Transaction
+    </button>
+
+        <button type="reset" class="btn btn-primary mt-3 w-100" (click)="resetForm()">
+      Reset
+    </button>
   </form>
 </div>

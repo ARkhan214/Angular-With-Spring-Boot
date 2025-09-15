@@ -1,0 +1,38 @@
+<p>mobile-bill-component works!</p>
+<div class="bill-card">
+  <h2>Mobile Bill Payment</h2>
+
+  <form [formGroup]="mobileBillForm" (ngSubmit)="onSubmit()">
+    <div class="form-row">
+      <label for="companyName">Company Name</label>
+      <input id="companyName" type="text" formControlName="companyName" placeholder="e.g. Grameenphone" />
+      <div class="error" *ngIf="mobileBillForm.get('companyName')?.touched && mobileBillForm.get('companyName')?.hasError('required')">
+        Company name is required.
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label for="accountHolderBillingId">Account / Billing ID</label>
+      <input id="accountHolderBillingId" type="text" formControlName="accountHolderBillingId" placeholder="Enter mobile number / billing ID" />
+      <div class="error" *ngIf="mobileBillForm.get('accountHolderBillingId')?.touched && mobileBillForm.get('accountHolderBillingId')?.hasError('required')">
+        Billing ID is required.
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label for="amount">Amount</label>
+      <input id="amount" type="number" formControlName="amount" min="1" step="0.01" />
+      <div class="error" *ngIf="mobileBillForm.get('amount')?.touched">
+        <span *ngIf="mobileBillForm.get('amount')?.hasError('required')">Amount is required.</span>
+        <span *ngIf="mobileBillForm.get('amount')?.hasError('min')">Amount must be at least 1.</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="submit" [disabled]="mobileBillForm.invalid || !token" class="btn-primary">Pay Bill</button>
+      <button type="button" (click)="resetForm()" class="btn-secondary">Reset</button>
+    </div>
+
+    <p class="note" *ngIf="!token">You are not logged in. Please login to make a payment.</p>
+  </form>
+</div>

@@ -171,4 +171,10 @@ export class Accountsservice {
   registerAccount(formData: FormData): Observable<any> {
     return this.http.post(`${this.apiUrl}/account/`, formData);
   }
+
+
+    // Receiver accounts data load
+  getAccountById(receiverId: number): Observable<Accounts> {
+    return this.http.get<Accounts>(`${this.apiUrl}/account/receiver/${receiverId}`);
+  }
 }

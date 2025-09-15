@@ -1,0 +1,38 @@
+<p>credit-card-bill-component works!</p>
+<div class="bill-card">
+  <h2>Credit Card Payment</h2>
+
+  <form [formGroup]="creditCardBillForm" (ngSubmit)="onSubmit()">
+    <div class="form-row">
+      <label for="companyName">Bank / Company Name</label>
+      <input id="companyName" type="text" formControlName="companyName" placeholder="e.g. City Bank" />
+      <div class="error" *ngIf="creditCardBillForm.get('companyName')?.touched && creditCardBillForm.get('companyName')?.hasError('required')">
+        Company name is required.
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label for="accountHolderBillingId">Account / Credit Card Number</label>
+      <input id="accountHolderBillingId" type="text" formControlName="accountHolderBillingId" placeholder="Enter card number / billing ID" />
+      <div class="error" *ngIf="creditCardBillForm.get('accountHolderBillingId')?.touched && creditCardBillForm.get('accountHolderBillingId')?.hasError('required')">
+        Credit card number is required.
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label for="amount">Amount</label>
+      <input id="amount" type="number" formControlName="amount" min="1" step="0.01" />
+      <div class="error" *ngIf="creditCardBillForm.get('amount')?.touched">
+        <span *ngIf="creditCardBillForm.get('amount')?.hasError('required')">Amount is required.</span>
+        <span *ngIf="creditCardBillForm.get('amount')?.hasError('min')">Amount must be at least 1.</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="submit" [disabled]="creditCardBillForm.invalid || !token" class="btn-primary">Pay Bill</button>
+      <button type="button" (click)="resetForm()" class="btn-secondary">Reset</button>
+    </div>
+
+    <p class="note" *ngIf="!token">You are not logged in. Please login to make a payment.</p>
+  </form>
+</div>

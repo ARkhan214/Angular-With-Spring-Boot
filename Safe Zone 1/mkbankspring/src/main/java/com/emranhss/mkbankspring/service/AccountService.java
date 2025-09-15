@@ -103,4 +103,36 @@ public class AccountService {
         Accounts account = findAccountByEmail(email);
         return account.getId();
     }
+
+
+    //---------Receiver data load start
+    // Receiver Account load by ID
+    public AccountsDTO getReceiverAccountById(Long receiverId) {
+        Accounts account = accountRepository.findById(receiverId)
+                .orElseThrow(() -> new RuntimeException("Receiver account not found!"));
+
+        if (!account.isAccountActiveStatus()) {
+            throw new RuntimeException("Receiver account is closed!");
+        }
+
+        // Entity → DTO mapping
+        AccountsDTO dto = new AccountsDTO();
+        dto.setId(account.getId());
+        dto.setName(account.getName());
+        dto.setAccountActiveStatus(account.isAccountActiveStatus());
+        dto.setAccountType(account.getAccountType());
+        dto.setBalance(account.getBalance());
+        dto.setNid(account.getNid());
+        dto.setPhoneNumber(account.getPhoneNumber());
+        dto.setAddress(account.getAddress());
+        dto.setPhoto(account.getPhoto());
+        dto.setDateOfBirth(account.getDateOfBirth());
+        dto.setAccountOpeningDate(account.getAccountOpeningDate());
+        dto.setAccountClosingDate(account.getAccountClosingDate());
+        dto.setRole(account.getRole() != null ? account.getRole().toString() : null);
+
+        return dto;
+    }
+    //----------Receiver data load end
+
 }

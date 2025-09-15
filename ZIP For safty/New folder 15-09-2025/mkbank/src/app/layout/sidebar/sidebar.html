@@ -1,0 +1,307 @@
+<ul class="navbar-nav sidebar sidebar-dark accordion shadow" id="accordionSidebar"
+    style="background: linear-gradient(to bottom right, #30302f, #141414); color: white;">
+
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" routerLink="/about"
+        style="padding: 1rem;">
+        <!-- <div class="sidebar-brand-icon rotate-n-15">
+            <i class="fas fa-user-shield fa-lg" style="color: rgb(252, 218, 30);"></i>
+        </div> -->
+        <div class="sidebar-brand-text mx-3 fw-bold" style="font-weight: bold;"> <i
+                class="fa fa-university mr-2 text-info"></i>MK Bank</div>
+    </a>
+
+    <hr class="sidebar-divider my-0" style="border-color: rgba(255,255,255,0.3);">
+
+    <li class="nav-item">
+        <a class="nav-link text-warning fw-semibold" routerLink="/"><i class="fa fa-home me-1 text-warning"></i>Home</a>
+    </li>
+
+
+
+    <!-- ================= ADMIN MENUS START ================= -->
+    <ng-container *ngIf="isAdmin()">
+
+        <li class="nav-item">
+            <a class="nav-link text-success fw-semibold" routerLink="/admin-profile"><i
+                    class="fa-solid fa-user me-1"></i>👤 Profile</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link text-info fw-semibold" routerLink="/viewallaccount"><i
+                    class="fa fa-credit-card me-1 text-info"></i>All Accounts</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link text-info fw-semibold" routerLink="/admindash"><i
+                    class="fa fa-credit-card me-1 text-info"></i>Dashboard</a>
+        </li>
+
+
+        <li class="nav-item">
+            <a class="nav-link text-info fw-semibold" routerLink="/admin-approval-loan"><i
+                    class="fa fa-credit-card me-1 text-info"></i>Pending Loan</a>
+        </li>
+
+
+        <li class="nav-item">
+            <a class="nav-link text-info fw-semibold" routerLink="/viewalluser"><i
+                    class="fa fa-credit-card me-1 text-info"></i>All Users</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link text-info fw-semibold" routerLink="/viewallemp"><i
+                    class="fa fa-credit-card me-1 text-info"></i>All
+                Employees</a>
+        </li>
+
+
+
+        <li class="nav-item">
+            <a class="nav-link text-muted fw-semibold" routerLink="/addemployee"><i
+                    class="fa fa-user-plus me-1 text-muted"></i>Add Employees</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link text-info fw-semibold" routerLink="/onlyadduser"><i
+                    class="fa fa-credit-card me-1 text-info"></i>Admin Registration</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link text-success fw-semibold" routerLink="/emptrst"><i
+                    class="fa fa-exchange me-1 text-success"></i>Transaction Statement</a>
+        </li>
+
+
+
+    </ng-container>
+    <!-- ================= ADMIN MENUS END ================= -->
+
+    <!-- ================= USER MENUS START ================= -->
+
+    <ng-container *ngIf="isUser()">
+
+        <div>
+            <li class="nav-item">
+                <a class="nav-link text-success fw-semibold" routerLink="/account-profile"><i
+                        class="fa fa-exchange me-1 text-success"></i>👤 Profile</a>
+            </li>
+        </div>
+
+
+        <!-- Utilities -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
+                style="color: #fff;">
+                <i class="fas fa-tools" style="color: #34d399;"></i>
+                <span style="margin-left: 10px;">Utilities Bill:</span>
+            </a>
+            <div id="collapseUtilities" class="collapse">
+                <div class="bg-light py-2 collapse-inner rounded">s
+                    <a class="collapse-item" routerLink="/water-bill">Water Bill</a>
+                    <a class="collapse-item" routerLink="/mobile-bill">Mobile Bill</a>
+                    <a class="collapse-item" routerLink="/credit-card-bill">Credit-Card-Bill</a>
+                    <a class="collapse-item" routerLink="/electricity-bill">Electricity Bill</a>
+                    <a class="collapse-item" routerLink="/gas-bill">GAS Bill</a>
+                    <a class="collapse-item" routerLink="/internet-bill">Internet Bill</a>
+                    <a class="collapse-item" routerLink="#">Education</a>
+                </div>
+            </div>
+        </li>
+
+        <hr class="sidebar-divider" style="border-color: rgba(255,255,255,0.2);">
+
+        <!-- Components -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAccounts"
+                style="color: #fff;">
+                <i class="fas fa-puzzle-piece" style="color: #f87171;"></i>
+                <span style="margin-left: 10px;">Accounts</span>
+            </a>
+            <div id="collapseAccounts" class="collapse">
+                <div class="bg-light py-2 collapse-inner rounded">
+                    <a class="collapse-item" routerLink="/withdraw">Withdwaw</a>
+                    <a class="collapse-item" routerLink="/addtr">Transfar Money</a>
+                    <a class="collapse-item" routerLink="/acctrst">Transaction Statement</a>
+                </div>
+            </div>
+        </li>
+
+        <hr class="sidebar-divider" style="border-color: rgba(255,255,255,0.2);">
+
+        <!-- Components -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFD"
+                style="color: #fff;">
+                <i class="fas fa-puzzle-piece" style="color: #f87171;"></i>
+                <span style="margin-left: 10px;">FD</span>
+            </a>
+            <div id="collapseFD" class="collapse">
+                <div class="bg-light py-2 collapse-inner rounded">
+                    <a class="collapse-item" routerLink="/fd">Fixed Deposit</a>
+                    <a class="collapse-item" routerLink="/view-all-fd">View All Fixed Deposit</a>
+                </div>
+            </div>
+        </li>
+
+        <hr class="sidebar-divider" style="border-color: rgba(255,255,255,0.2);">
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLoan"
+                style="color: #fff;">
+                <i class="fas fa-puzzle-piece" style="color: #f87171;"></i>
+                <span style="margin-left: 10px;">Loan</span>
+            </a>
+            <div id="collapseLoan" class="collapse">
+                <div class="bg-light py-2 collapse-inner rounded">
+
+                    <a class="collapse-item" routerLink="/pay-loan">Pay Loan</a>
+                    <a class="collapse-item" routerLink="/apply-loan">Apply For Loan</a>
+                    <a class="collapse-item" routerLink="/view-all-loan">View all Loan</a>
+                </div>
+            </div>
+        </li>
+
+        <hr class="sidebar-divider" style="border-color: rgba(255,255,255,0.2);">
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDps"
+                style="color: #fff;">
+                <i class="fas fa-puzzle-piece" style="color: #f87171;"></i>
+                <span style="margin-left: 10px;">DPS</span>
+            </a>
+            <div id="collapseDps" class="collapse">
+                <div class="bg-light py-2 collapse-inner rounded">
+
+                    <a class="collapse-item" routerLink="/dps-pay">DPS Payment</a>
+                    <a class="collapse-item" routerLink="/dps">DPS Form</a>
+                    <a class="collapse-item" routerLink="/view-all-dps">View all DPS</a>
+                </div>
+            </div>
+        </li>
+
+    </ng-container>
+    <!-- ================= USER MENUS END================= -->
+
+
+
+    <!-- ================= EMPLOYEE MENUS START ================= -->
+    <ng-container *ngIf="isEmployee()">
+        <li class="nav-item">
+            <a class="nav-link text-success fw-semibold" routerLink="/employee-profile"><i
+                    class="fa fa-exchange me-1 text-success"></i>👤 Profile</a>
+        </li>
+
+        <!-- <li class="nav-item">
+            <a class="nav-link text-success fw-semibold" routerLink="/emptr"><i
+                    class="fa fa-exchange me-1 text-success"></i>Employee Transaction</a>
+        </li> -->
+
+        <li class="nav-item">
+            <a class="nav-link text-muted fw-semibold" routerLink="/adduser"><i
+                    class="fa fa-user-plus me-1 text-muted"></i>Create Account</a>
+        </li>
+
+        <!-- <li class="nav-item">
+            <a class="nav-link text-success fw-semibold" routerLink="#"><i
+                    class="fa fa-exchange me-1 text-success"></i>Transaction Statement</a>
+        </li> -->
+
+        <li class="nav-item">
+            <a class="nav-link text-info fw-semibold" routerLink="/viewallaccount"><i
+                    class="fa fa-credit-card me-1 text-info"></i>All Accounts</a>
+        </li>
+
+
+        <!-- Utilities -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
+                style="color: #fff;">
+                <i class="fas fa-tools" style="color: #34d399;"></i>
+                <span style="margin-left: 10px;">Payment</span>
+            </a>
+            <div id="collapseUtilities" class="collapse">
+                <div class="bg-light py-2 collapse-inner rounded">
+                    <h6 class="collapse-header text-dark">Utilities Bill:</h6>
+                    <a class="collapse-item" href="/electricity-bill">Electric Bill</a>
+                    <a class="collapse-item" routerLink="/water-bill">Water Bill</a>
+                    <a class="collapse-item" href="/gas-bill">Gas Bill</a>
+                </div>
+            </div>
+        </li>
+
+        <hr class="sidebar-divider" style="border-color: rgba(255,255,255,0.2);">
+
+        <!-- Components -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+                style="color: #fff;">
+                <i class="fas fa-puzzle-piece" style="color: #f87171;"></i>
+                <span style="margin-left: 10px;">Accounts</span>
+            </a>
+            <div id="collapseTwo" class="collapse">
+                <div class="bg-light py-2 collapse-inner rounded">
+                    <h6 class="collapse-header text-dark">Savings</h6>
+                    <a class="collapse-item" routerLink="/deposit">Deposit & Withdwaw</a>
+                    <!-- <a class="collapse-item" routerLink="/emptr">Withdwaw</a> -->
+                    <a class="collapse-item" routerLink="/emptr">Transfar Money</a>
+                    <a class="collapse-item" routerLink="/emptrst">Transaction Statement</a>
+                    <a class="collapse-item" routerLink="#">Fixed Deposit</a>
+                    <a class="collapse-item" routerLink="/apply-loan">Loan Apply</a>
+                    <a class="collapse-item" routerLink="#">DPS</a>
+                </div>
+            </div>
+        </li>
+
+
+    </ng-container>
+    <!-- ================= EMPLOYEE MENUS END ================= -->
+
+
+
+    <hr class="sidebar-divider" style="border-color: rgba(255,255,255,0.2);">
+
+    <!-- Heading -->
+    <div class="sidebar-heading" style="color: #f8fafc;"></div>
+
+
+
+    <!-- Addons -->
+    <div class="sidebar-heading" style="color: #f8fafc;"></div>
+
+    <!-- Pages -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" style="color: #fff;">
+            <i class="fas fa-copy" style="color: #facc15;"></i>
+            <span style="margin-left: 10px;">Pages</span>
+        </a>
+        <div id="collapsePages" class="collapse">
+            <div class="bg-light py-2 collapse-inner rounded">
+                <a class="collapse-item" routerLink="/forgot-password">Forgot Password</a>
+            </div>
+
+        </div>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link fw-semibold d-flex align-items-center gap-2" routerLink="/login"
+            style="color: #198754; border: 1px solid transparent; padding: 8px 15px; border-radius: 25px; transition: all 0.3s ease;"
+            onmouseover="this.style.background='#d1f7d6'; this.style.border='1px solid #198754'; this.style.color='#198754';"
+            onmouseout="this.style.background='transparent'; this.style.border='1px solid transparent'; this.style.color='#198754';">
+            <i class="fa fa-sign-in-alt me-1"></i>
+            <span>Login</span>
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link fw-semibold d-flex align-items-center gap-2" (click)="logout()"
+            style="color: #dc3545; border: 1px solid transparent; padding: 8px 15px; border-radius: 25px; transition: all 0.3s ease; cursor:pointer; text-decoration:none;"
+            onmouseover="this.style.background='#f8d7da'; this.style.border='1px solid #dc3545'; this.style.color='#dc3545';"
+            onmouseout="this.style.background='transparent'; this.style.border='1px solid transparent'; this.style.color='#dc3545';">
+            <i class="fa fa-sign-out-alt me-1"></i>
+            <span>Logout</span>
+        </a>
+    </li>
+
+
+</ul>
