@@ -49,6 +49,7 @@ export class DpsPayComponent implements OnInit {
   fetchDpsDetails(): void {
     if (!this.dpsId) {
       this.errorMessage = 'Please enter DPS ID';
+      this.alertService.error(this.errorMessage);
       this.dpsData = null;
       return;
     }
@@ -66,11 +67,13 @@ export class DpsPayComponent implements OnInit {
         next: (res: any) => {
           this.dpsData = res;
           this.errorMessage = '';
+           this.alertService.success('✅ DPS details loaded successfully!');
           this.cdr.markForCheck();
         },
         error: (err: any) => {
           console.error(err);
           this.errorMessage = err.error || 'DPS not found';
+          this.alertService.error(this.errorMessage);
           this.dpsData = null;
         }
       });
@@ -79,6 +82,7 @@ export class DpsPayComponent implements OnInit {
   payDps(): void {
     if (!this.dpsId) {
       this.errorMessage = 'Please enter valid DPS ID';
+       this.alertService.error(this.errorMessage);
       this.successMessage = '';
       return;
     }
@@ -128,6 +132,7 @@ export class DpsPayComponent implements OnInit {
     this.successMessage = '';
     this.errorMessage = '';
     this.loading = false;
+    this.alertService.success('✅ DPS form reset successfully.');
   }
 
 }

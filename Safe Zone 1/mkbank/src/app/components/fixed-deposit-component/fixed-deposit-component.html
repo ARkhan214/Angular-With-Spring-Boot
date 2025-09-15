@@ -42,27 +42,19 @@
       <!-- Deposit Input -->
       <div class="form-group mb-3">
         <label class="form-label fw-semibold">Deposit Amount</label>
-        <input 
-          type="number" 
-          [(ngModel)]="depositAmount"
-          (input)="calculatePreview()"
-          class="form-control" 
-          placeholder="Enter deposit amount"
-          style="border-radius: 10px; padding: 10px;"
-        />
+        <input type="number" [(ngModel)]="depositAmount" (change)="calculatePreview()" class="form-control"
+          placeholder="Enter deposit amount" style="border-radius: 10px; padding: 10px;" />
       </div>
 
-      <!-- Duration Input -->
-      <div class="form-group mb-3">
+      <!-- Duration Dropdown -->
+      <div *ngIf="depositAmount > 49999" class="form-group mb-3">
         <label class="form-label fw-semibold">Duration (Months)</label>
-        <input 
-          type="number" 
-          [(ngModel)]="durationInMonths"
-          (input)="calculatePreview()"
-          class="form-control" 
-          placeholder="Enter duration in months"
-          style="border-radius: 10px; padding: 10px;"
-        />
+        <select [(ngModel)]="durationInMonths" (change)="calculatePreview()" class="form-control"
+          style="border-radius: 0px; padding: 0px;">
+          <option *ngFor="let month of monthsList" [value]="month">
+            {{ month }} Months
+          </option>
+        </select>
       </div>
 
       <!-- Preview -->

@@ -19,17 +19,23 @@ public class GLTransaction {
 
     private String description;
 
+    // Polymorphic linking fields
+    private Long referenceId;      // কোন entity এর ID (FD/DPS/Loan ইত্যাদি)
+    private String referenceType;  // "FD", "DPS", "LOAN"
+
     @Temporal(TemporalType.TIMESTAMP)
     private Date transactionDate = new Date();
 
     public GLTransaction() {
     }
 
-    public GLTransaction(Long id, double amount, GLType type, String description, Date transactionDate) {
+    public GLTransaction(Long id, double amount, GLType type, String description, Long referenceId, String referenceType, Date transactionDate) {
         this.id = id;
         this.amount = amount;
         this.type = type;
         this.description = description;
+        this.referenceId = referenceId;
+        this.referenceType = referenceType;
         this.transactionDate = transactionDate;
     }
 
@@ -71,5 +77,21 @@ public class GLTransaction {
 
     public void setTransactionDate(Date transactionDate) {
         this.transactionDate = transactionDate;
+    }
+
+    public Long getReferenceId() {
+        return referenceId;
+    }
+
+    public void setReferenceId(Long referenceId) {
+        this.referenceId = referenceId;
+    }
+
+    public String getReferenceType() {
+        return referenceType;
+    }
+
+    public void setReferenceType(String referenceType) {
+        this.referenceType = referenceType;
     }
 }

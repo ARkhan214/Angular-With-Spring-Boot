@@ -16,6 +16,9 @@ export class FixedDepositComponent implements OnInit{
   depositAmount!: number;
   durationInMonths!: number;
 
+   // Dropdown months list
+  monthsList: number[] = [12, 24, 36, 48, 60, 72, 84, 96, 108, 120];
+
   // Pre-filled data
   accountId!: number;
   accountName: string = '';
@@ -72,7 +75,7 @@ export class FixedDepositComponent implements OnInit{
           this.address = res.account.address;
 
           this.depositAmount = 0;
-          this.durationInMonths = 0;
+          this.durationInMonths =0;   // default first month
         },
         error: (err) => {
           console.error(err);
@@ -94,7 +97,7 @@ export class FixedDepositComponent implements OnInit{
   }
 
 // Minimum deposit & duration validation
-if (this.depositAmount < 49999 || this.durationInMonths < 12 || this.durationInMonths > 120) {
+if (this.depositAmount < 50000 || this.durationInMonths < 12 || this.durationInMonths > 120) {
   this.alertService.warning(
     "FD amount must be at least 50,000 Taka and Duration must be between 12 and 120 months"
   );
@@ -109,27 +112,41 @@ if (this.depositAmount < 49999 || this.durationInMonths < 12 || this.durationInM
     return;
   }
 
-  // Interest Rate Logic based on duration
-  if (this.durationInMonths <= 12) {
-    this.estimatedInterestRate = 5;
-  } else if (this.durationInMonths <= 36) {
-    this.estimatedInterestRate = 6;
-  } else if (this.durationInMonths <= 60) {
-    this.estimatedInterestRate = 7;
+
+    // Interest Rate Logic (match backend)
+  if(this.depositAmount >= 100000) {
+    if(this.durationInMonths >= 60) this.estimatedInterestRate = 12;
+    else if(this.durationInMonths >= 36) this.estimatedInterestRate = 11;
+    else if(this.durationInMonths >= 12) this.estimatedInterestRate = 10;
   } else {
-    this.estimatedInterestRate = 8;
+    if(this.durationInMonths >= 12) this.estimatedInterestRate = 7;
   }
 
   // Maturity Calculation
   this.estimatedMaturityAmount = this.depositAmount +
     (this.depositAmount * this.estimatedInterestRate / 100 * this.durationInMonths / 12);
+
+  // // Interest Rate Logic based on duration
+  // if (this.durationInMonths <= 12) {
+  //   this.estimatedInterestRate = 10;
+  // } else if (this.durationInMonths <= 36) {
+  //   this.estimatedInterestRate = 11;
+  // } else if (this.durationInMonths <= 60) {
+  //   this.estimatedInterestRate = 12;
+  // } else {
+  //   this.estimatedInterestRate = 5;
+  // }
+
+  // // Maturity Calculation
+  // this.estimatedMaturityAmount = this.depositAmount +
+  //   (this.depositAmount * this.estimatedInterestRate / 100 * this.durationInMonths / 12);
 }
 
 
   //----------------------- Fixed Deposit Create -----------------------
   fixedDeposit() {
     if (!this.depositAmount || !this.durationInMonths) {
-      this.alertService.error('All fields are required!');
+      this.alertService.error('All fields are required! Deposit Amount Must be Atlist 50000/- Taka');
       return;
     }
 

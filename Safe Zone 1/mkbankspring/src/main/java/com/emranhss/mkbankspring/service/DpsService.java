@@ -32,6 +32,7 @@ public class DpsService {
     @Autowired
     private TransactionRepository transactionRepository;
 
+
 //creat dps------------------
     @Transactional
     public Dps createDps(Dps dps, Long accountId) {
@@ -145,6 +146,15 @@ public class DpsService {
 
         dpsPaymentRepository.save(payment);
 
+        // Create GL transaction for DPS Payment
+        GLTransaction glTxn = new GLTransaction();
+        glTxn.setAmount(amount);
+        glTxn.setType(GLType.DPS_PAYMENT);
+        glTxn.setDescription("DPS Payment.DPS ID Is :"+dpsAccount.getId());
+        glTxn.setReferenceId(dpsAccount.getId());
+        glTxn.setReferenceType("DPS");
+        glTransactionRepository.save(glTxn);
+
 
         if (dpsAccount.getMonthsPaid() >= dpsAccount.getTermMonths()) {
             dpsAccount.setStatus(DpsStatus.CLOSED);
@@ -159,7 +169,16 @@ public class DpsService {
             transaction.setToken(token);
             transactionRepository.save(transaction);
 
+            GLTransaction glTxn1 = new GLTransaction();
+            glTxn1.setAmount(-dpsAccount.getMaturityAmount());    // minus because money going out
+            glTxn1.setType(GLType.DPS_CLOSED);
+            glTxn1.setDescription("Maturity amount credited for DPS ID " + dpsId);
+            glTxn1.setReferenceId(dpsAccount.getId());
+            glTxn1.setReferenceType("DPS");
+            glTransactionRepository.save(glTxn1);
+
         }
+
 
         accountRepository.save(account);
         dpsAccountRepository.save(dpsAccount);

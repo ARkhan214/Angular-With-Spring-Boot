@@ -30,12 +30,14 @@ public class FixedDepositService {
     @Autowired
 private GLTransactionRepository glTransactionRepository;
 
+
+
     @Transactional
     public FixedDepositDTO createFD(FixedDepositDTO fdDTO, Long accountId, String token) {
         double amount = fdDTO.getDepositAmount();
         int durationMonths = fdDTO.getDurationInMonths();
 
-        if (amount < 49999 || durationMonths < 12 || durationMonths > 120) {
+        if (amount < 50000 || durationMonths < 12 || durationMonths > 120) {
             throw new RuntimeException("Invalid amount or duration");
         }
 
@@ -81,11 +83,25 @@ private GLTransactionRepository glTransactionRepository;
         txn.setToken(token);
         transactionRepository.save(txn);
 
+        // Create GL transaction for Open FD
+        GLTransaction glTxn = new GLTransaction();
+        glTxn.setAmount(amount);
+        glTxn.setType(GLType.FD_OPEN);
+        glTxn.setDescription("FD Open Abd FD ID is: "+fd.getId());
+        glTxn.setReferenceId(fd.getId());
+        glTxn.setReferenceType("FD");
+        glTransactionRepository.save(glTxn);
+
+
         return mapToDTO(fd);
     }
 
 
-
+//------------ST sob GL View By reference Type
+public List<GLTransaction> getFdTransactions(Long fdId) {
+    return glTransactionRepository.findByReferenceTypeAndReferenceId("FD", fdId);
+}
+    //-----------End
 
 
 
@@ -229,8 +245,16 @@ public FixedDepositDTO closeFD(Long fdId, Long accountId,String token) {
         GLTransaction glTxn = new GLTransaction();
         glTxn.setAmount(penaltyAmount);
         glTxn.setType(GLType.FD_CLOSED_PENALTY);
-        glTxn.setDescription("FD closed within 30 days, penalty applied");
+        glTxn.setDescription("FD closed within 30 days, penalty applied and The penalty FD ID is: "+fd.getId());
         glTransactionRepository.save(glTxn);
+
+        GLTransaction glTxn2 = new GLTransaction();
+        glTxn2.setAmount(-fd.getDepositAmount());  // minus because money going out
+        glTxn2.setType(GLType.FD_CLOSED);
+        glTxn2.setDescription("FD Closed and FD ID is: " + fd.getId());
+        glTxn2.setReferenceId(fd.getId());
+        glTxn2.setReferenceType("FD");
+        glTransactionRepository.save(glTxn2);
 
         Transaction txn1 = new Transaction();
         txn1.setAccount(account);

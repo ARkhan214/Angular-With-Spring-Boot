@@ -3,10 +3,7 @@ package com.emranhss.mkbankspring.restcontroller;
 import com.emranhss.mkbankspring.dto.AccountsDTO;
 import com.emranhss.mkbankspring.dto.FixedDepositDTO;
 import com.emranhss.mkbankspring.dto.LoanDto;
-import com.emranhss.mkbankspring.entity.Accounts;
-import com.emranhss.mkbankspring.entity.FixedDeposit;
-import com.emranhss.mkbankspring.entity.Loan;
-import com.emranhss.mkbankspring.entity.User;
+import com.emranhss.mkbankspring.entity.*;
 import com.emranhss.mkbankspring.repository.AccountRepository;
 import com.emranhss.mkbankspring.repository.UserRepository;
 import com.emranhss.mkbankspring.service.AccountService;
@@ -52,6 +49,12 @@ public class FixedDepositController {
         return fdService.createFD(fdDTO, sender.getId(), token);
     }
 
+    //--------------
+    @GetMapping("/{fdId}/transactions")
+    public List<GLTransaction> getFdTransactions(@PathVariable Long fdId) {
+        return fdService.getFdTransactions(fdId);
+    }
+    //-------------
 
 
 //    @PostMapping("/create")

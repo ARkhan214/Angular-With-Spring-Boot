@@ -67,7 +67,8 @@ public class SecurityConfig {
                                 "/api/fd/**",
                                 "/api/dps/**",
                                 "/api/dps/pay/{dpsId}",
-                                "/api/fd/close/{fdId}/{accountId}"
+                                "/api/fd/close/{fdId}/{accountId}",
+                                "/{fdId}/transactions"
 
 
                         )

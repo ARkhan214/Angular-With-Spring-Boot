@@ -30,4 +30,5 @@ export class LoanPayService {
     const body: LoanPaymentRequest = { loanId, amount };
     return this.http.post<any>(`http://localhost:8085/api/loans/pay`, body, { headers });
   }
+  
 }

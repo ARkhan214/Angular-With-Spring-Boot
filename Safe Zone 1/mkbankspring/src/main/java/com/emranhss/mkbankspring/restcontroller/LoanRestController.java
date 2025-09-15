@@ -136,11 +136,17 @@ public class LoanRestController {
 
 
  //Make payment towards a loan
+    // Make payment
     @PostMapping("/pay")
-    public ResponseEntity<?> payLoan(@RequestBody LoanPaymentDto paymentDto, Authentication authentication) {
+    public ResponseEntity<?> payLoan(
+            @RequestBody LoanPaymentDto paymentDto,
+            @RequestHeader("Authorization") String authHeader,
+            Authentication authentication
+    ) {
         try {
+            String token = authHeader.replace("Bearer ", "");
             Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
-            Loan updated = loanService1.payLoan(accountId, paymentDto);
+            Loan updated = loanService1.payLoan(accountId, paymentDto, token);
             return ResponseEntity.ok(updated);
         } catch (Exception ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
@@ -148,14 +154,62 @@ public class LoanRestController {
     }
 
 
+//    @PostMapping("/pay")
+//    public ResponseEntity<?> payLoan(
+//            @RequestBody LoanPaymentDto paymentDto,
+//            @RequestHeader("Authorization") String authHeader,
+//            Authentication authentication) {
+//        try {
+//            String token = authHeader.replace("Bearer ", "");
+//            Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+//            Loan updated = loanService1.payLoan(accountId, paymentDto,token);
+//            return ResponseEntity.ok(updated);
+//        } catch (Exception ex) {
+//            return ResponseEntity.badRequest().body(ex.getMessage());
+//        }
+//    }
+
+
     //----------------------srart Get loan details-----------
 
+    // Fetch a single loan
     @GetMapping("/{id}")
-    public ResponseEntity<LoanDto> getLoanById(@PathVariable Long id) {
-        LoanDto loanDto = loanService1.getLoanDtoById(id);
+    public ResponseEntity<LoanDto> getLoanById(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+        LoanDto loanDto = loanService1.getLoanDtoById(id, accountId);
         return ResponseEntity.ok(loanDto);
     }
-    //-------------end-------------
+
+
+//    @GetMapping("/{id}")
+//    public ResponseEntity<LoanDto> getLoanById(
+//            @PathVariable Long id,
+//            Authentication authentication
+//            ) {
+//        // logged-in user এর accountId বের করা
+//        Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+//
+//        // service call with ownership check
+//        LoanDto loanDto = loanService1.getLoanDtoById(id, accountId);
+//
+//        return ResponseEntity.ok(loanDto);
+//    }
+
+//
+//    @GetMapping("/{loanId}")
+//    public ResponseEntity<?> getLoan(@PathVariable Long loanId, Authentication authentication) {
+//        try {
+//            LoanDto loan = loanService1.getLoanById(loanId);
+//            // optional: check ownership
+//            return ResponseEntity.ok(loan);
+//        } catch (Exception ex) {
+//            return ResponseEntity.badRequest().body(ex.getMessage());
+//        }
+//    }
+    //-------------end Get loan details-------------
 
 
 
@@ -201,14 +255,15 @@ public class LoanRestController {
 
 
 
-//
-//    // Account holder pay EMI
+
+    // Account holder pay EMI
 //    @PostMapping("pay/{loanId}")
 //    public ResponseEntity<Loan> payEMI(@PathVariable Long loanId,
 //                                       @RequestParam double amount) {
-//        Loan loan = loanService.payEMI(loanId, amount);
+//        Loan loan = loanService1.payEMI(loanId, amount);
 //        return ResponseEntity.ok(loan);
 //    }
+
 //
 //    // Admin view all pending loans
 //    @GetMapping("pending")

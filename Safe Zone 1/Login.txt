@@ -1,0 +1,51 @@
+Ques:--login kora thakle saideber er manute login option thakbe na amon korte parba?
+
+Ans:--
+হ্যাঁ আঃ রহিম খান, Angular-এ এটা করা খুব সহজ। তুমি **`*ngIf`** ব্যবহার করে condition অনুযায়ী menu item দেখাতে বা লুকাতে পারো।
+
+### উদাহরণ:
+
+ধরা যাক তোমার কাছে একটি **authentication service** আছে যা বলে ইউজার login আছে কি না:
+
+```ts
+// auth.service.ts
+export class AuthService {
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('token'); // বা যেটা তোমার login state ধরে
+  }
+}
+```
+
+### Sidebar HTML:
+
+```html
+<!-- Login Menu Item -->
+<li class="nav-item" *ngIf="!authService.isLoggedIn()">
+  <a class="nav-link fw-semibold d-flex align-items-center gap-2" routerLink="/login"
+     style="color: #198754; border: 1px solid transparent; padding: 8px 15px; border-radius: 25px;">
+    <i class="fa fa-sign-in-alt me-1"></i>
+    <span>Login</span>
+  </a>
+</li>
+
+<!-- Logout Menu Item -->
+<li class="nav-item" *ngIf="authService.isLoggedIn()">
+  <a class="nav-link fw-semibold d-flex align-items-center gap-2" (click)="logout()"
+     style="color: #dc3545; border: 1px solid transparent; padding: 8px 15px; border-radius: 25px; cursor:pointer;">
+    <i class="fa fa-sign-out-alt me-1"></i>
+    <span>Logout</span>
+  </a>
+</li>
+```
+
+### ব্যাখ্যা:
+
+* `*ngIf="!authService.isLoggedIn()"` → Login menu **মাত্র তখন দেখাবে যখন ইউজার logged out থাকবে**।
+* `*ngIf="authService.isLoggedIn()"` → Logout menu **মাত্র তখন দেখাবে যখন ইউজার logged in থাকবে**।
+
+> অর্থাৎ, লগিন থাকলে Login অপশন দেখাবে না, এবং লগিন থাকলে Logout দেখাবে।
+
+---
+
+আঃ রহিম খান, চাইলে আমি তোমার **সম্পূর্ণ sidebar কোডে এই login/logout logic integrate করে** দেখাতে পারি, যাতে পুরো sidebar auto-update হয় login state অনুযায়ী।
+চাইছো আমি সেটা করি?

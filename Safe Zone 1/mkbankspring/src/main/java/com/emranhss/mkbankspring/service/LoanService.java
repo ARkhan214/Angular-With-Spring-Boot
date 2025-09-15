@@ -286,11 +286,15 @@ public class LoanService{
 
 
     //loan pay korar jonno
-    public Loan payLoan(Long accountId, LoanPaymentDto paymentDto) {
+    public Loan payLoan(Long accountId, LoanPaymentDto paymentDto,String token) {
         if (paymentDto.getAmount() <= 0) throw new IllegalArgumentException("Payment amount must be > 0");
 
         Loan loan = loanRepository.findById(paymentDto.getLoanId())
                 .orElseThrow(() -> new RuntimeException("Loan not found"));
+
+        if (loan.getStatus() == LoanStatus.CLOSED) {
+            throw new RuntimeException("This loan is already closed. No further payments allowed.");
+        }
 
         Accounts account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
@@ -300,6 +304,10 @@ public class LoanService{
         }
 
         double payAmount = paymentDto.getAmount();
+
+        if (payAmount > loan.getRemainingAmount()) {
+            throw new RuntimeException("Payment amount must be less than loan remaining amount");
+        }
 
         // Check sufficient balance
         if (account.getBalance() < payAmount) {
@@ -333,7 +341,8 @@ public class LoanService{
         txn.setType(TransactionType.TRANSFER); // Account receives money
         txn.setTransactionTime(new Date());
         txn.setAmount(paymentDto.getAmount());
-        txn.setDescription("Loan Installment payment ");
+        txn.setDescription("Loan Installment payment "+ loan.getId());
+        txn.setToken(token);
         txn.setReceiverAccount(null); // Receiver not needed for loan credit
         transactionRepository.save(txn);
 
@@ -342,10 +351,54 @@ public class LoanService{
 
 //-------------start---------------------
 
+    // Fetch all loans for a given account
+    public List<LoanDto> getLoansByAccountId(Long accountId) {
+        List<Loan> loans = loanRepository.findByAccountId(accountId);
 
-    public LoanDto getLoanDtoById(Long loanId) {
+        return loans.stream().map(loan -> {
+            Accounts account = loan.getAccount();
+            AccountsDTO accountDTO = null;
+            if (account != null) {
+                accountDTO = new AccountsDTO(
+                        account.getId(),
+                        account.getName(),
+                        account.getBalance(),
+                        account.getAccountType(),
+                        account.getNid(),
+                        account.getPhoneNumber(),
+                        account.getAddress(),
+                        account.getPhoto()
+                );
+            }
+
+            return new LoanDto(
+                    loan.getId(),
+                    loan.getLoanAmount(),
+                    loan.getEmiAmount(),
+                    loan.getInterestRate(),
+                    loan.getStatus().toString(),
+                    loan.getLoanType().toString(),
+                    loan.getLoanStartDate(),
+                    loan.getLoanMaturityDate(),
+                    loan.getTotalAlreadyPaidAmount(),
+                    loan.getRemainingAmount(),
+                    loan.getPenaltyRate(),
+                    loan.getLastPaymentDate(),
+                    loan.getUpdatedAt(),
+                    accountDTO
+            );
+        }).collect(Collectors.toList());
+    }
+
+
+    public LoanDto getLoanDtoById(Long loanId,Long accountId) {
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new RuntimeException("Loan not found"));
+
+        // Ownership check
+        if (!loan.getAccount().getId().equals(accountId)) {
+            throw new RuntimeException("You are not authorized to view this loan");
+        }
 
         // Account entity থেকে AccountsDTO বানানো
         Accounts account = loan.getAccount();
@@ -384,7 +437,6 @@ public class LoanService{
     }
 
 
-
 //    public LoanDto getLoanById(Long loanId) {
 //        Loan loan = loanRepository.findById(loanId)
 //                .orElseThrow(() -> new RuntimeException("Loan not found with ID: " + loanId));
@@ -402,6 +454,7 @@ public class LoanService{
 //                account.getName(),
 //                account.getBalance(),
 //                account.getAccountType(),
+//                account.getNid(),
 //                account.getPhoneNumber(),
 //                account.getAddress(),
 //                account.getPhoto()

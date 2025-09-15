@@ -1,3 +1,20 @@
+Postman code
+GET http://localhost:8085/api/dps/my-dps
+POST http://localhost:8085/api/dps/pay/2
+POST http://localhost:8085/api/dps/create
+
+
+
+
+
+
+
+
+
+
+
+
+
 1️⃣ DpsRepository
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

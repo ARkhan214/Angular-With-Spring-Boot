@@ -1,187 +1,1041 @@
-Features:
+============Start LoanRestController==Date 15-09-2025=============
 
-Token validation ✅
+package com.emranhss.mkbankspring.restcontroller;
 
-EMI calculation ✅
+import com.emranhss.mkbankspring.dto.*;
+import com.emranhss.mkbankspring.entity.Accounts;
+import com.emranhss.mkbankspring.entity.Loan;
+import com.emranhss.mkbankspring.service.AccountService;
+import com.emranhss.mkbankspring.service.ILoanService;
+import com.emranhss.mkbankspring.service.LoanService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
-Repayment update ✅
-
-Premature closure ✅
-
-Audit timestamps ✅
-
-1️⃣ LoanRepository
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 import java.util.List;
 
-@Repository
-public interface LoanRepository extends JpaRepository<Loan, Long> {
+@RestController
+@RequestMapping("/api/loans")
+public class LoanRestController {
+//    @Autowired
+//    private ILoanService loanService;
 
-    // Find all loans by account ID
-    List<Loan> findByAccountId(Long accountId);
+    @Autowired
+    private LoanService loanService1;
 
-    // Find active loans by account ID
-    List<Loan> findByAccountIdAndStatus(Long accountId, LoanStatus status);
+    @Autowired
+    private AccountService accountService;
+
+    @PostMapping("/calculate")
+    public ResponseEntity<?> calculateEmi(@RequestBody LoanRequestDto dto) {
+        try {
+            EmiResponseDto res = loanService1.calculateEmi(dto.getLoanAmount(), dto.getDurationInMonths(), dto.getLoanType().name());
+            return ResponseEntity.ok(res);
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+    }
+
+
+
+    @PostMapping("/apply")
+    public ResponseEntity<?> applyLoan(
+            @RequestBody LoanRequestDto dto,
+            @RequestHeader("Authorization") String authHeader,
+            Authentication authentication
+//            Authentication authentication
+    ) {
+
+
+        try {
+
+            // Token extract করা
+            String token = authHeader.replace("Bearer ", "");
+
+            Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+            Loan loan = loanService1.applyLoan(accountId, dto,token);
+
+            LoanDto response = new LoanDto();
+            response.setId(loan.getId());
+            response.setLoanAmount(loan.getLoanAmount());
+            response.setEmiAmount(loan.getEmiAmount());
+            response.setStatus(loan.getStatus().name());
+            response.setLoanType(loan.getLoanType().name());
+
+            // AccountDto
+            AccountsDTO accountDto = new AccountsDTO();
+            accountDto.setId(loan.getAccount().getId());
+            accountDto.setName(loan.getAccount().getName());
+            accountDto.setBalance(loan.getAccount().getBalance());
+            accountDto.setNid(loan.getAccount().getNid());
+            accountDto.setPhoneNumber(loan.getAccount().getPhoneNumber());
+            accountDto.setAddress(loan.getAccount().getAddress());
+            accountDto.setAccountType(loan.getAccount().getAccountType());
+            response.setAccount(accountDto);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+    }
+
+
+
+    @GetMapping("/apply/init")
+    public ResponseEntity<LoanDto> getLoanInitData(Authentication authentication) {
+        try {
+            // 1️⃣ accountId ber kora
+            Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+            Accounts account = accountService.findAccountById(accountId);
+
+            // 2️⃣ LoanDto(pre-filled default values)
+            LoanDto response = new LoanDto();
+
+            response.setId(null); // এখনো loan create হয়নি, তাই null
+            response.setLoanAmount(0); // user input
+            response.setEmiAmount(0); // backend calculate করবে
+            response.setInterestRate(0); // backend calculate করবে
+            response.setStatus("PENDING"); // default
+            response.setLoanType(""); // user input
+
+            // 3️⃣ AccountDTO set
+            AccountsDTO accountDto = new AccountsDTO();
+            accountDto.setId(account.getId());
+            accountDto.setName(account.getName());
+            accountDto.setBalance(account.getBalance());
+            accountDto.setNid(account.getNid());
+            accountDto.setPhoneNumber(account.getPhoneNumber());
+            accountDto.setAddress(account.getAddress());
+            accountDto.setAccountType(account.getAccountType());
+
+            response.setAccount(accountDto);
+
+            return ResponseEntity.ok(response);
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+
+
+    /**
+     * Apply for loan.
+     * Uses authenticated user's accountId (via accountService)
+     * POST /api/loans/apply
+     */
+//    @PostMapping("/apply")
+//    public ResponseEntity<?> applyLoan(@RequestBody LoanRequestDto dto, Authentication authentication) {
+//        try {
+//            // get accountId from authentication (implement accountService.findAccountByEmail)
+//            Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+//            Loan loan = loanService.applyLoan(accountId, dto);
+//            return ResponseEntity.ok(loan);
+//        } catch (Exception ex) {
+//            return ResponseEntity.badRequest().body(ex.getMessage());
+//        }
+//    }
+
+
+ //Make payment towards a loan
+    @PostMapping("/pay")
+    public ResponseEntity<?> payLoan(
+            @RequestBody LoanPaymentDto paymentDto,
+            @RequestHeader("Authorization") String authHeader,
+            Authentication authentication) {
+        try {
+            String token = authHeader.replace("Bearer ", "");
+            Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+            Loan updated = loanService1.payLoan(accountId, paymentDto,token);
+            return ResponseEntity.ok(updated);
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
+    }
+
+
+    //----------------------srart Get loan details-----------
+
+    @GetMapping("/{id}")
+    public ResponseEntity<LoanDto> getLoanById(
+            @PathVariable Long id,
+            Authentication authentication
+            ) {
+        // logged-in user এর accountId বের করা
+        Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+
+        // service call with ownership check
+        LoanDto loanDto = loanService1.getLoanDtoById(id, accountId);
+
+        return ResponseEntity.ok(loanDto);
+    }
+
+//
+//    @GetMapping("/{loanId}")
+//    public ResponseEntity<?> getLoan(@PathVariable Long loanId, Authentication authentication) {
+//        try {
+//            LoanDto loan = loanService1.getLoanById(loanId);
+//            // optional: check ownership
+//            return ResponseEntity.ok(loan);
+//        } catch (Exception ex) {
+//            return ResponseEntity.badRequest().body(ex.getMessage());
+//        }
+//    }
+    //-------------end Get loan details-------------
+
+
+
+    @GetMapping("/myloans")
+    public ResponseEntity<List<LoanDto>> getMyLoans(Authentication authentication) {
+        Long accountId = accountService.findAccountByEmail(authentication.getName()).getId();
+        List<Loan> loans = loanService1.getLoansByAccount(accountId);
+
+        List<LoanDto> loanDtos = loans.stream().map(loan -> {
+            //data from loanDTO
+            LoanDto dto = new LoanDto();
+            dto.setId(loan.getId());
+            dto.setLoanAmount(loan.getLoanAmount());
+            dto.setInterestRate(loan.getInterestRate());
+            dto.setEmiAmount(loan.getEmiAmount());
+            dto.setRemainingAmount(loan.getRemainingAmount());
+            dto.setTotalAlreadyPaidAmount(loan.getTotalAlreadyPaidAmount());
+            dto.setStatus(loan.getStatus().name());
+            dto.setLoanType(loan.getLoanType().name());
+            dto.setLoanStartDate(loan.getLoanStartDate());
+            dto.setLoanMaturityDate(loan.getLoanMaturityDate());
+
+
+
+            //from accDTO
+            AccountsDTO accDto = new AccountsDTO();
+            accDto.setId(loan.getAccount().getId());
+            accDto.setName(loan.getAccount().getName());
+            accDto.setNid(loan.getAccount().getNid());
+            accDto.setBalance(loan.getAccount().getBalance());
+            accDto.setAccountType(loan.getAccount().getAccountType());
+            accDto.setPhoneNumber(loan.getAccount().getPhoneNumber());
+            accDto.setAddress(loan.getAccount().getAddress());
+            dto.setAccount(accDto);
+
+            return dto;
+        }).toList();
+
+        return ResponseEntity.ok(loanDtos);
+    }
+
+
+
+
+
+
+    // Account holder pay EMI
+//    @PostMapping("pay/{loanId}")
+//    public ResponseEntity<Loan> payEMI(@PathVariable Long loanId,
+//                                       @RequestParam double amount) {
+//        Loan loan = loanService1.payEMI(loanId, amount);
+//        return ResponseEntity.ok(loan);
+//    }
+
+//
+//    // Admin view all pending loans
+//    @GetMapping("pending")
+//    public ResponseEntity<List<Loan>> getPendingLoans() {
+//        List<Loan> loans = loanService.getPendingLoans();
+//        return ResponseEntity.ok(loans);
+//    }
+//
+//    // Admin approve a loan
+//    @PostMapping("approve/{loanId}")
+//    public ResponseEntity<Loan> approveLoan(@PathVariable Long loanId) {
+//        Loan loan = loanService.approveLoan(loanId);
+//        return ResponseEntity.ok(loan);
+//    }
+//
+//    // Admin reject a loan
+//    @PostMapping("reject/{loanId}")
+//    public ResponseEntity<Loan> rejectLoan(@PathVariable Long loanId) {
+//        Loan loan = loanService.rejectLoan(loanId);
+//        return ResponseEntity.ok(loan);
+//    }
 }
-2️⃣ LoanService
+
+
+============End LoanRestController====Date 15-09-2025=============
+
+------------------------------------------------------------------
+
+============Start LoanService==Date 15-09-2025====================
+package com.emranhss.mkbankspring.service;
+
+import com.emranhss.mkbankspring.dto.*;
+import com.emranhss.mkbankspring.entity.*;
+import com.emranhss.mkbankspring.repository.AccountRepository;
+import com.emranhss.mkbankspring.repository.LoanRepository;
+import com.emranhss.mkbankspring.repository.TransactionRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
-public class LoanService {
-
-    @Autowired
-    private LoanRepository loanRepository;
-
-    // Calculate monthly EMI
-    public double calculateEmi(double principal, double annualRate, int durationInMonths) {
-        double monthlyRate = annualRate / 12 / 100;
-        return (principal * monthlyRate * Math.pow(1 + monthlyRate, durationInMonths)) /
-               (Math.pow(1 + monthlyRate, durationInMonths) - 1);
-    }
-
-    // Calculate loan maturity date
-    public Date calculateMaturityDate(Loan loan) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(loan.getStartDate());
-        cal.add(Calendar.MONTH, loan.getDurationInMonths());
-        return cal.getTime();
-    }
-
-    // Record repayment
-    public Loan repayLoan(Long loanId, double amount) {
-        Loan loan = loanRepository.findById(loanId)
-                .orElseThrow(() -> new RuntimeException("Loan not found"));
-
-        if (!loan.getStatus().equals(LoanStatus.ACTIVE)) {
-            throw new RuntimeException("Cannot repay: Loan not active");
-        }
-
-        loan.setTotalPaid(loan.getTotalPaid() + amount);
-        loan.setRemainingAmount(loan.getLoanAmount() - loan.getTotalPaid());
-
-        if (loan.getRemainingAmount() <= 0) {
-            loan.setStatus(LoanStatus.CLOSED);
-            loan.setRemainingAmount(0);
-        }
-
-        loan.setUpdatedAt(new Date());
-        loan.setLastPaymentDate(new Date());
-
-        return loanRepository.save(loan);
-    }
-
-    // Premature closure (apply penalty)
-    public Loan closeLoanPrematurely(Long loanId, double penaltyRate) {
-        Loan loan = loanRepository.findById(loanId)
-                .orElseThrow(() -> new RuntimeException("Loan not found"));
-
-        if (!loan.getStatus().equals(LoanStatus.ACTIVE)) {
-            throw new RuntimeException("Loan not active");
-        }
-
-        // Apply penalty interest
-        double remaining = loan.getRemainingAmount();
-        double penalty = remaining * penaltyRate / 100.0;
-        loan.setRemainingAmount(remaining + penalty);
-
-        loan.setStatus(LoanStatus.CLOSED);
-        loan.setUpdatedAt(new Date());
-        loan.setLastPaymentDate(new Date());
-        loan.setMaturityDate(new Date());
-
-        return loanRepository.save(loan);
-    }
-}
-3️⃣ LoanRestController
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import java.util.Date;
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/loan")
-public class LoanRestController {
-
-    @Autowired
-    private LoanService loanService;
-
+public class LoanService{
     @Autowired
     private LoanRepository loanRepository;
 
     @Autowired
-    private JwtService jwtService;
+    private AccountService accountService;
+    @Autowired
+    private AccountRepository accountRepository;
 
-    // Create new loan
-    @PostMapping("/create")
-    public ResponseEntity<Loan> createLoan(@RequestBody Loan loan,
-                                           @RequestHeader("Authorization") String authHeader) {
+    @Autowired
+    private TransactionRepository transactionRepository;
 
-        String token = authHeader.replace("Bearer ", "");
-        Long userId = jwtService.extractUserId(token);
 
-        if (!loan.getAccount().getUser().getId().equals(userId)) {
-            return ResponseEntity.status(403).build();
+
+    //loan interest rate calculate korar jonno
+    private double getFixedInterestRate(LoanType loanType) {
+        if (loanType == null) return 10.0; // default
+        switch (loanType) {
+            case PERSONAL: return 12.0;
+            case HOME: return 8.0;
+            case CAR: return 9.0;
+            case EDUCATION: return 6.0;
+            case BUSINESS: return 14.0;
+            default: return 10.0;
         }
+    }
 
+    //loan calculate korar jonno
+    public EmiResponseDto calculateEmi(double loanAmount, int durationInMonths, String loanTypeStr) {
+        if (durationInMonths <= 0) throw new IllegalArgumentException("Duration must be > 0");
+        if (durationInMonths > 60) throw new IllegalArgumentException("Duration cannot exceed 60 months");
+
+        LoanType loanType = LoanType.valueOf(loanTypeStr);
+        double interestRate = getFixedInterestRate(loanType);
+
+        // Simple interest yearly on principal as user requested
+        double totalInterest = loanAmount * (interestRate / 100.0);
+        double totalPayable = loanAmount + totalInterest;
+        double emi = totalPayable / durationInMonths;
+
+        return new EmiResponseDto(emi, totalPayable, interestRate);
+    }
+
+    //Loan with approval   start---------------------------failed code
+//    @Override
+//    @Transactional
+//    public Loan applyLoan(Long accountId, LoanRequestDto dto) {
+//        // validation
+//                if (dto.getDurationInMonths() <= 0 || dto.getDurationInMonths() > 60)
+//            throw new IllegalArgumentException("Duration must be between 1 and 60 months");
+//        if (dto.getLoanAmount() <= 0 || dto.getLoanAmount() > 99999999) {
+//            throw new IllegalArgumentException("Loan amount must be > 0 and <= 99,999,999");
+//        }
+//
+//        Accounts account = accountRepository.findById(accountId)
+//                .orElseThrow(() -> new RuntimeException("Account not found"));
+//
+//                LoanType loanType = dto.getLoanType();
+//        double interestRate = getFixedInterestRate(loanType);
+//
+//        double totalInterest = dto.getLoanAmount() * (interestRate / 100.0);
+//        double totalPayable = dto.getLoanAmount() + totalInterest;
+//        double emi = totalPayable / dto.getDurationInMonths();
+//
+//
+//        // Create Loan
+//        Loan loan = new Loan();
+//        loan.setAccount(account);
+//        loan.setLoanAmount(dto.getLoanAmount());
+//        loan.setInterestRate(interestRate);
+//        loan.setDurationInMonths(dto.getDurationInMonths());
+//        loan.setEmiAmount(emi);
+//        loan.setLoanType(loanType);
+//        loan.setStatus(LoanStatus.PENDING);
+//        Date start = new Date();
+//        loan.setLoanStartDate(start);
+//        loan.setLoanMaturityDate(addMonths(start, dto.getDurationInMonths()));
+//        loan.setTotalAlreadyPaidAmount(0.0);
+//        loan.setRemainingAmount(totalPayable);
+//        loan.setUpdatedAt(new Date());
+//
+//        return loanRepository.save(loan);
+//
+//    }
+//
+//
+//
+//    public List<LoanDto> getPendingLoanDTOs() {
+//        List<Loan> loans = loanRepository.findByStatus(LoanStatus.PENDING);
+//
+//        return loans.stream().map(loan -> {
+//            LoanDto dto = new LoanDto();
+//            dto.setId(loan.getId());
+//            dto.setLoanAmount(loan.getLoanAmount());
+//            dto.setEmiAmount(loan.getEmiAmount());
+//            dto.setInterestRate(loan.getInterestRate());
+//            dto.setStatus(loan.getStatus().name());
+//            dto.setLoanType(loan.getLoanType().name());
+//            dto.setLoanStartDate(loan.getLoanStartDate());
+//            dto.setLoanMaturityDate(loan.getLoanMaturityDate());
+//            dto.setTotalAlreadyPaidAmount(loan.getTotalAlreadyPaidAmount());
+//            dto.setRemainingAmount(loan.getRemainingAmount());
+//            dto.setPenaltyRate(loan.getPenaltyRate());
+//            dto.setLastPaymentDate(loan.getLastPaymentDate());
+//            dto.setUpdatedAt(loan.getUpdatedAt());
+//
+//            AccountsDTO accountDTO = new AccountsDTO();
+//            accountDTO.setId(loan.getAccount().getId());
+//            accountDTO.setName(loan.getAccount().getName());
+//            accountDTO.setBalance(loan.getAccount().getBalance());
+//            dto.setAccount(accountDTO);
+//
+//            return dto;
+//        }).collect(Collectors.toList());
+//    }
+//
+//
+//
+//
+//
+//    @Transactional
+//    public Loan approveLoan(Long loanId) {
+//        Loan loan = loanRepository.findById(loanId)
+//                .orElseThrow(() -> new RuntimeException("Loan not found"));
+//
+//        if (loan.getStatus() != LoanStatus.PENDING) {
+//            throw new IllegalStateException("Loan is not in pending state");
+//        }
+//
+//        Accounts account = loan.getAccount();
+//
+//        // ✅ Loan Active
+//        loan.setStatus(LoanStatus.ACTIVE);
+//
+//        // ✅ Account balance update
+//        account.setBalance(account.getBalance() + loan.getLoanAmount());
+//
+//        // ✅ Transaction add
+//        Transaction txn = new Transaction();
+//        txn.setAccount(account);
+//        txn.setAmount(loan.getLoanAmount());
+//        txn.setType(TransactionType.DEPOSIT);
+//        txn.setDescription("Loan Disbursed");
+//        txn.setTransactionTime(new Date());
+//
+//        transactionRepository.save(txn);
+//
+//        return loanRepository.save(loan);
+//    }
+//
+//
+//
+//    @Transactional
+//    public Loan rejectLoan(Long loanId) {
+//        Loan loan = loanRepository.findById(loanId)
+//                .orElseThrow(() -> new RuntimeException("Loan not found"));
+//
+//        if (loan.getStatus() != LoanStatus.PENDING) {
+//            throw new IllegalStateException("Loan is not in pending state");
+//        }
+//
+//        loan.setStatus(LoanStatus.REJECTED);
+//        return loanRepository.save(loan);
+//    }
+    //Loan with approval   end---------------------------failed code
+
+
+
+//loan apply korar jonno
+    public Loan applyLoan(Long accountId, LoanRequestDto dto,String token) {
+        if (dto.getDurationInMonths() <= 0 || dto.getDurationInMonths() > 60)
+            throw new IllegalArgumentException("Duration must be between 1 and 60 months");
+        if (dto.getLoanAmount() <= 0 || dto.getLoanAmount() > 99999999)
+            throw new IllegalArgumentException("Loan amount must be > 0 and <= 99,999,999");
+
+        Accounts account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        LoanType loanType = dto.getLoanType();
+        double interestRate = getFixedInterestRate(loanType);
+
+        double totalInterest = dto.getLoanAmount() * (interestRate / 100.0);
+        double totalPayable = dto.getLoanAmount() + totalInterest;
+        double emi = totalPayable / dto.getDurationInMonths();
+
+        // Update account balance
+        account.setBalance(account.getBalance() + dto.getLoanAmount());
+        accountRepository.save(account);
+
+        // Create Loan
+        Loan loan = new Loan();
+        loan.setAccount(account);
+        loan.setLoanAmount(dto.getLoanAmount());
+        loan.setInterestRate(interestRate);
+        loan.setDurationInMonths(dto.getDurationInMonths());
+        loan.setEmiAmount(emi);
+        loan.setLoanType(loanType);
         loan.setStatus(LoanStatus.ACTIVE);
-        loan.setEmiAmount(loanService.calculateEmi(loan.getLoanAmount(), loan.getInterestRate(), loan.getDurationInMonths()));
-        loan.setMaturityDate(loanService.calculateMaturityDate(loan));
-        loan.setCreatedAt(new Date());
+        Date start = new Date();
+        loan.setLoanStartDate(start);
+        loan.setLoanMaturityDate(addMonths(start, dto.getDurationInMonths()));
+        loan.setTotalAlreadyPaidAmount(0.0);
+        loan.setRemainingAmount(totalPayable);
         loan.setUpdatedAt(new Date());
 
         Loan savedLoan = loanRepository.save(loan);
-        return ResponseEntity.ok(savedLoan);
+
+        // Create Transaction for Loan Credit
+        Transaction txn = new Transaction();
+        txn.setAccount(account);
+        txn.setType(TransactionType.DEPOSIT); // Account receives money
+        txn.setTransactionTime(new Date());
+        txn.setAmount(dto.getLoanAmount());
+        txn.setDescription("Loan disbursed: Loan ID " + savedLoan.getId());
+        txn.setReceiverAccount(null); // Receiver not needed for loan credit
+        txn.setToken(token);
+        transactionRepository.save(txn);
+
+        return savedLoan;
     }
 
-    // Repay loan
-    @PostMapping("/repay/{loanId}")
-    public ResponseEntity<Loan> repayLoan(@PathVariable Long loanId,
-                                          @RequestParam double amount,
-                                          @RequestHeader("Authorization") String authHeader) {
 
-        String token = authHeader.replace("Bearer ", "");
+
+
+
+
+
+//
+//    @Override
+//    @Transactional
+//    public Loan applyLoan(Long accountId, LoanRequestDto dto) {
+//        if (dto.getDurationInMonths() <= 0) throw new IllegalArgumentException("Duration must be > 0");
+//        if (dto.getDurationInMonths() > 60) throw new IllegalArgumentException("Duration cannot exceed 60 months");
+//        if (dto.getLoanAmount() <= 0 || dto.getLoanAmount() > 99999999) {
+//            throw new IllegalArgumentException("Loan amount must be > 0 and <= 99,999,999");
+//        }
+//
+//
+//        Accounts account = accountRepository.findById(accountId)
+//                .orElseThrow(() -> new RuntimeException("Account not found"));
+//
+//        LoanType loanType = dto.getLoanType();
+//        double interestRate = getFixedInterestRate(loanType);
+//
+//        double totalInterest = dto.getLoanAmount() * (interestRate / 100.0);
+//        double totalPayable = dto.getLoanAmount() + totalInterest;
+//        double emi = totalPayable / dto.getDurationInMonths();
+//
+//        Loan loan = new Loan();
+//        loan.setAccount(account);
+//        loan.setLoanAmount(dto.getLoanAmount());
+//        loan.setInterestRate(interestRate);
+//        loan.setDurationInMonths(dto.getDurationInMonths());
+//        loan.setEmiAmount(emi);
+//        loan.setLoanType(loanType);
+//        loan.setStatus(LoanStatus.PENDING);
+//        Date start = new Date();
+//        loan.setLoanStartDate(start);
+//        loan.setLoanMaturityDate(addMonths(start, dto.getDurationInMonths()));
+//        loan.setTotalAlreadyPaidAmount(0.0);
+//        loan.setRemainingAmount(totalPayable);
+//        loan.setUpdatedAt(new Date());
+//
+//        return loanRepository.save(loan);
+//    }
+
+
+
+
+    //loan pay korar jonno
+    public Loan payLoan(Long accountId, LoanPaymentDto paymentDto,String token) {
+        if (paymentDto.getAmount() <= 0) throw new IllegalArgumentException("Payment amount must be > 0");
+
+        Loan loan = loanRepository.findById(paymentDto.getLoanId())
+                .orElseThrow(() -> new RuntimeException("Loan not found"));
+
+        if (loan.getStatus() == LoanStatus.CLOSED) {
+            throw new RuntimeException("This loan is already closed. No further payments allowed.");
+        }
+
+        Accounts account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        if (!loan.getAccount().getId().equals(accountId)) {
+            throw new RuntimeException("Loan does not belong to this account");
+        }
+
+        double payAmount = paymentDto.getAmount();
+
+        if (payAmount > loan.getRemainingAmount()) {
+            throw new RuntimeException("Payment amount must be less than loan remaining amount");
+        }
+
+        // Check sufficient balance
+        if (account.getBalance() < payAmount) {
+            throw new RuntimeException("Insufficient account balance");
+        }
+
+        // Deduct from account
+        account.setBalance(account.getBalance() - payAmount);
+        accountRepository.save(account); // persist
+
+        // Update loan
+        double newPaid = loan.getTotalAlreadyPaidAmount() + payAmount;
+        double newRemaining = loan.getRemainingAmount() - payAmount;
+        loan.setTotalAlreadyPaidAmount(newPaid);
+        loan.setRemainingAmount(Math.max(0.0, newRemaining));
+        loan.setLastPaymentDate(new Date());
+        loan.setUpdatedAt(new Date());
+
+        if (loan.getRemainingAmount() <= 0.0) {
+            loan.setStatus(LoanStatus.CLOSED);
+        } else {
+            // if it was PENDING and first payment done, set ACTIVE
+            if (loan.getStatus() == LoanStatus.PENDING) {
+                loan.setStatus(LoanStatus.ACTIVE);
+            }
+        }
+
+        // Create Transaction for Loan Credit
+        Transaction txn = new Transaction();
+        txn.setAccount(account);
+        txn.setType(TransactionType.TRANSFER); // Account receives money
+        txn.setTransactionTime(new Date());
+        txn.setAmount(paymentDto.getAmount());
+        txn.setDescription("Loan Installment payment "+ loan.getId());
+        txn.setToken(token);
+        txn.setReceiverAccount(null); // Receiver not needed for loan credit
+        transactionRepository.save(txn);
+
+        return loanRepository.save(loan);
+    }
+
+//-------------start---------------------
+
+
+    public LoanDto getLoanDtoById(Long loanId,Long accountId) {
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new RuntimeException("Loan not found"));
 
-        if (!loan.getAccount().getUser().getId().equals(jwtService.extractUserId(token))) {
-            return ResponseEntity.status(403).build();
+        // Ownership check
+        if (!loan.getAccount().getId().equals(accountId)) {
+            throw new RuntimeException("You are not authorized to view this loan");
         }
 
-        Loan updatedLoan = loanService.repayLoan(loanId, amount);
-        return ResponseEntity.ok(updatedLoan);
-    }
+        // Account entity থেকে AccountsDTO বানানো
+        Accounts account = loan.getAccount();
+        AccountsDTO accountDTO = null;
 
-    // Premature closure
-    @PostMapping("/close/{loanId}")
-    public ResponseEntity<Loan> closeLoan(@PathVariable Long loanId,
-                                          @RequestParam double penaltyRate,
-                                          @RequestHeader("Authorization") String authHeader) {
-
-        String token = authHeader.replace("Bearer ", "");
-        Loan loan = loanRepository.findById(loanId)
-                .orElseThrow(() -> new RuntimeException("Loan not found"));
-
-        if (!loan.getAccount().getUser().getId().equals(jwtService.extractUserId(token))) {
-            return ResponseEntity.status(403).build();
+        if (account != null) {
+            accountDTO = new AccountsDTO(
+                    account.getId(),
+                    account.getName(),
+                    account.getBalance(),
+                    account.getAccountType(),
+                    account.getNid(),
+                    account.getPhoneNumber(),
+                    account.getAddress(),
+                    account.getPhoto()
+            );
         }
 
-        Loan closedLoan = loanService.closeLoanPrematurely(loanId, penaltyRate);
-        return ResponseEntity.ok(closedLoan);
+        // LoanDto বানানো
+        return new LoanDto(
+                loan.getId(),
+                loan.getLoanAmount(),
+                loan.getEmiAmount(),
+                loan.getInterestRate(),
+                loan.getStatus().toString(),
+                loan.getLoanType().toString(),
+                loan.getLoanStartDate(),
+                loan.getLoanMaturityDate(),
+                loan.getTotalAlreadyPaidAmount(),
+                loan.getRemainingAmount(),
+                loan.getPenaltyRate(),
+                loan.getLastPaymentDate(),
+                loan.getUpdatedAt(),
+                accountDTO
+        );
     }
 
-    // Get all loans of logged-in user
-    @GetMapping("/my-loans")
-    public ResponseEntity<List<Loan>> getMyLoans(@RequestHeader("Authorization") String authHeader) {
-        String token = authHeader.replace("Bearer ", "");
-        Long userId = jwtService.extractUserId(token);
 
-        List<Loan> myLoans = loanRepository.findByAccountId(userId);
-        return ResponseEntity.ok(myLoans);
+//    public LoanDto getLoanById(Long loanId) {
+//        Loan loan = loanRepository.findById(loanId)
+//                .orElseThrow(() -> new RuntimeException("Loan not found with ID: " + loanId));
+//
+//        // 👉 Convert Loan → LoanDto
+//        return mapToDto(loan);
+//    }
+//
+//    private LoanDto mapToDto(Loan loan) {
+//        Accounts account = loan.getAccount();
+//
+//        // Account → AccountsDTO
+//        AccountsDTO accountDto = new AccountsDTO(
+//                account.getId(),
+//                account.getName(),
+//                account.getBalance(),
+//                account.getAccountType(),
+//                account.getNid(),
+//                account.getPhoneNumber(),
+//                account.getAddress(),
+//                account.getPhoto()
+//        );
+//
+//        // Loan → LoanDto
+//        LoanDto dto = new LoanDto(
+//                loan.getId(),
+//                loan.getLoanAmount(),
+//                loan.getEmiAmount(),
+//                loan.getInterestRate(),
+//                loan.getStatus().toString(),  // Enum to → String
+//                loan.getLoanType().toString(),
+//                loan.getLoanStartDate(),
+//                loan.getLoanMaturityDate(),
+//                loan.getTotalAlreadyPaidAmount(),
+//                loan.getRemainingAmount(),
+//                loan.getPenaltyRate(),
+//                loan.getLastPaymentDate(),
+//                loan.getUpdatedAt(),
+//                accountDto
+//        );
+//
+//        return dto;
+//    }
+
+
+
+    //----------------------------end----------------
+
+
+
+
+    //login kore account holder eta diea tar sob loan view kortese
+    public List<Loan> getLoansByAccount(Long accountId) {
+        return loanRepository.findByAccountId(accountId);
     }
+
+
+    // helper to add months
+    private Date addMonths(Date date, int months) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.MONTH, months);
+        return cal.getTime();
+    }
+
+
+
+    // Account holder apply loan
+//    public Loan applyLoan(Long accountId, Loan loan) {
+//        Accounts account = accountService.findById(accountId)
+//                .orElseThrow(() -> new RuntimeException("Account not found"));
+//
+//        loan.setAccount(account);
+//        loan.setStatus(LoanStatus.PENDING);
+//        loan.setLoanStartDate(new Date());
+//
+//        // EMI Calculation
+//        double principal = loan.getLoanAmount();
+//        double monthlyRate = loan.getInterestRate() / 12 / 100;
+//        int months = loan.getDurationInMonths();
+//        double emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) /
+//                (Math.pow(1 + monthlyRate, months) - 1);
+//        loan.setEmiAmount(Math.round(emi * 100.0) / 100.0);
+//
+//        // Total and remaining amount
+//        loan.setTotalAlreadyPaidAmount(0);
+//        loan.setRemainingAmount(loan.getEmiAmount() * months);
+//
+//        // Maturity Date
+//        Calendar cal = Calendar.getInstance();
+//        cal.setTime(new Date());
+//        cal.add(Calendar.MONTH, months);
+//        loan.setLoanMaturityDate(cal.getTime());
+//
+//        loan.setUpdatedAt(new Date());
+//        return loanRepository.save(loan);
+//    }
+//
+//    // Account holder view own loans
+
+
+//
+//    // Admin view pending loans
+//    public List<Loan> getPendingLoans() {
+//        return loanRepository.findByStatus(LoanStatus.PENDING);
+//    }
+//
+//    // Admin approve loan
+//    public Loan approveLoan(Long loanId) {
+//        Loan loan = loanRepository.findById(loanId)
+//                .orElseThrow(() -> new RuntimeException("Loan not found"));
+//        loan.setStatus(LoanStatus.ACTIVE);
+//        loan.setUpdatedAt(new Date());
+//        return loanRepository.save(loan);
+//    }
+//
+//    // Admin reject loan
+//    public Loan rejectLoan(Long loanId) {
+//        Loan loan = loanRepository.findById(loanId)
+//                .orElseThrow(() -> new RuntimeException("Loan not found"));
+//        loan.setStatus(LoanStatus.CLOSED);
+//        loan.setUpdatedAt(new Date());
+//        return loanRepository.save(loan);
+//    }
+//
+//    // Payment (Account holder pays EMI)
+//    public Loan payEMI(Long loanId, double amount) {
+//        Loan loan = loanRepository.findById(loanId)
+//                .orElseThrow(() -> new RuntimeException("Loan not found"));
+//
+//        // Update paid amount
+//        double totalPaid = loan.getTotalAlreadyPaidAmount() + amount;
+//        loan.setTotalAlreadyPaidAmount(totalPaid);
+//
+//        // Update remaining amount
+//        double remaining = (loan.getEmiAmount() * loan.getDurationInMonths()) - totalPaid;
+//        loan.setRemainingAmount(Math.max(0, remaining));
+//
+//        // Update last payment date
+//        loan.setLastPaymentDate(new Date());
+//        loan.setUpdatedAt(new Date());
+//
+//        // If fully paid, close loan
+//        if (remaining <= 0) {
+//            loan.setStatus(LoanStatus.CLOSED);
+//        }
+//
+//        return loanRepository.save(loan);
+//    }
 }
+============End LoanService== Date 15-09-2025=============
+
+
+
+==============================Start PayLoan.ts== Date 15-09-2025=============
+
+import { ChangeDetectorRef, Component, Inject, PLATFORM_ID } from '@angular/core';
+import { LoanService } from '../../service/loan-service';
+import { AlertService } from '../../service/alert-service';
+import { LoanPayService } from '../../service/loan-pay-service';
+import { Router } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
+@Component({
+  selector: 'app-pay-loan',
+  standalone: false,
+  templateUrl: './pay-loan.html',
+  styleUrl: './pay-loan.css'
+})
+export class PayLoan {
+ loanId: number | null = null;
+  amount: number | null = null;
+  loanData: any = null;
+  successMessage: string = '';
+  errorMessage: string = '';
+  loading: boolean = false;
+
+  constructor(
+    private loanPayService: LoanPayService,
+    private alertService: AlertService,
+    private router: Router,
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
+
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      const savedLoanId = localStorage.getItem('loanId');
+      if (savedLoanId) {
+        this.loanId = Number(savedLoanId);
+        this.fetchLoanDetails(); // auto-fetch saved loan
+      }
+    }
+  }
+
+  private getAuthToken(): string {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('authToken') || '';
+    }
+    return '';
+  }
+
+ // Fetch loan details
+ fetchLoanDetails(): void {
+  if (!this.loanId) {
+    this.errorMessage = 'Please enter Loan ID';
+    this.loanData = null;
+    return;
+  }
+
+  const token = this.getAuthToken();
+  if (!token) {
+    this.alertService.error('Authentication token not found. Please login again.');
+    return;
+  }
+
+  const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+
+  this.http.get(`http://localhost:8085/api/loans/${this.loanId}`, { headers })
+    .subscribe({
+      next: (res: any) => {
+        this.loanData = res;
+        console.log('Data----------------'+res);
+        this.errorMessage = '';
+        this.cdr.markForCheck();
+      },
+      error: (err: any) => {
+        console.error(err);
+        this.errorMessage = err.error || 'Loan not found';
+        this.loanData = null;
+      }
+    });
+}
+
+
+  //  loan payment
+  payLoan(): void {
+    if (!this.loanId || !this.amount) {
+       this.alertService.error('Please enter amount');
+      return;
+    }
+
+    this.loading = true;
+    this.loanPayService.payLoan(this.loanId, this.amount).subscribe({
+  next: (res) => {
+    this.alertService.success('Payment successful! '+this.amount);
+    this.errorMessage = '';
+    this.loading = false;
+    this.fetchLoanDetails(); // refresh loan info
+  },
+  error: (err) => {
+    this.alertService.error(err.error || 'Payment failed');
+    this.successMessage = '';
+    this.loading = false;
+  }
+});
+  }
+
+}
+==============================End PayLoan.ts== Date 15-09-2025=============
+
+--------------------------------------------------------------------------
+
+
+==============================Start PayLoan.html == Date 15-09-2025=============
+<div class="container mt-5">
+  <div class="card shadow-sm">
+    <div class="card-header bg-success text-white">
+      <h4 class="mb-0 text-center">Loan Payment Form</h4>
+    </div>
+    <div class="card-body">
+
+      <!-- Loan ID Input -->
+      <div class="form-group mb-4">
+        <label for="loanId"><strong>Loan ID</strong></label>
+        <input type="number" id="loanId" class="form-control" [(ngModel)]="loanId" (ngModelChange)="fetchLoanDetails()"
+          placeholder="Enter Loan ID">
+      </div>
+
+      <!-- Loan Details Form View -->
+      <div *ngIf="loanData" class="mb-4">
+        <h5 class="mb-3 text-primary">Loan Information</h5>
+        <form>
+          <div class="form-group row mb-2">
+            <label class="col-sm-4 col-form-label">Account Name</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" [value]="loanData.account.name" readonly>
+            </div>
+          </div>
+
+          <div class="form-group row mb-2">
+            <label class="col-sm-4 col-form-label">Account Number</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" [value]="loanData.account.id" readonly>
+            </div>
+          </div>
+
+          <div class="form-group row mb-2">
+            <label class="col-sm-4 col-form-label">Loan Amount</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" [value]="loanData.loanAmount" readonly>
+            </div>
+          </div>
+
+          <div class="form-group row mb-2">
+            <label class="col-sm-4 col-form-label">EMI</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" [value]="loanData.emiAmount" readonly>
+            </div>
+          </div>
+
+          <div class="form-group row mb-2">
+            <label class="col-sm-4 col-form-label">Remaining</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" [value]="loanData.remainingAmount" readonly>
+            </div>
+          </div>
+
+          <div class="form-group row mb-2">
+            <label class="col-sm-4 col-form-label">Total Paid Amount</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" [value]="loanData.totalAlreadyPaidAmount" readonly>
+            </div>
+          </div>
+
+          <div class="form-group row mb-2">
+            <label class="col-sm-4 col-form-label">Status</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" [value]="loanData.status" readonly>
+            </div>
+          </div>
+
+          <div class="form-group row mb-2">
+            <label class="col-sm-4 col-form-label">Loan Type</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" [value]="loanData.loanType" readonly>
+            </div>
+          </div>
+
+          <div class="form-group row mb-2">
+            <label class="col-sm-4 col-form-label">Interest Rate (%)</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" [value]="loanData.interestRate" readonly>
+            </div>
+          </div>
+          <div>
+            <img [src]="'http://localhost:8085/images/account/' + loanData.account.photo" alt="Account Photo"
+              class="rounded-circle img-thumbnail me-3" width="80" height="80" />
+          </div>
+        </form>
+      </div>
+
+      <!-- Payment Amount Always Visible -->
+      <div class="form-group mb-3">
+        <label for="paymentAmount"><strong>Payment Amount</strong></label>
+        <input type="number" id="paymentAmount" class="form-control" [(ngModel)]="amount" placeholder="Enter amount">
+      </div>
+
+      <button class="btn btn-success w-100 mb-3" (click)="payLoan()" [disabled]="loading">
+        {{ loading ? 'Processing...' : 'Pay EMI' }}
+      </button>
+
+      <!-- Alerts -->
+      <div>
+        <div class="alert alert-success" *ngIf="successMessage">{{ successMessage }}</div>
+        <div class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+==============================End PayLoan.html == Date 15-09-2025=============

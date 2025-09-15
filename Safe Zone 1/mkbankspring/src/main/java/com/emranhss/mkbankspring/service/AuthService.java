@@ -3,6 +3,7 @@ package com.emranhss.mkbankspring.service;
 import com.emranhss.mkbankspring.dto.AuthenticationResponse;
 import com.emranhss.mkbankspring.entity.*;
 import com.emranhss.mkbankspring.jwt.JwtService;
+import com.emranhss.mkbankspring.repository.GLTransactionRepository;
 import com.emranhss.mkbankspring.repository.TokenRepository;
 import com.emranhss.mkbankspring.repository.UserRepository;
 import jakarta.mail.MessagingException;
@@ -48,6 +49,9 @@ public class AuthService {
 
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    private GLTransactionRepository glTransactionRepository;
 
     @Autowired
     @Lazy
@@ -217,6 +221,15 @@ public class AuthService {
             initialDeposit.setToken(jwtToken);                          // Attach the same JWT token
             transactionService.addTransaction(initialDeposit, accountData.getId(),jwtToken);
         }
+
+        GLTransaction glTxn1 = new GLTransaction();
+        glTxn1.setAmount(accountData.getBalance());    // minus because money going out
+        glTxn1.setType(GLType.ACCOUNT_OPEN);
+        glTxn1.setDescription("Account Openning Balance.Account Id is " + accountData.getId());
+        glTxn1.setReferenceId(accountData.getId());
+        glTxn1.setReferenceType("ACCOUNT_OPEN");
+        glTransactionRepository.save(glTxn1);
+
         // Send activation email to the user after successful registration
         sendActivationEmail(savedUser);
     }
