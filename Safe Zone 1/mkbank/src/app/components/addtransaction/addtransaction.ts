@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Inject, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Transactionsservice } from '../../service/transactionsservice';
 import { Transaction } from '../../model/transactions.model';
@@ -14,7 +14,7 @@ import { Accountsservice } from '../../service/accountsservice';
   templateUrl: './addtransaction.html',
   styleUrl: './addtransaction.css'
 })
-export class Addtransaction {
+export class Addtransaction implements OnInit{
 
   transactionForm!: FormGroup;
   transactionType = TransactionType;
@@ -68,6 +68,8 @@ export class Addtransaction {
       }
     });
   }
+
+
 
   //Receiver Data Load (Service Call)
   loadReceiverData(receiverId: number) {

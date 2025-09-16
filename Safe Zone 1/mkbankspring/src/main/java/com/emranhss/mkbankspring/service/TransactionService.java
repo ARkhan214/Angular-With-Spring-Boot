@@ -143,6 +143,10 @@ public class TransactionService {
         Accounts receiver = accountRepository.findById(receiverId)
                 .orElseThrow(() -> new RuntimeException("Receiver account not found!"));
 
+        if (senderId.equals(receiverId)) {
+            throw new RuntimeException("You cannot transfer to your own account!");
+        }
+
         if (!receiver.isAccountActiveStatus()) {
             throw new RuntimeException("Receiver account is closed!");
         }

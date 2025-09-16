@@ -1,0 +1,1686 @@
+ঠিক আছে আঃ রহিম খান, আমি ধাপে ধাপে তোমাকে বুঝিয়ে দিচ্ছি কিভাবে **Loan Approval System** বানাতে হবে। আমরা মূলত দুইটা দিক দেখব: **User Side** এবং **Admin Side**।
+
+---
+
+### **1️⃣ User Side: Loan Apply**
+
+* User লগইন করে loan apply করবে।
+* Apply করার সময় backend এ একটি **Loan record** তৈরি হবে।
+* Initial status হবে `PENDING`।
+* Example fields:
+
+  ```text
+  id | accountId | loanAmount | interestRate | status(PENDING/APPROVED/CANCELLED) | loanType | appliedAt
+  ```
+* User শুধু apply করবে; approval বা cancel করার ক্ষমতা নেই।
+
+---
+
+### **2️⃣ Admin Side: Loan Approval**
+
+* Admin একটি **list of pending loans** দেখতে পারবে।
+
+  * Example: GET `/api/admin/loans/pending`
+  * Response: List of loans with user info (name, accountId, amount, appliedAt)
+* Admin approve বা cancel করতে পারবে।
+
+  * Approve: `PUT /api/admin/loans/{loanId}/approve`
+  * Cancel: `PUT /api/admin/loans/{loanId}/cancel`
+* Approve করলে status `APPROVED` হবে। Cancel করলে `CANCELLED` হবে।
+
+---
+
+### **3️⃣ Database Changes (Optional but Recommended)**
+
+* `Loan` entity তে নতুন ফিল্ড:
+
+  ```java
+  private Long id;
+  private Long accountId;   // যেই user apply করেছে
+  private double loanAmount;
+  private double interestRate;
+  private String status;    // PENDING / APPROVED / CANCELLED
+  private String loanType;
+  private LocalDateTime appliedAt;
+  private LocalDateTime approvedAt;  // optional, শুধু approved হলে set হবে
+  private Long approvedBy;  // optional, admin userId
+  ```
+* `LoanRepository` তে query method তৈরি করতে হবে:
+
+  ```java
+  List<Loan> findByStatus(String status);  // For admin pending loans
+  ```
+
+---
+
+### **4️⃣ Backend Flow**
+
+1. User apply করলে:
+
+   * LoanService.createLoan() → status `PENDING`
+2. Admin pending loans fetch করলে:
+
+   * LoanService.getPendingLoans() → list of loans
+3. Admin approve/cancel করলে:
+
+   * LoanService.updateLoanStatus(loanId, "APPROVED"/"CANCELLED")
+
+---
+
+### **5️⃣ Frontend Flow**
+
+* User:
+
+  * Form fill → submit → show success message
+* Admin:
+
+  * Table/List of pending loans
+  * Approve/Cancel button → backend call
+
+---
+
+আঃ রহিম খান, যদি তুমি চাও আমি এবার **backend structure & code** তৈরি করে দেখাই কিভাবে Loan Approval implement করতে হবে।
+তুমি কি চাইছো আমি backend code দিয়ে দিই?
+
+
+=================================
+
+he tumi bujhte parso .good.amar posondho hoise.sono ami chi amar kajta 100% paerfect hok tai tumi amar kastheke file niea perfect vabe korba .ebar bolo ki ki lagbe tarpor ami debo tomake.age backend full process complete korba tarpr frontend .ebar bolo ki ki  file dile perfect korte parba.
+
+================================
+
+ধন্যবাদ আঃ রহিম খান, বুঝতে পারলাম 😎। আমরা পুরো Loan Approval System **100% perfect** করতে চাই। আমি step by step বলছি, কোন কোন ফাইল/ডেটা দরকার হবে যেন backend একদম smooth তৈরি করা যায়।
+
+---
+
+### **1️⃣ Entity Files**
+
+আমাদের লাগবে:
+
+* `Loan.java` (Loan entity)
+* `Accounts.java` (যদি তোমার Loan entity Account reference করে)
+* `User.java` (যদি admin/user info লাগবে)
+
+> কারণ backend এ loan apply, fetch, approve/cancel করার জন্য entity ঠিক থাকতে হবে।
+
+---
+
+### **2️⃣ DTO Files**
+
+* `LoanDto.java` (user/frontend কে পাঠানোর জন্য)
+* `AccountsDTO.java` (LoanDto এর ভিতরে account info দেখানোর জন্য)
+
+> তুমি আগেই LoanDto দিয়েছো, যদি AccountsDTO থাকে সেটাও লাগবে।
+
+---
+
+### **3️⃣ Repository Files**
+
+* `LoanRepository.java` (Loan entity এর জন্য)
+* `AccountRepository.java` (তোমার কাছে আছে)
+* `UserRepository.java` (যদি admin user info লাগবে)
+
+> Repositories backend logic এর backbone।
+
+---
+
+### **4️⃣ Service Files**
+
+* `LoanService.java` (apply, get pending, approve, cancel logic)
+* `AccountService.java` (user account fetch করার জন্য)
+* `UserService.java` (optional, admin verify/ fetch করতে)
+
+---
+
+### **5️⃣ RestController Files**
+
+* `LoanRestController.java` (user apply/ pre-fill data fetch)
+* `AdminLoanRestController.java` (admin pending loans, approve/cancel)
+
+---
+
+### **6️⃣ Security (Optional but Recommended)**
+
+* JwtAuthenticationFilter / SecurityConfig (যদি admin/user role আলাদা করতে হয়)
+* Role check logic
+
+---
+
+### **7️⃣ Extra (Optional)**
+
+* `application.properties` / `application.yml` (database + mail config)
+* Any utility class (যদি loan interest calculation বা date calculation দরকার হয়)
+
+---
+
+💡 **Backend perfect করতে আমি এই সব ফাইল চাই**। তুমি এগুলো আমাকে দিলে আমি:
+
+1. Loan apply system
+2. Admin pending loan list
+3. Approve/Cancel logic
+4. Response DTO mapping
+   সবই clean & production-ready style এ বানিয়ে দিব।
+
+---
+
+আঃ রহিম খান, তুমি কি একসাথে সব ফাইল দিবে, নাকি step by step দিবে?
+ 
+====================================================
+
+
+atogulo file akta message diea tumi nite parba na tai dui tinta message lagte pare .tumi age sobgulo amar kastheke niba tarpor full kaj er code banay diba .ami tomake file dicci .ok
+
+=====================================================
+
+
+
+ঠিক আছে আঃ রহিম খান 😎। আমি বুঝেছি।
+
+আপনি প্রথমে সব ফাইল/ডেটা পাঠান। আমি সবগুলো receive করার পরে **Loan Approval System** এর full backend code একবারে clean & perfect বানিয়ে দিব।
+
+শুধু খেয়াল রাখবেন, প্রথমে সব ফাইল/ডেটা পাঠাবেন, তারপর আমি coding শুরু করব।
+
+আপনি পাঠাতে শুরু করতে পারেন।
+==================================
+
+package com.emranhss.mkbankspring.entity;
+
+import jakarta.persistence.*;
+
+import java.util.Date;
+
+@Entity
+public class Loan {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    // Account holder of this loan
+    @ManyToOne
+    @JoinColumn(name = "account_id", nullable = false)
+    private Accounts account;
+
+    private double loanAmount;
+
+    private double interestRate;
+
+    // Duration of loan in months
+    private int durationInMonths;
+
+    // Monthly installment (EMI)
+    private double emiAmount;
+
+    @Enumerated(EnumType.STRING)
+    private LoanType loanType;
+
+    @Enumerated(EnumType.STRING)
+    private LoanStatus status = LoanStatus.ACTIVE;
+
+    @Temporal(TemporalType.DATE)
+    private Date loanStartDate;
+
+    // Loan maturity date
+    @Temporal(TemporalType.DATE)
+    private Date loanMaturityDate;
+
+    private double totalAlreadyPaidAmount;
+    // Remaining amount to be paid
+    private double remainingAmount;
+
+    // Penalty rate for late payment or default (optional)
+    private double penaltyRate;
+
+    // Date when last payment was made
+    @Temporal(TemporalType.DATE)
+    private Date lastPaymentDate;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+
+    // Constructors, getters, setters
+    public Loan() {
+    }
+
+    public Loan(Long id, Accounts account, double loanAmount, double interestRate, int durationInMonths, double emiAmount, LoanType loanType, LoanStatus status, Date loanStartDate, Date loanMaturityDate, double totalAlreadyPaidAmount, double remainingAmount, double penaltyRate, Date lastPaymentDate, Date updatedAt) {
+        this.id = id;
+        this.account = account;
+        this.loanAmount = loanAmount;
+        this.interestRate = interestRate;
+        this.durationInMonths = durationInMonths;
+        this.emiAmount = emiAmount;
+        this.loanType = loanType;
+        this.status = status;
+        this.loanStartDate = loanStartDate;
+        this.loanMaturityDate = loanMaturityDate;
+        this.totalAlreadyPaidAmount = totalAlreadyPaidAmount;
+        this.remainingAmount = remainingAmount;
+        this.penaltyRate = penaltyRate;
+        this.lastPaymentDate = lastPaymentDate;
+        this.updatedAt = updatedAt;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Accounts getAccount() {
+        return account;
+    }
+
+    public void setAccount(Accounts account) {
+        this.account = account;
+    }
+
+    public double getLoanAmount() {
+        return loanAmount;
+    }
+
+    public void setLoanAmount(double loanAmount) {
+        this.loanAmount = loanAmount;
+    }
+
+    public double getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(double interestRate) {
+        this.interestRate = interestRate;
+    }
+
+    public int getDurationInMonths() {
+        return durationInMonths;
+    }
+
+    public void setDurationInMonths(int durationInMonths) {
+        this.durationInMonths = durationInMonths;
+    }
+
+    public double getEmiAmount() {
+        return emiAmount;
+    }
+
+    public void setEmiAmount(double emiAmount) {
+        this.emiAmount = emiAmount;
+    }
+
+    public LoanType getLoanType() {
+        return loanType;
+    }
+
+    public void setLoanType(LoanType loanType) {
+        this.loanType = loanType;
+    }
+
+    public LoanStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(LoanStatus status) {
+        this.status = status;
+    }
+
+    public Date getLoanStartDate() {
+        return loanStartDate;
+    }
+
+    public void setLoanStartDate(Date loanStartDate) {
+        this.loanStartDate = loanStartDate;
+    }
+
+    public Date getLoanMaturityDate() {
+        return loanMaturityDate;
+    }
+
+    public void setLoanMaturityDate(Date loanMaturityDate) {
+        this.loanMaturityDate = loanMaturityDate;
+    }
+
+    public double getTotalAlreadyPaidAmount() {
+        return totalAlreadyPaidAmount;
+    }
+
+    public void setTotalAlreadyPaidAmount(double totalAlreadyPaidAmount) {
+        this.totalAlreadyPaidAmount = totalAlreadyPaidAmount;
+    }
+
+    public double getRemainingAmount() {
+        return remainingAmount;
+    }
+
+    public void setRemainingAmount(double remainingAmount) {
+        this.remainingAmount = remainingAmount;
+    }
+
+    public double getPenaltyRate() {
+        return penaltyRate;
+    }
+
+    public void setPenaltyRate(double penaltyRate) {
+        this.penaltyRate = penaltyRate;
+    }
+
+    public Date getLastPaymentDate() {
+        return lastPaymentDate;
+    }
+
+    public void setLastPaymentDate(Date lastPaymentDate) {
+        this.lastPaymentDate = lastPaymentDate;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+}  
+
+package com.emranhss.mkbankspring.entity;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
+
+import java.util.Date;
+import java.util.List;
+
+@Entity
+public class Accounts {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+   private Long id ;
+
+    private String name;
+    private boolean accountActiveStatus = true;
+    private String accountType ;
+    private double balance ;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(unique = true, length = 17, nullable = false)
+    private String nid;
+
+    @Column(length = 15, unique = true, nullable = false)
+    private String phoneNumber;
+
+    @Column(length = 255)
+    private String address;
+
+    private String photo;
+
+
+    private Date dateOfBirth;
+
+
+    private Date accountOpeningDate;
+
+
+    private Date accountClosingDate;
+
+
+    @Enumerated(value = EnumType.STRING)
+    private  Role role;
+
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    @JsonIgnore
+//    @JsonBackReference
+    private List<Transaction> transactions;
+
+    public Accounts() {
+    }
+
+    public Accounts(Long id, String name, boolean accountActiveStatus, String accountType, double balance, User user, String nid, String phoneNumber, String address, String photo, Date dateOfBirth, Date accountOpeningDate, Date accountClosingDate, Role role, List<Transaction> transactions) {
+        this.id = id;
+        this.name = name;
+        this.accountActiveStatus = accountActiveStatus;
+        this.accountType = accountType;
+        this.balance = balance;
+        this.user = user;
+        this.nid = nid;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.photo = photo;
+        this.dateOfBirth = dateOfBirth;
+        this.accountOpeningDate = accountOpeningDate;
+        this.accountClosingDate = accountClosingDate;
+        this.role = role;
+        this.transactions = transactions;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isAccountActiveStatus() {
+        return accountActiveStatus;
+    }
+
+    public void setAccountActiveStatus(boolean accountActiveStatus) {
+        this.accountActiveStatus = accountActiveStatus;
+    }
+
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(String accountType) {
+        this.accountType = accountType != null ? accountType.toUpperCase() : null;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public String getNid() {
+        return nid;
+    }
+
+    public void setNid(String nid) {
+        this.nid = nid;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
+    public Date getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public Date getAccountOpeningDate() {
+        return accountOpeningDate;
+    }
+
+    public void setAccountOpeningDate(Date accountOpeningDate) {
+        this.accountOpeningDate = accountOpeningDate;
+    }
+
+    public Date getAccountClosingDate() {
+        return accountClosingDate;
+    }
+
+    public void setAccountClosingDate(Date accountClosingDate) {
+        this.accountClosingDate = accountClosingDate;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
+    }
+
+    @Override
+    public String toString() {
+        return "Accounts{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", accountActiveStatus=" + accountActiveStatus +
+                ", accountType='" + accountType + '\'' +
+                ", balance=" + balance +
+                ", user=" + user +
+                ", nid='" + nid + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", address='" + address + '\'' +
+                ", photo='" + photo + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", accountOpeningDate=" + accountOpeningDate +
+                ", accountClosingDate=" + accountClosingDate +
+                ", role=" + role +
+                ", transactions=" + transactions +
+                '}';
+    }
+}  
+
+package com.emranhss.mkbankspring.entity;
+
+import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
+
+@Entity
+public class User implements UserDetails {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+
+    @Column(unique = true)
+    private String email;
+    private String password;
+    // Extra field for reset
+    private String resetToken;
+    private Date tokenExpiry;
+
+    @Column(length = 15, unique = true, nullable = false)
+    private String phoneNumber;
+    private String photo;
+
+    private Date dateOfBirth;
+
+    @Enumerated(value = EnumType.STRING)
+    private  Role role;
+
+    @OneToMany
+    private List<Token> tokens;
+
+
+    // for user details +++++++++++++++++++++++++++++++++++++++++
+
+    @Column(nullable = false)
+    private  boolean active;
+    private boolean isLock;
+
+
+
+    public User() {
+    }
+
+    public User(Long id, String name, String email, String password, String resetToken, Date tokenExpiry, String phoneNumber, String photo, Date dateOfBirth, Role role, List<Token> tokens) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.resetToken = resetToken;
+        this.tokenExpiry = tokenExpiry;
+        this.phoneNumber = phoneNumber;
+        this.photo = photo;
+        this.dateOfBirth = dateOfBirth;
+        this.role = role;
+        this.tokens = tokens;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    public String getResetToken() { return resetToken; }
+    public void setResetToken(String resetToken) { this.resetToken = resetToken; }
+
+    public Date getTokenExpiry() { return tokenExpiry; }
+    public void setTokenExpiry(Date tokenExpiry) { this.tokenExpiry = tokenExpiry; }
+
+
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
+    public Date getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public List<Token> getTokens() {
+        return tokens;
+    }
+
+    public void setTokens(List<Token> tokens) {
+        this.tokens = tokens;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public boolean isLock() {
+        return isLock;
+    }
+
+    public void setLock(boolean lock) {
+        isLock = lock;
+    }
+
+
+    // implements Methods ----------------------------------------------------
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return isLock;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+}  
+
+package com.emranhss.mkbankspring.dto;
+
+import java.util.Date;
+
+public class AccountsDTO {
+    private Long id;
+    private String name;
+    private boolean accountActiveStatus;
+    private String accountType;
+    private double balance;
+//    private Long userId;
+    private String nid;
+    private String phoneNumber;
+    private String address;
+    private String photo;
+    private Date dateOfBirth;
+    private Date accountOpeningDate;
+    private Date accountClosingDate;
+    private String role;
+
+    public AccountsDTO() {
+
+
+    }
+
+    public AccountsDTO(Long id, String name, boolean accountActiveStatus, String accountType, double balance, String nid, String phoneNumber, String address, String photo, Date dateOfBirth, Date accountOpeningDate, Date accountClosingDate, String role) {
+        this.id = id;
+        this.name = name;
+        this.accountActiveStatus = accountActiveStatus;
+        this.accountType = accountType;
+        this.balance = balance;
+        this.nid = nid;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.photo = photo;
+        this.dateOfBirth = dateOfBirth;
+        this.accountOpeningDate = accountOpeningDate;
+        this.accountClosingDate = accountClosingDate;
+        this.role = role;
+    }
+
+    public AccountsDTO(Long id, String name, double balance, String accountType) {
+
+    }
+
+
+    // 7 parameter constructor
+    public AccountsDTO(Long id, String name, double balance, String accountType,
+                       String nid, String phoneNumber, String address,String photo) {
+        this.id = id;
+        this.name = name;
+        this.balance = balance;
+        this.accountType = accountType;
+        this.nid = nid;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.photo = photo;
+
+    }
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isAccountActiveStatus() {
+        return accountActiveStatus;
+    }
+
+    public void setAccountActiveStatus(boolean accountActiveStatus) {
+        this.accountActiveStatus = accountActiveStatus;
+    }
+
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(String accountType) {
+        this.accountType = accountType;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    public String getNid() {
+        return nid;
+    }
+
+    public void setNid(String nid) {
+        this.nid = nid;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
+    public Date getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public Date getAccountOpeningDate() {
+        return accountOpeningDate;
+    }
+
+    public void setAccountOpeningDate(Date accountOpeningDate) {
+        this.accountOpeningDate = accountOpeningDate;
+    }
+
+    public Date getAccountClosingDate() {
+        return accountClosingDate;
+    }
+
+    public void setAccountClosingDate(Date accountClosingDate) {
+        this.accountClosingDate = accountClosingDate;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+}  
+
+package com.emranhss.mkbankspring.dto;
+
+import java.util.Date;
+
+public class LoanDto {
+
+    private Long id;
+    private double loanAmount;
+    private double emiAmount;
+    private double interestRate;
+    private String status;
+    private String loanType;
+    private Date loanStartDate;
+    private Date loanMaturityDate;
+    private double totalAlreadyPaidAmount;
+    private double remainingAmount;
+    private double penaltyRate;
+    private Date lastPaymentDate;
+    private Date updatedAt;
+    private AccountsDTO account; // এখানে DTO use করলাম
+
+    public LoanDto() {
+    }
+
+    public LoanDto(Long id, double loanAmount, double emiAmount, double interestRate, String status, String loanType, Date loanStartDate, Date loanMaturityDate, double totalAlreadyPaidAmount, double remainingAmount, double penaltyRate, Date lastPaymentDate, Date updatedAt, AccountsDTO account) {
+        this.id = id;
+        this.loanAmount = loanAmount;
+        this.emiAmount = emiAmount;
+        this.interestRate = interestRate;
+        this.status = status;
+        this.loanType = loanType;
+        this.loanStartDate = loanStartDate;
+        this.loanMaturityDate = loanMaturityDate;
+        this.totalAlreadyPaidAmount = totalAlreadyPaidAmount;
+        this.remainingAmount = remainingAmount;
+        this.penaltyRate = penaltyRate;
+        this.lastPaymentDate = lastPaymentDate;
+        this.updatedAt = updatedAt;
+        this.account = account;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public double getLoanAmount() {
+        return loanAmount;
+    }
+
+    public void setLoanAmount(double loanAmount) {
+        this.loanAmount = loanAmount;
+    }
+
+    public double getEmiAmount() {
+        return emiAmount;
+    }
+
+    public void setEmiAmount(double emiAmount) {
+        this.emiAmount = emiAmount;
+    }
+
+    public double getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(double interestRate) {
+        this.interestRate = interestRate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getLoanType() {
+        return loanType;
+    }
+
+    public void setLoanType(String loanType) {
+        this.loanType = loanType;
+    }
+
+    public Date getLoanStartDate() {
+        return loanStartDate;
+    }
+
+    public void setLoanStartDate(Date loanStartDate) {
+        this.loanStartDate = loanStartDate;
+    }
+
+    public Date getLoanMaturityDate() {
+        return loanMaturityDate;
+    }
+
+    public void setLoanMaturityDate(Date loanMaturityDate) {
+        this.loanMaturityDate = loanMaturityDate;
+    }
+
+    public double getTotalAlreadyPaidAmount() {
+        return totalAlreadyPaidAmount;
+    }
+
+    public void setTotalAlreadyPaidAmount(double totalAlreadyPaidAmount) {
+        this.totalAlreadyPaidAmount = totalAlreadyPaidAmount;
+    }
+
+    public double getRemainingAmount() {
+        return remainingAmount;
+    }
+
+    public void setRemainingAmount(double remainingAmount) {
+        this.remainingAmount = remainingAmount;
+    }
+
+    public double getPenaltyRate() {
+        return penaltyRate;
+    }
+
+    public void setPenaltyRate(double penaltyRate) {
+        this.penaltyRate = penaltyRate;
+    }
+
+    public Date getLastPaymentDate() {
+        return lastPaymentDate;
+    }
+
+    public void setLastPaymentDate(Date lastPaymentDate) {
+        this.lastPaymentDate = lastPaymentDate;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public AccountsDTO getAccount() {
+        return account;
+    }
+
+    public void setAccount(AccountsDTO account) {
+        this.account = account;
+    }
+}  
+
+package com.emranhss.mkbankspring.repository;
+
+import com.emranhss.mkbankspring.entity.Loan;
+import com.emranhss.mkbankspring.entity.LoanStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface LoanRepository  extends JpaRepository<Loan, Long> {
+
+    List<Loan> findByAccountId(Long accountId);
+    List<Loan> findByStatus(LoanStatus status);
+
+
+}  
+
+package com.emranhss.mkbankspring.repository;
+
+import com.emranhss.mkbankspring.entity.Accounts;
+import com.emranhss.mkbankspring.entity.Dps;
+import com.emranhss.mkbankspring.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface AccountRepository extends JpaRepository<Accounts,Long> {
+
+    //(connected with TransactionResCon Method Number -3) and
+    //(connected with AccountResCon Method Number -2)
+    Optional<Accounts> findById(Long id);
+
+
+    Optional<Accounts> findByUserId(Long userId);
+
+    @Query("SELECT ac FROM Accounts ac WHERE ac.user.email = :email")
+    Optional<Accounts> findByUserEmail(@Param("email") String email);
+
+    // Option 2: Directly return account id
+    @Query("SELECT a FROM Accounts a WHERE a.user = :user")
+    Optional<Accounts> findAccountByUser(User user);
+
+    // Option 3: If you want to search by userId instead of object
+    @Query("SELECT a.id FROM Accounts a WHERE a.user.id = :userId")
+    Long findAccountIdByUserId(Long userId);
+
+
+    @Query("SELECT d FROM Dps d JOIN FETCH d.account WHERE d.account.id = :accountId")
+    List<Dps> findByAccountId(@Param("accountId") Long accountId);
+
+}  
+
+package com.emranhss.mkbankspring.repository;
+
+import com.emranhss.mkbankspring.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public interface UserRepository extends JpaRepository<User,Long> {
+
+
+    Optional<User> findByEmail(String email);
+
+    Optional<User> findById(Long id);
+
+    Optional<User> findByResetToken(String resetToken);
+
+}  
+
+kichu korona ami baki 
+Service Files,RestController Files dicci tarpor kaj suru karba.  
+
+
+===============================================
+ঠিক আছে আঃ রহিম খান ✅।
+
+আমি এখন পর্যন্ত সব entity আর repository files পেয়েছি। আপনি এখন service এবং restcontroller files পাঠান, তারপর আমি full backend code তৈরির জন্য কাজ শুরু করব।
+
+
+==========================================================
+
+package com.emranhss.mkbankspring.service; import com.emranhss.mkbankspring.dto.*; import com.emranhss.mkbankspring.entity.*; import com.emranhss.mkbankspring.repository.AccountRepository; import com.emranhss.mkbankspring.repository.LoanRepository; import com.emranhss.mkbankspring.repository.TransactionRepository; import jakarta.transaction.Transactional; import org.springframework.beans.factory.annotation.Autowired; import org.springframework.stereotype.Service; import java.util.Calendar; import java.util.Date; import java.util.List; import java.util.Optional; import java.util.stream.Collectors; @Service public class LoanService{ @Autowired private LoanRepository loanRepository; @Autowired private AccountService accountService; @Autowired private AccountRepository accountRepository; @Autowired private TransactionRepository transactionRepository; //loan interest rate calculate korar jonno private double getFixedInterestRate(LoanType loanType) { if (loanType == null) return 10.0; // default switch (loanType) { case PERSONAL: return 12.0; case HOME: return 8.0; case CAR: return 9.0; case EDUCATION: return 6.0; case BUSINESS: return 14.0; default: return 10.0; } } //loan calculate korar jonno public EmiResponseDto calculateEmi(double loanAmount, int durationInMonths, String loanTypeStr) { if (durationInMonths <= 0) throw new IllegalArgumentException("Duration must be > 0"); if (durationInMonths > 60) throw new IllegalArgumentException("Duration cannot exceed 60 months"); LoanType loanType = LoanType.valueOf(loanTypeStr); double interestRate = getFixedInterestRate(loanType); // Simple interest yearly on principal as user requested double totalInterest = loanAmount * (interestRate / 100.0); double totalPayable = loanAmount + totalInterest; double emi = totalPayable / durationInMonths; return new EmiResponseDto(emi, totalPayable, interestRate); } //Loan with approval start---------------------------failed code // @Override // @Transactional // public Loan applyLoan(Long accountId, LoanRequestDto dto) { // // validation // if (dto.getDurationInMonths() <= 0 || dto.getDurationInMonths() > 60) // throw new IllegalArgumentException("Duration must be between 1 and 60 months"); // if (dto.getLoanAmount() <= 0 || dto.getLoanAmount() > 99999999) { // throw new IllegalArgumentException("Loan amount must be > 0 and <= 99,999,999"); // } // // Accounts account = accountRepository.findById(accountId) // .orElseThrow(() -> new RuntimeException("Account not found")); // // LoanType loanType = dto.getLoanType(); // double interestRate = getFixedInterestRate(loanType); // // double totalInterest = dto.getLoanAmount() * (interestRate / 100.0); // double totalPayable = dto.getLoanAmount() + totalInterest; // double emi = totalPayable / dto.getDurationInMonths(); // // // // Create Loan // Loan loan = new Loan(); // loan.setAccount(account); // loan.setLoanAmount(dto.getLoanAmount()); // loan.setInterestRate(interestRate); // loan.setDurationInMonths(dto.getDurationInMonths()); // loan.setEmiAmount(emi); // loan.setLoanType(loanType); // loan.setStatus(LoanStatus.PENDING); // Date start = new Date(); // loan.setLoanStartDate(start); // loan.setLoanMaturityDate(addMonths(start, dto.getDurationInMonths())); // loan.setTotalAlreadyPaidAmount(0.0); // loan.setRemainingAmount(totalPayable); // loan.setUpdatedAt(new Date()); // // return loanRepository.save(loan); // // } // // // // public List<LoanDto> getPendingLoanDTOs() { // List<Loan> loans = loanRepository.findByStatus(LoanStatus.PENDING); // // return loans.stream().map(loan -> { // LoanDto dto = new LoanDto(); // dto.setId(loan.getId()); // dto.setLoanAmount(loan.getLoanAmount()); // dto.setEmiAmount(loan.getEmiAmount()); // dto.setInterestRate(loan.getInterestRate()); // dto.setStatus(loan.getStatus().name()); // dto.setLoanType(loan.getLoanType().name()); // dto.setLoanStartDate(loan.getLoanStartDate()); // dto.setLoanMaturityDate(loan.getLoanMaturityDate()); // dto.setTotalAlreadyPaidAmount(loan.getTotalAlreadyPaidAmount()); // dto.setRemainingAmount(loan.getRemainingAmount()); // dto.setPenaltyRate(loan.getPenaltyRate()); // dto.setLastPaymentDate(loan.getLastPaymentDate()); // dto.setUpdatedAt(loan.getUpdatedAt()); // // AccountsDTO accountDTO = new AccountsDTO(); // accountDTO.setId(loan.getAccount().getId()); // accountDTO.setName(loan.getAccount().getName()); // accountDTO.setBalance(loan.getAccount().getBalance()); // dto.setAccount(accountDTO); // // return dto; // }).collect(Collectors.toList()); // } // // // // // // @Transactional // public Loan approveLoan(Long loanId) { // Loan loan = loanRepository.findById(loanId) // .orElseThrow(() -> new RuntimeException("Loan not found")); // // if (loan.getStatus() != LoanStatus.PENDING) { // throw new IllegalStateException("Loan is not in pending state"); // } // // Accounts account = loan.getAccount(); // // // ✅ Loan Active // loan.setStatus(LoanStatus.ACTIVE); // // // ✅ Account balance update // account.setBalance(account.getBalance() + loan.getLoanAmount()); // // // ✅ Transaction add // Transaction txn = new Transaction(); // txn.setAccount(account); // txn.setAmount(loan.getLoanAmount()); // txn.setType(TransactionType.DEPOSIT); // txn.setDescription("Loan Disbursed"); // txn.setTransactionTime(new Date()); // // transactionRepository.save(txn); // // return loanRepository.save(loan); // } // // // // @Transactional // public Loan rejectLoan(Long loanId) { // Loan loan = loanRepository.findById(loanId) // .orElseThrow(() -> new RuntimeException("Loan not found")); // // if (loan.getStatus() != LoanStatus.PENDING) { // throw new IllegalStateException("Loan is not in pending state"); // } // // loan.setStatus(LoanStatus.REJECTED); // return loanRepository.save(loan); // } //Loan with approval end---------------------------failed code //loan apply korar jonno public Loan applyLoan(Long accountId, LoanRequestDto dto,String token) { if (dto.getDurationInMonths() <= 0 || dto.getDurationInMonths() > 60) throw new IllegalArgumentException("Duration must be between 1 and 60 months"); if (dto.getLoanAmount() <= 0 || dto.getLoanAmount() > 99999999) throw new IllegalArgumentException("Loan amount must be > 0 and <= 99,999,999"); Accounts account = accountRepository.findById(accountId) .orElseThrow(() -> new RuntimeException("Account not found")); LoanType loanType = dto.getLoanType(); double interestRate = getFixedInterestRate(loanType); double totalInterest = dto.getLoanAmount() * (interestRate / 100.0); double totalPayable = dto.getLoanAmount() + totalInterest; double emi = totalPayable / dto.getDurationInMonths(); // Update account balance account.setBalance(account.getBalance() + dto.getLoanAmount()); accountRepository.save(account); // Create Loan Loan loan = new Loan(); loan.setAccount(account); loan.setLoanAmount(dto.getLoanAmount()); loan.setInterestRate(interestRate); loan.setDurationInMonths(dto.getDurationInMonths()); loan.setEmiAmount(emi); loan.setLoanType(loanType); loan.setStatus(LoanStatus.ACTIVE); Date start = new Date(); loan.setLoanStartDate(start); loan.setLoanMaturityDate(addMonths(start, dto.getDurationInMonths())); loan.setTotalAlreadyPaidAmount(0.0); loan.setRemainingAmount(totalPayable); loan.setUpdatedAt(new Date()); Loan savedLoan = loanRepository.save(loan); // Create Transaction for Loan Credit Transaction txn = new Transaction(); txn.setAccount(account); txn.setType(TransactionType.DEPOSIT); // Account receives money txn.setTransactionTime(new Date()); txn.setAmount(dto.getLoanAmount()); txn.setDescription("Loan disbursed: Loan ID " + savedLoan.getId()); txn.setReceiverAccount(null); // Receiver not needed for loan credit txn.setToken(token); transactionRepository.save(txn); return savedLoan; } // // @Override // @Transactional // public Loan applyLoan(Long accountId, LoanRequestDto dto) { // if (dto.getDurationInMonths() <= 0) throw new IllegalArgumentException("Duration must be > 0"); // if (dto.getDurationInMonths() > 60) throw new IllegalArgumentException("Duration cannot exceed 60 months"); // if (dto.getLoanAmount() <= 0 || dto.getLoanAmount() > 99999999) { // throw new IllegalArgumentException("Loan amount must be > 0 and <= 99,999,999"); // } // // // Accounts account = accountRepository.findById(accountId) // .orElseThrow(() -> new RuntimeException("Account not found")); // // LoanType loanType = dto.getLoanType(); // double interestRate = getFixedInterestRate(loanType); // // double totalInterest = dto.getLoanAmount() * (interestRate / 100.0); // double totalPayable = dto.getLoanAmount() + totalInterest; // double emi = totalPayable / dto.getDurationInMonths(); // // Loan loan = new Loan(); // loan.setAccount(account); // loan.setLoanAmount(dto.getLoanAmount()); // loan.setInterestRate(interestRate); // loan.setDurationInMonths(dto.getDurationInMonths()); // loan.setEmiAmount(emi); // loan.setLoanType(loanType); // loan.setStatus(LoanStatus.PENDING); // Date start = new Date(); // loan.setLoanStartDate(start); // loan.setLoanMaturityDate(addMonths(start, dto.getDurationInMonths())); // loan.setTotalAlreadyPaidAmount(0.0); // loan.setRemainingAmount(totalPayable); // loan.setUpdatedAt(new Date()); // // return loanRepository.save(loan); // } //loan pay korar jonno public Loan payLoan(Long accountId, LoanPaymentDto paymentDto,String token) { if (paymentDto.getAmount() <= 0) throw new IllegalArgumentException("Payment amount must be > 0"); Loan loan = loanRepository.findById(paymentDto.getLoanId()) .orElseThrow(() -> new RuntimeException("Loan not found")); if (loan.getStatus() == LoanStatus.CLOSED) { throw new RuntimeException("This loan is already closed. No further payments allowed."); } Accounts account = accountRepository.findById(accountId) .orElseThrow(() -> new RuntimeException("Account not found")); if (!loan.getAccount().getId().equals(accountId)) { throw new RuntimeException("Loan does not belong to this account"); } double payAmount = paymentDto.getAmount(); if (payAmount > loan.getRemainingAmount()) { throw new RuntimeException("Payment amount must be less than loan remaining amount"); } // Check sufficient balance if (account.getBalance() < payAmount) { throw new RuntimeException("Insufficient account balance"); } // Deduct from account account.setBalance(account.getBalance() - payAmount); accountRepository.save(account); // persist // Update loan double newPaid = loan.getTotalAlreadyPaidAmount() + payAmount; double newRemaining = loan.getRemainingAmount() - payAmount; loan.setTotalAlreadyPaidAmount(newPaid); loan.setRemainingAmount(Math.max(0.0, newRemaining)); loan.setLastPaymentDate(new Date()); loan.setUpdatedAt(new Date()); if (loan.getRemainingAmount() <= 0.0) { loan.setStatus(LoanStatus.CLOSED); } else { // if it was PENDING and first payment done, set ACTIVE if (loan.getStatus() == LoanStatus.PENDING) { loan.setStatus(LoanStatus.ACTIVE); } } // Create Transaction for Loan Credit Transaction txn = new Transaction(); txn.setAccount(account); txn.setType(TransactionType.TRANSFER); // Account receives money txn.setTransactionTime(new Date()); txn.setAmount(paymentDto.getAmount()); txn.setDescription("Loan Installment payment "+ loan.getId()); txn.setToken(token); txn.setReceiverAccount(null); // Receiver not needed for loan credit transactionRepository.save(txn); return loanRepository.save(loan); } //-------------start--------------------- // Fetch all loans for a given account public List<LoanDto> getLoansByAccountId(Long accountId) { List<Loan> loans = loanRepository.findByAccountId(accountId); return loans.stream().map(loan -> { Accounts account = loan.getAccount(); AccountsDTO accountDTO = null; if (account != null) { accountDTO = new AccountsDTO( account.getId(), account.getName(), account.getBalance(), account.getAccountType(), account.getNid(), account.getPhoneNumber(), account.getAddress(), account.getPhoto() ); } return new LoanDto( loan.getId(), loan.getLoanAmount(), loan.getEmiAmount(), loan.getInterestRate(), loan.getStatus().toString(), loan.getLoanType().toString(), loan.getLoanStartDate(), loan.getLoanMaturityDate(), loan.getTotalAlreadyPaidAmount(), loan.getRemainingAmount(), loan.getPenaltyRate(), loan.getLastPaymentDate(), loan.getUpdatedAt(), accountDTO ); }).collect(Collectors.toList()); } public LoanDto getLoanDtoById(Long loanId,Long accountId) { Loan loan = loanRepository.findById(loanId) .orElseThrow(() -> new RuntimeException("Loan not found")); // Ownership check if (!loan.getAccount().getId().equals(accountId)) { throw new RuntimeException("You are not authorized to view this loan"); } // Account entity থেকে AccountsDTO বানানো Accounts account = loan.getAccount(); AccountsDTO accountDTO = null; if (account != null) { accountDTO = new AccountsDTO( account.getId(), account.getName(), account.getBalance(), account.getAccountType(), account.getNid(), account.getPhoneNumber(), account.getAddress(), account.getPhoto() ); } // LoanDto বানানো return new LoanDto( loan.getId(), loan.getLoanAmount(), loan.getEmiAmount(), loan.getInterestRate(), loan.getStatus().toString(), loan.getLoanType().toString(), loan.getLoanStartDate(), loan.getLoanMaturityDate(), loan.getTotalAlreadyPaidAmount(), loan.getRemainingAmount(), loan.getPenaltyRate(), loan.getLastPaymentDate(), loan.getUpdatedAt(), accountDTO ); } // public LoanDto getLoanById(Long loanId) { // Loan loan = loanRepository.findById(loanId) // .orElseThrow(() -> new RuntimeException("Loan not found with ID: " + loanId)); // // // 👉 Convert Loan → LoanDto // return mapToDto(loan); // } // // private LoanDto mapToDto(Loan loan) { // Accounts account = loan.getAccount(); // // // Account → AccountsDTO // AccountsDTO accountDto = new AccountsDTO( // account.getId(), // account.getName(), // account.getBalance(), // account.getAccountType(), // account.getNid(), // account.getPhoneNumber(), // account.getAddress(), // account.getPhoto() // ); // // // Loan → LoanDto // LoanDto dto = new LoanDto( // loan.getId(), // loan.getLoanAmount(), // loan.getEmiAmount(), // loan.getInterestRate(), // loan.getStatus().toString(), // Enum to → String // loan.getLoanType().toString(), // loan.getLoanStartDate(), // loan.getLoanMaturityDate(), // loan.getTotalAlreadyPaidAmount(), // loan.getRemainingAmount(), // loan.getPenaltyRate(), // loan.getLastPaymentDate(), // loan.getUpdatedAt(), // accountDto // ); // // return dto; // } //----------------------------end---------------- //login kore account holder eta diea tar sob loan view kortese public List<Loan> getLoansByAccount(Long accountId) { return loanRepository.findByAccountId(accountId); } // helper to add months private Date addMonths(Date date, int months) { Calendar cal = Calendar.getInstance(); cal.setTime(date); cal.add(Calendar.MONTH, months); return cal.getTime(); } // Account holder apply loan // public Loan applyLoan(Long accountId, Loan loan) { // Accounts account = accountService.findById(accountId) // .orElseThrow(() -> new RuntimeException("Account not found")); // // loan.setAccount(account); // loan.setStatus(LoanStatus.PENDING); // loan.setLoanStartDate(new Date()); // // // EMI Calculation // double principal = loan.getLoanAmount(); // double monthlyRate = loan.getInterestRate() / 12 / 100; // int months = loan.getDurationInMonths(); // double emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / // (Math.pow(1 + monthlyRate, months) - 1); // loan.setEmiAmount(Math.round(emi * 100.0) / 100.0); // // // Total and remaining amount // loan.setTotalAlreadyPaidAmount(0); // loan.setRemainingAmount(loan.getEmiAmount() * months); // // // Maturity Date // Calendar cal = Calendar.getInstance(); // cal.setTime(new Date()); // cal.add(Calendar.MONTH, months); // loan.setLoanMaturityDate(cal.getTime()); // // loan.setUpdatedAt(new Date()); // return loanRepository.save(loan); // } // // // Account holder view own loans // // // Admin view pending loans // public List<Loan> getPendingLoans() { // return loanRepository.findByStatus(LoanStatus.PENDING); // } // // // Admin approve loan // public Loan approveLoan(Long loanId) { // Loan loan = loanRepository.findById(loanId) // .orElseThrow(() -> new RuntimeException("Loan not found")); // loan.setStatus(LoanStatus.ACTIVE); // loan.setUpdatedAt(new Date()); // return loanRepository.save(loan); // } // // // Admin reject loan // public Loan rejectLoan(Long loanId) { // Loan loan = loanRepository.findById(loanId) // .orElseThrow(() -> new RuntimeException("Loan not found")); // loan.setStatus(LoanStatus.CLOSED); // loan.setUpdatedAt(new Date()); // return loanRepository.save(loan); // } // // // Payment (Account holder pays EMI) // public Loan payEMI(Long loanId, double amount) { // Loan loan = loanRepository.findById(loanId) // .orElseThrow(() -> new RuntimeException("Loan not found")); // // // Update paid amount // double totalPaid = loan.getTotalAlreadyPaidAmount() + amount; // loan.setTotalAlreadyPaidAmount(totalPaid); // // // Update remaining amount // double remaining = (loan.getEmiAmount() * loan.getDurationInMonths()) - totalPaid; // loan.setRemainingAmount(Math.max(0, remaining)); // // // Update last payment date // loan.setLastPaymentDate(new Date()); // loan.setUpdatedAt(new Date()); // // // If fully paid, close loan // if (remaining <= 0) { // loan.setStatus(LoanStatus.CLOSED); // } // // return loanRepository.save(loan); // } } package com.emranhss.mkbankspring.service; import com.emranhss.mkbankspring.dto.AccountsDTO; import com.emranhss.mkbankspring.entity.Accounts; import com.emranhss.mkbankspring.repository.AccountRepository; import org.springframework.beans.factory.annotation.Autowired; import org.springframework.stereotype.Service; import java.util.List; import java.util.Optional; import java.util.stream.Collectors; @Service public class AccountService { @Autowired private AccountRepository accountRepository; //find all account (connected with AccountResCon Method Number -3) public List<Accounts> getAll() { return accountRepository.findAll(); } // Method for Transaction Taka (id diea account er data ana)(connected with AccountResCon Method Number 3 & 4) public Optional<Accounts> findById(Long id) { return accountRepository.findById(id); } //find account by id (connected with AccountResCon Method Number -2) public Accounts findAccountById(Long id) { return accountRepository.findById(id).orElse(null); } //method for save (connected with AccountResCon Method Number -4) public Accounts save(Accounts accounts) { return accountRepository.save(accounts); } //method for delete public void delete(Long id) { accountRepository.deleteById(id); } // public Accounts getProfileByUserId(Long userId) { // return accountRepository.findByUserId(userId) // .orElseThrow(() -> new RuntimeException("Account not found")); // } // Profile method (returns DTO) public AccountsDTO getProfileByEmail(String email) { Accounts account = findAccountByEmail(email); AccountsDTO dto = new AccountsDTO(); dto.setId(account.getId()); dto.setName(account.getName()); dto.setAccountActiveStatus(account.isAccountActiveStatus()); dto.setAccountType(account.getAccountType()); dto.setBalance(account.getBalance()); dto.setNid(account.getNid()); dto.setPhoneNumber(account.getPhoneNumber()); dto.setAddress(account.getAddress()); dto.setPhoto(account.getPhoto()); dto.setDateOfBirth(account.getDateOfBirth()); dto.setAccountOpeningDate(account.getAccountOpeningDate()); dto.setAccountClosingDate(account.getAccountClosingDate()); dto.setRole(account.getRole() != null ? account.getRole().name() : null); return dto; } //For all Accounts public List<AccountsDTO> getAllAccountsDTO() { return accountRepository.findAll().stream() .map(acc -> new AccountsDTO( acc.getId() != null ? acc.getId() : 0, acc.getName(), acc.isAccountActiveStatus(), acc.getAccountType(), acc.getBalance(), acc.getNid(), acc.getPhoneNumber(), acc.getAddress(), acc.getPhoto(), acc.getDateOfBirth(), acc.getAccountOpeningDate(), acc.getAccountClosingDate(), acc.getRole() != null ? acc.getRole().toString() : "" )) .collect(Collectors.toList()); } // Find Account by Email public Accounts findAccountByEmail(String email) { return accountRepository.findByUserEmail(email) .orElseThrow(() -> new RuntimeException("Account not found for user with email: " + email)); } // Find Account Id by Email public Long findAccountIdByEmail(String email) { Accounts account = findAccountByEmail(email); return account.getId(); } //---------Receiver data load start // Receiver Account load by ID public AccountsDTO getReceiverAccountById(Long receiverId) { Accounts account = accountRepository.findById(receiverId) .orElseThrow(() -> new RuntimeException("Receiver account not found!")); if (!account.isAccountActiveStatus()) { throw new RuntimeException("Receiver account is closed!"); } // Entity → DTO mapping AccountsDTO dto = new AccountsDTO(); dto.setId(account.getId()); dto.setName(account.getName()); dto.setAccountActiveStatus(account.isAccountActiveStatus()); dto.setAccountType(account.getAccountType()); dto.setBalance(account.getBalance()); dto.setNid(account.getNid()); dto.setPhoneNumber(account.getPhoneNumber()); dto.setAddress(account.getAddress()); dto.setPhoto(account.getPhoto()); dto.setDateOfBirth(account.getDateOfBirth()); dto.setAccountOpeningDate(account.getAccountOpeningDate()); dto.setAccountClosingDate(account.getAccountClosingDate()); dto.setRole(account.getRole() != null ? account.getRole().toString() : null); return dto; } //----------Receiver data load end } package com.emranhss.mkbankspring.service; import com.emranhss.mkbankspring.entity.User; import com.emranhss.mkbankspring.repository.UserRepository; import org.springframework.beans.factory.annotation.Autowired; import org.springframework.security.core.GrantedAuthority; import org.springframework.security.core.authority.SimpleGrantedAuthority; import org.springframework.security.core.userdetails.UserDetails; import org.springframework.security.core.userdetails.UserDetailsService; import org.springframework.security.core.userdetails.UsernameNotFoundException; import org.springframework.stereotype.Service; import java.util.Collections; import java.util.List; @Service public class UserService implements UserDetailsService { @Autowired private UserRepository userRepository; @Override public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException { User user = userRepository.findByEmail(username) .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username)); List<GrantedAuthority>authorities =Collections.singletonList( new SimpleGrantedAuthority("ROLE_"+user.getRole().name()) ); return new org.springframework.security.core.userdetails.User( user.getEmail(), user.getPassword(), authorities ); } } package com.emranhss.mkbankspring.service; import com.emranhss.mkbankspring.dto.AuthenticationResponse; import com.emranhss.mkbankspring.entity.*; import com.emranhss.mkbankspring.jwt.JwtService; import com.emranhss.mkbankspring.repository.GLTransactionRepository; import com.emranhss.mkbankspring.repository.TokenRepository; import com.emranhss.mkbankspring.repository.UserRepository; import jakarta.mail.MessagingException; import org.springframework.beans.factory.annotation.Autowired; import org.springframework.beans.factory.annotation.Value; import org.springframework.context.annotation.Lazy; import org.springframework.security.authentication.AuthenticationManager; import org.springframework.security.authentication.UsernamePasswordAuthenticationToken; import org.springframework.security.core.userdetails.UsernameNotFoundException; import org.springframework.security.crypto.password.PasswordEncoder; import org.springframework.stereotype.Service; import org.springframework.web.multipart.MultipartFile; import java.io.IOException; import java.nio.file.Files; import java.nio.file.Path; import java.nio.file.Paths; import java.util.*; @Service public class AuthService { @Autowired private PasswordEncoder passwordEncoder; @Autowired private UserRepository userRepository; @Autowired private TokenRepository tokenRepository; @Autowired private EmailService emailService; @Autowired private AccountService accountService; @Autowired private TransactionService transactionService; @Autowired private EmployeeService employeeService; @Autowired private JwtService jwtService; @Autowired private GLTransactionRepository glTransactionRepository; @Autowired @Lazy private AuthenticationManager authenticationManager; @Value("src/main/resources/static/images") private String uploadDir; //Method for save,update or register (connected with UserResCon Method Number -1) //Save user public void saveOrUpdateUser(User user, MultipartFile imageFile) { if (imageFile != null && !imageFile.isEmpty()) { String fileName = saveImage(imageFile, user); user.setPhoto(fileName); } user.setPassword(passwordEncoder.encode(user.getPassword())); user.setRole(Role.ADMIN); user.setActive(true); userRepository.save(user); sendActivationEmail(user); } //method for find all user public List<User> findAll() { return userRepository.findAll(); } //method for find user by id public User findById(Long id) { return userRepository.findById(id).get(); } //method for find user by id or return null public User findUserById(Long id) { return userRepository.findById(id).orElse(null); } public void delete(User user) { userRepository.delete(user); } //Method for Send Email (connected with this saveOrUpdateUser methode) private void sendActivationEmail(User user) { String subject = "Welcome to Our Service – Confirm Your Registration"; String mailText = "<!DOCTYPE html>" + "<html>" + "<head>" + "<style>" + " body { font-family: Arial, sans-serif; line-height: 1.6; }" + " .container { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; }" + " .header { background-color: #4CAF50; color: white; padding: 10px; text-align: center; border-radius: 10px 10px 0 0; }" + " .content { padding: 20px; }" + " .footer { font-size: 0.9em; color: #777; margin-top: 20px; text-align: center; }" + "</style>" + "</head>" + "<body>" + " <div class='container'>" + " <div class='content'>" + " <p>Dear " + user.getName() + ",</p>" + " <p>Thank you for registering with us. We are excited to have you on board!</p>" + " <p>Please confirm your email address to activate your account and get started.</p>" + " <p>If you have any questions or need help, feel free to reach out to our support team.</p>" + " <br>" + " <p>Best regards,<br>The Support Team</p>" + " </div>" + " <div class='footer'>" + " &copy; " + java.time.Year.now() + " MK Bank. All rights reserved." + " </div>" + " </div>" + "</body>" + "</html>"; try { emailService.sendSimpleEmail(user.getEmail(), subject, mailText); } catch (MessagingException e) { throw new RuntimeException("Failed to send activation email", e); } } //Method for save image of file in User table public String saveImage(MultipartFile file, User user) { Path uploadPath = Paths.get(uploadDir + "/user"); if (!Files.exists(uploadPath)) { try { Files.createDirectories(uploadPath); // change here } catch (IOException e) { throw new RuntimeException(e); } } String fileName = user.getName() + "_" + UUID.randomUUID().toString(); try { Path filePath = uploadPath.resolve(fileName); Files.copy(file.getInputStream(), filePath); } catch (IOException e) { throw new RuntimeException(e); } return fileName; } //Method for save image file in Account table public String saveImageForAccount(MultipartFile file, Accounts account) { Path uploadPath = Paths.get(uploadDir + "/account"); if (!Files.exists(uploadPath)) { try { Files.createDirectory(uploadPath); } catch (IOException e) { throw new RuntimeException(e); } } String accountName = account.getName(); String fileName = accountName.trim().replaceAll("\\s+", "_"); String savedFileName = fileName + "_" + UUID.randomUUID().toString(); try { Path filePath = uploadPath.resolve(savedFileName); Files.copy(file.getInputStream(), filePath); } catch (IOException e) { throw new RuntimeException(e); } return savedFileName; } // Account Save or update or registration (connected with AccountResCon Method Number -1) public void registerAccount(User user, MultipartFile imageFile, Accounts accountData) { // Handle profile image upload for both User and Account if (imageFile != null && !imageFile.isEmpty()) { String filename = saveImage(imageFile, user); // Save user profile photo String accountPhoto = saveImageForAccount(imageFile, accountData); // Save account photo accountData.setPhoto(accountPhoto); user.setPhoto(filename); } // Encode password before saving User user.setPassword(passwordEncoder.encode(user.getPassword())); user.setRole(Role.USER); // Default role = USER user.setActive(true); // Set user as active User savedUser = userRepository.save(user); // Link account with this saved user accountData.setUser(savedUser); accountService.save(accountData); // Auto-login step: Generate JWT token for this newly registered user String jwtToken = jwtService.generateToken(savedUser); saveUserToken(jwtToken, savedUser); // Save token into Token table in DB // If account has an initial balance, create the first transaction if (accountData.getBalance() > 0) { Transaction initialDeposit = new Transaction(); initialDeposit.setAmount(accountData.getBalance()); // Initial balance amount initialDeposit.setType(TransactionType.INITIALBALANCE); // Mark as INITIALBALANCE type initialDeposit.setDescription("Initial deposit"); // Description for clarity initialDeposit.setToken(jwtToken); // Attach the same JWT token transactionService.addTransaction(initialDeposit, accountData.getId(),jwtToken); } GLTransaction glTxn1 = new GLTransaction(); glTxn1.setAmount(accountData.getBalance()); // minus because money going out glTxn1.setType(GLType.ACCOUNT_OPEN); glTxn1.setDescription("Account Openning Balance.Account Id is " + accountData.getId()); glTxn1.setReferenceId(accountData.getId()); glTxn1.setReferenceType("ACCOUNT_OPEN"); glTransactionRepository.save(glTxn1); // Send activation email to the user after successful registration sendActivationEmail(savedUser); } //Employ plus user Save public void registerEmployee(User user, MultipartFile imageFile, Employee employeeData) { if (imageFile != null && !imageFile.isEmpty()) { String filename = saveImage(imageFile, user); String employeePhoto = saveImageForEmployee(imageFile, employeeData); employeeData.setPhoto(employeePhoto); user.setPhoto(filename); } user.setPassword(passwordEncoder.encode(user.getPassword())); user.setRole(Role.EMPLOYEE); user.setActive(true); User savedUser = userRepository.save(user); employeeData.setUser(savedUser); if (employeeData.getDateOfJoining() != null) { Calendar cal = Calendar.getInstance(); cal.setTime(employeeData.getDateOfJoining()); cal.add(Calendar.YEAR,30); //joining date theke 30 year. employeeData.setRetirementDate(cal.getTime()); } employeeService.save(employeeData); sendEmployeeWelcomeEmail(employeeData); } //Method for save image file in Account table public String saveImageForEmployee(MultipartFile file, Employee employee) { Path uploadPath = Paths.get(uploadDir + "/employee"); if (!Files.exists(uploadPath)) { try { Files.createDirectory(uploadPath); } catch (IOException e) { throw new RuntimeException(e); } } String employeeName = employee.getName(); String fileName = employeeName.trim().replaceAll("\\s+", "_"); String savedFileName = fileName + "_" + UUID.randomUUID().toString(); // String savedFileName = employee + "_" + UUID.randomUUID().toString(); try { Path filePath = uploadPath.resolve(savedFileName); Files.copy(file.getInputStream(), filePath); } catch (IOException e) { throw new RuntimeException(e); } return savedFileName; } // mail for employee private void sendEmployeeWelcomeEmail(Employee employee) { User user = employee.getUser(); String subject = "Congratulations – Welcome to MK Bank!"; String mailText = "<!DOCTYPE html>" + "<html>" + "<head>" + "<style>" + " body { font-family: Arial, sans-serif; line-height: 1.6; }" + " .container { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; }" + " .header { background-color: #2196F3; color: white; padding: 10px; text-align: center; border-radius: 10px 10px 0 0; }" + " .content { padding: 20px; }" + " .footer { font-size: 0.9em; color: #777; margin-top: 20px; text-align: center; }" + "</style>" + "</head>" + "<body>" + " <div class='container'>" + " <div class='content'>" + " <p>Dear " + user.getName() + ",</p>" + " <p>We are delighted to inform you that you have been successfully added as a " + employee.getPosition() + " of MK Bank.</p>" + " <p>Your official email is: <b>" + user.getEmail() + "</b></p>" + " <p>You can now log in to the system using your account credentials provided by the admin.</p>" + " <p>We wish you all the best in your new journey with us.</p>" + " <br>" + " <p>Best regards,<br>The HR & Admin Team</p>" + " </div>" + " <div class='footer'>" + " &copy; " + java.time.Year.now() + " MK Bank. All rights reserved." + " </div>" + " </div>" + "</body>" + "</html>"; try { emailService.sendSimpleEmail(user.getEmail(), subject, mailText); } catch (MessagingException e) { throw new RuntimeException("Failed to send congratulation email", e); } } //AuthService from sir //token save private void saveUserToken(String jwt, User user) { Token token = new Token(); token.setToken(jwt); token.setLogout(false); token.setUser(user); tokenRepository.save(token); } //remove toke private void removeAllTokenByUser(User user) { List<Token> validTokens = tokenRepository.findAllTokenByUser(user.getId()); if (validTokens.isEmpty()) { return; } validTokens.forEach(t -> { t.setLogout(true); }); tokenRepository.saveAll(validTokens); } // It is Login Method public AuthenticationResponse authenticate(User request) { // Authenticate Username & Password authenticationManager.authenticate( new UsernamePasswordAuthenticationToken( request.getUsername(), request.getPassword() ) ); // Fetch User from DB User user = userRepository.findByEmail(request.getEmail()) .orElseThrow(() -> new UsernameNotFoundException("User not found")); // Check Activation Status if (!user.isActive()) { throw new RuntimeException("Account is not activated. Please check your email for activation link."); } // Generate JWT Token String jwt = jwtService.generateToken(user); // Remove Existing Tokens (Invalidate Old Sessions) removeAllTokenByUser(user); // Save New Token to DB (Optional if stateless) saveUserToken(jwt, user); // Return Authentication Response return new AuthenticationResponse(jwt, "User Login Successful"); } //activeUser method (User sktive korar kaj kore) public String activeUser(Long id){ User user=userRepository.findById(id) .orElseThrow(()-> new RuntimeException("User not Found with this ID "+id)); if(user !=null){ user.setActive(true); userRepository.save(user); return "User Activated Successfully!"; }else { return "Invalid Activation Token!"; } } //For Forgot & Reset Password // Forgot Password public String forgotPassword(String email) { Optional<User> userOpt = userRepository.findByEmail(email); if (userOpt.isPresent()) { User user = userOpt.get(); // 1. Token generate String token = UUID.randomUUID().toString(); user.setResetToken(token); // 2. Expiry after 15 munites Calendar calendar = Calendar.getInstance(); calendar.add(Calendar.MINUTE, 15); Date expiryDate = calendar.getTime(); user.setTokenExpiry(expiryDate); // 3. Save user userRepository.save(user); // 4. Reset link & email String resetLink = "http://localhost:4200/reset-password?token=" + token; String mailBody = "<!DOCTYPE html>" + "<html><body>" + "<p>Dear " + user.getName() + ",</p>" + "<p>You requested a password reset. Click the link below to reset your password:</p>" + "<p><a href=\"" + resetLink + "\">Reset Password</a></p>" + "<p>This link will expire in 15 minutes.</p>" + "<p>Best regards,<br>Support Team</p>" + "</body></html>"; try { sendEmail(user.getEmail(), "Password Reset Request", mailBody); } catch (MessagingException e) { throw new RuntimeException("Failed to send email", e); } //for test token (email na dekhe consol theke token pabo.) System.out.println("Reset Token:--------- " + token); return "Reset link sent to your email!"; } return "User not found!"; } // Reset Password public String resetPassword(String token, String newPassword) { Optional<User> userOpt = userRepository.findByResetToken(token); if (userOpt.isPresent()) { User user = userOpt.get(); Date now = new Date(); if (user.getTokenExpiry() == null || user.getTokenExpiry().before(now)) { return "Token expired!"; } user.setPassword(passwordEncoder.encode(newPassword)); user.setResetToken(null); user.setTokenExpiry(null); userRepository.save(user); return "Password updated successfully!"; } return "Invalid token!"; } // General sendEmail method private void sendEmail(String to, String subject, String body) throws MessagingException { emailService.sendSimpleEmail(to, subject, body); } } package com.emranhss.mkbankspring.restcontroller; import com.emranhss.mkbankspring.dto.*; import com.emranhss.mkbankspring.entity.Accounts; import com.emranhss.mkbankspring.entity.Loan; import com.emranhss.mkbankspring.service.AccountService; import com.emranhss.mkbankspring.service.ILoanService; import com.emranhss.mkbankspring.service.LoanService; import org.springframework.beans.factory.annotation.Autowired; import org.springframework.http.ResponseEntity; import org.springframework.security.core.Authentication; import org.springframework.web.bind.annotation.*; import java.util.List; @RestController @RequestMapping("/api/loans") public class LoanRestController { // @Autowired // private ILoanService loanService; @Autowired private LoanService loanService1; @Autowired private AccountService accountService; @PostMapping("/calculate") public ResponseEntity<?> calculateEmi(@RequestBody LoanRequestDto dto) { try { EmiResponseDto res = loanService1.calculateEmi(dto.getLoanAmount(), dto.getDurationInMonths(), dto.getLoanType().name()); return ResponseEntity.ok(res); } catch (Exception ex) { return ResponseEntity.badRequest().body(ex.getMessage()); } } @PostMapping("/apply") public ResponseEntity<?> applyLoan( @RequestBody LoanRequestDto dto, @RequestHeader("Authorization") String authHeader, Authentication authentication ) { try { // Token extract করা String token = authHeader.replace("Bearer ", ""); Long accountId = accountService.findAccountByEmail(authentication.getName()).getId(); Loan loan = loanService1.applyLoan(accountId, dto,token); LoanDto response = new LoanDto(); response.setId(loan.getId()); response.setLoanAmount(loan.getLoanAmount()); response.setEmiAmount(loan.getEmiAmount()); response.setStatus(loan.getStatus().name()); response.setLoanType(loan.getLoanType().name()); // AccountDto AccountsDTO accountDto = new AccountsDTO(); accountDto.setId(loan.getAccount().getId()); accountDto.setName(loan.getAccount().getName()); accountDto.setBalance(loan.getAccount().getBalance()); accountDto.setNid(loan.getAccount().getNid()); accountDto.setPhoneNumber(loan.getAccount().getPhoneNumber()); accountDto.setAddress(loan.getAccount().getAddress()); accountDto.setAccountType(loan.getAccount().getAccountType()); response.setAccount(accountDto); return ResponseEntity.ok(response); } catch (Exception ex) { return ResponseEntity.badRequest().body(ex.getMessage()); } } // This endpoint only fetches pre-fill data for the Loan Apply form. @GetMapping("/apply/init") public ResponseEntity<LoanDto> getLoanInitData(Authentication authentication) { try { // 1️⃣ accountId ber kora Long accountId = accountService.findAccountByEmail(authentication.getName()).getId(); Accounts account = accountService.findAccountById(accountId); // 2️⃣ LoanDto(pre-filled default values) LoanDto response = new LoanDto(); response.setId(null); // এখনো loan create হয়নি, তাই null response.setLoanAmount(0); // user input response.setEmiAmount(0); // backend calculate করবে response.setInterestRate(0); // backend calculate করবে response.setStatus("PENDING"); // default response.setLoanType(""); // user input // 3️⃣ AccountDTO set AccountsDTO accountDto = new AccountsDTO(); accountDto.setId(account.getId()); accountDto.setName(account.getName()); accountDto.setBalance(account.getBalance()); accountDto.setNid(account.getNid()); accountDto.setPhoneNumber(account.getPhoneNumber()); accountDto.setAddress(account.getAddress()); accountDto.setAccountType(account.getAccountType()); response.setAccount(accountDto); return ResponseEntity.ok(response); } catch (Exception ex) { return ResponseEntity.badRequest().body(null); } } /** * Apply for loan. * Uses authenticated user's accountId (via accountService) * POST /api/loans/apply */ // @PostMapping("/apply") // public ResponseEntity<?> applyLoan(@RequestBody LoanRequestDto dto, Authentication authentication) { // try { // // get accountId from authentication (implement accountService.findAccountByEmail) // Long accountId = accountService.findAccountByEmail(authentication.getName()).getId(); // Loan loan = loanService.applyLoan(accountId, dto); // return ResponseEntity.ok(loan); // } catch (Exception ex) { // return ResponseEntity.badRequest().body(ex.getMessage()); // } // } //Make payment towards a loan // Make payment @PostMapping("/pay") public ResponseEntity<?> payLoan( @RequestBody LoanPaymentDto paymentDto, @RequestHeader("Authorization") String authHeader, Authentication authentication ) { try { String token = authHeader.replace("Bearer ", ""); Long accountId = accountService.findAccountByEmail(authentication.getName()).getId(); Loan updated = loanService1.payLoan(accountId, paymentDto, token); return ResponseEntity.ok(updated); } catch (Exception ex) { return ResponseEntity.badRequest().body(ex.getMessage()); } } // @PostMapping("/pay") // public ResponseEntity<?> payLoan( // @RequestBody LoanPaymentDto paymentDto, // @RequestHeader("Authorization") String authHeader, // Authentication authentication) { // try { // String token = authHeader.replace("Bearer ", ""); // Long accountId = accountService.findAccountByEmail(authentication.getName()).getId(); // Loan updated = loanService1.payLoan(accountId, paymentDto,token); // return ResponseEntity.ok(updated); // } catch (Exception ex) { // return ResponseEntity.badRequest().body(ex.getMessage()); // } // } //----------------------srart Get loan details----------- // Fetch a single loan @GetMapping("/{id}") public ResponseEntity<LoanDto> getLoanById( @PathVariable Long id, Authentication authentication ) { Long accountId = accountService.findAccountByEmail(authentication.getName()).getId(); LoanDto loanDto = loanService1.getLoanDtoById(id, accountId); return ResponseEntity.ok(loanDto); } // @GetMapping("/{id}") // public ResponseEntity<LoanDto> getLoanById( // @PathVariable Long id, // Authentication authentication // ) { // // logged-in user এর accountId বের করা // Long accountId = accountService.findAccountByEmail(authentication.getName()).getId(); // // // service call with ownership check // LoanDto loanDto = loanService1.getLoanDtoById(id, accountId); // // return ResponseEntity.ok(loanDto); // } // // @GetMapping("/{loanId}") // public ResponseEntity<?> getLoan(@PathVariable Long loanId, Authentication authentication) { // try { // LoanDto loan = loanService1.getLoanById(loanId); // // optional: check ownership // return ResponseEntity.ok(loan); // } catch (Exception ex) { // return ResponseEntity.badRequest().body(ex.getMessage()); // } // } //-------------end Get loan details------------- @GetMapping("/myloans") public ResponseEntity<List<LoanDto>> getMyLoans(Authentication authentication) { Long accountId = accountService.findAccountByEmail(authentication.getName()).getId(); List<Loan> loans = loanService1.getLoansByAccount(accountId); List<LoanDto> loanDtos = loans.stream().map(loan -> { //data from loanDTO LoanDto dto = new LoanDto(); dto.setId(loan.getId()); dto.setLoanAmount(loan.getLoanAmount()); dto.setInterestRate(loan.getInterestRate()); dto.setEmiAmount(loan.getEmiAmount()); dto.setRemainingAmount(loan.getRemainingAmount()); dto.setTotalAlreadyPaidAmount(loan.getTotalAlreadyPaidAmount()); dto.setStatus(loan.getStatus().name()); dto.setLoanType(loan.getLoanType().name()); dto.setLoanStartDate(loan.getLoanStartDate()); dto.setLoanMaturityDate(loan.getLoanMaturityDate()); //from accDTO AccountsDTO accDto = new AccountsDTO(); accDto.setId(loan.getAccount().getId()); accDto.setName(loan.getAccount().getName()); accDto.setNid(loan.getAccount().getNid()); accDto.setBalance(loan.getAccount().getBalance()); accDto.setAccountType(loan.getAccount().getAccountType()); accDto.setPhoneNumber(loan.getAccount().getPhoneNumber()); accDto.setAddress(loan.getAccount().getAddress()); dto.setAccount(accDto); return dto; }).toList(); return ResponseEntity.ok(loanDtos); } // Account holder pay EMI // @PostMapping("pay/{loanId}") // public ResponseEntity<Loan> payEMI(@PathVariable Long loanId, // @RequestParam double amount) { // Loan loan = loanService1.payEMI(loanId, amount); // return ResponseEntity.ok(loan); // } // // // Admin view all pending loans // @GetMapping("pending") // public ResponseEntity<List<Loan>> getPendingLoans() { // List<Loan> loans = loanService.getPendingLoans(); // return ResponseEntity.ok(loans); // } // // // Admin approve a loan // @PostMapping("approve/{loanId}") // public ResponseEntity<Loan> approveLoan(@PathVariable Long loanId) { // Loan loan = loanService.approveLoan(loanId); // return ResponseEntity.ok(loan); // } // // // Admin reject a loan // @PostMapping("reject/{loanId}") // public ResponseEntity<Loan> rejectLoan(@PathVariable Long loanId) { // Loan loan = loanService.rejectLoan(loanId); // return ResponseEntity.ok(loan); // } } package com.emranhss.mkbankspring.restcontroller; import com.emranhss.mkbankspring.dto.AccountsDTO; import com.emranhss.mkbankspring.dto.LoanDto; import com.emranhss.mkbankspring.entity.Loan; import com.emranhss.mkbankspring.entity.LoanStatus; import com.emranhss.mkbankspring.entity.Transaction; import com.emranhss.mkbankspring.entity.TransactionType; import com.emranhss.mkbankspring.repository.AccountRepository; import com.emranhss.mkbankspring.repository.LoanRepository; import com.emranhss.mkbankspring.repository.TransactionRepository; import com.emranhss.mkbankspring.service.LoanService; import jakarta.transaction.Transactional; import org.springframework.beans.factory.annotation.Autowired; import org.springframework.http.ResponseEntity; import org.springframework.web.bind.annotation.*; import java.util.Date; import java.util.List; import java.util.stream.Collectors; @RestController @RequestMapping("/api/admin/loans") public class AdminLoanRestController { @Autowired private LoanRepository loanRepository; @Autowired private AccountRepository accountRepository; @Autowired private TransactionRepository transactionRepository; @Autowired private LoanService loanService; // @GetMapping("/pending") // public ResponseEntity<List<LoanDto>> getPendingLoans() { // List<LoanDto> loanDTOs = loanService.getPendingLoanDTOs(); // return ResponseEntity.ok(loanDTOs); // } // View all pending loans as DTO @GetMapping("/pendings") public ResponseEntity<List<LoanDto>> getPendingLoan() { List<Loan> loans = loanRepository.findByStatus(LoanStatus.PENDING); List<LoanDto> loanDTOs = loans.stream().map(loan -> { LoanDto dto = new LoanDto(); dto.setId(loan.getId()); dto.setLoanAmount(loan.getLoanAmount()); dto.setEmiAmount(loan.getEmiAmount()); dto.setInterestRate(loan.getInterestRate()); dto.setStatus(loan.getStatus().name()); dto.setLoanType(loan.getLoanType().name()); dto.setLoanStartDate(loan.getLoanStartDate()); dto.setLoanMaturityDate(loan.getLoanMaturityDate()); dto.setTotalAlreadyPaidAmount(loan.getTotalAlreadyPaidAmount()); dto.setRemainingAmount(loan.getRemainingAmount()); dto.setPenaltyRate(loan.getPenaltyRate()); dto.setLastPaymentDate(loan.getLastPaymentDate()); dto.setUpdatedAt(loan.getUpdatedAt()); // Account DTO mapping AccountsDTO accountDTO = new AccountsDTO(); accountDTO.setId(loan.getAccount().getId()); accountDTO.setName(loan.getAccount().getName()); accountDTO.setBalance(loan.getAccount().getBalance()); // প্রয়োজন অনুযায়ী অন্যান্য ফিল্ডও এখানে set করতে পারো dto.setAccount(accountDTO); return dto; }).collect(Collectors.toList()); return ResponseEntity.ok(loanDTOs); } // Approve Loan @PostMapping("/{loanId}/approve") @Transactional public ResponseEntity<String> approveLoan(@PathVariable Long loanId) { Loan loan = loanRepository.findById(loanId) .orElseThrow(() -> new RuntimeException("Loan not found")); if (loan.getStatus() != LoanStatus.PENDING) { return ResponseEntity.badRequest().body("Loan is not in pending state"); } // Loan approve loan.setStatus(LoanStatus.ACTIVE); loanRepository.save(loan); // Update account balance var account = loan.getAccount(); account.setBalance(account.getBalance() + loan.getLoanAmount()); accountRepository.save(account); // Transaction entry Transaction txn = new Transaction(); txn.setAccount(account); txn.setAmount(loan.getLoanAmount()); txn.setType(TransactionType.DEPOSIT); txn.setDescription("Loan Approved and Credited to Account"); txn.setTransactionTime(new Date()); transactionRepository.save(txn); return ResponseEntity.ok("Loan approved successfully!"); } // Reject Loan @PostMapping("/{loanId}/reject") @Transactional public ResponseEntity<String> rejectLoan(@PathVariable Long loanId) { Loan loan = loanRepository.findById(loanId) .orElseThrow(() -> new RuntimeException("Loan not found")); if (loan.getStatus() != LoanStatus.PENDING) { return ResponseEntity.badRequest().body("Loan is not in pending state"); } loan.setStatus(LoanStatus.REJECTED); loanRepository.save(loan); return ResponseEntity.ok("Loan rejected successfully!"); } } baki optional gulo ar dilam na ogulo o amar ache .akhon sono.amar admin save hocce authservice theke ti otirikto eta dilam jeno bujhte paro .jaihok ebar valo kore koro.
+
+
+
+
+
+ঠিক আছে আঃ রহিম খান, তাহলে আমরা **Loan apply + approval workflow** নিয়ে কাজ শুরু করি। আমি তোমার দেওয়া স্ট্রাকচার অনুযায়ী backend-ready code সাজাবো।
+
+আমাদের মূল focus হবে:
+
+1. **Loan apply** (user API)
+2. **Loan approval/reject** (admin API)
+3. **DTO mapping এবং transactional handling**
+
+আমি step by step structure দিবো।
+
+---
+
+## ১️⃣ **Entity Files**
+
+### **Loan.java**
+
+```java
+package com.emranhss.mkbankspring.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Date;
+
+@Getter
+@Setter
+@Entity
+public class Loan {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private double loanAmount;
+    private double emiAmount;
+    private double interestRate;
+    private double remainingAmount;
+    private double totalAlreadyPaidAmount;
+    private double penaltyRate;
+
+    @Enumerated(EnumType.STRING)
+    private LoanType loanType;
+
+    @Enumerated(EnumType.STRING)
+    private LoanStatus status;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date loanStartDate;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date loanMaturityDate;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastPaymentDate;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    private Accounts account;
+}
+```
+
+### **Accounts.java**
+
+```java
+package com.emranhss.mkbankspring.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Entity
+public class Accounts {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+    private String email;
+    private String nid;
+    private String phoneNumber;
+    private String address;
+    private String accountType;
+    private double balance;
+}
+```
+
+### **LoanStatus.java**
+
+```java
+package com.emranhss.mkbankspring.entity;
+
+public enum LoanStatus {
+    PENDING,
+    ACTIVE,
+    REJECTED,
+    CLOSED
+}
+```
+
+### **LoanType.java**
+
+```java
+package com.emranhss.mkbankspring.entity;
+
+public enum LoanType {
+    PERSONAL,
+    HOME,
+    VEHICLE
+}
+```
+
+---
+
+## ২️⃣ **DTO Files**
+
+### **AccountsDTO.java**
+
+```java
+package com.emranhss.mkbankspring.dto;
+
+import com.emranhss.mkbankspring.entity.Accounts;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class AccountsDTO {
+
+    private Long id;
+    private String name;
+    private String email;
+    private String nid;
+    private String phoneNumber;
+    private String address;
+    private String accountType;
+    private double balance;
+
+    public static AccountsDTO fromEntity(Accounts account) {
+        AccountsDTO dto = new AccountsDTO();
+        dto.setId(account.getId());
+        dto.setName(account.getName());
+        dto.setEmail(account.getEmail());
+        dto.setNid(account.getNid());
+        dto.setPhoneNumber(account.getPhoneNumber());
+        dto.setAddress(account.getAddress());
+        dto.setAccountType(account.getAccountType());
+        dto.setBalance(account.getBalance());
+        return dto;
+    }
+}
+```
+
+### **LoanDto.java**
+
+```java
+package com.emranhss.mkbankspring.dto;
+
+import com.emranhss.mkbankspring.entity.Loan;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Date;
+
+@Getter
+@Setter
+public class LoanDto {
+
+    private Long id;
+    private double loanAmount;
+    private double emiAmount;
+    private double interestRate;
+    private double remainingAmount;
+    private double totalAlreadyPaidAmount;
+    private double penaltyRate;
+    private String status;
+    private String loanType;
+    private Date loanStartDate;
+    private Date loanMaturityDate;
+    private Date lastPaymentDate;
+    private Date updatedAt;
+
+    private AccountsDTO account;
+
+    public static LoanDto fromEntity(Loan loan) {
+        LoanDto dto = new LoanDto();
+        dto.setId(loan.getId());
+        dto.setLoanAmount(loan.getLoanAmount());
+        dto.setEmiAmount(loan.getEmiAmount());
+        dto.setInterestRate(loan.getInterestRate());
+        dto.setRemainingAmount(loan.getRemainingAmount());
+        dto.setTotalAlreadyPaidAmount(loan.getTotalAlreadyPaidAmount());
+        dto.setPenaltyRate(loan.getPenaltyRate());
+        dto.setStatus(loan.getStatus().name());
+        dto.setLoanType(loan.getLoanType().name());
+        dto.setLoanStartDate(loan.getLoanStartDate());
+        dto.setLoanMaturityDate(loan.getLoanMaturityDate());
+        dto.setLastPaymentDate(loan.getLastPaymentDate());
+        dto.setUpdatedAt(loan.getUpdatedAt());
+        dto.setAccount(AccountsDTO.fromEntity(loan.getAccount()));
+        return dto;
+    }
+}
+```
+
+---
+
+## ৩️⃣ **Repository Files**
+
+### **LoanRepository.java**
+
+```java
+package com.emranhss.mkbankspring.repository;
+
+import com.emranhss.mkbankspring.entity.Loan;
+import com.emranhss.mkbankspring.entity.LoanStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface LoanRepository extends JpaRepository<Loan, Long> {
+    List<Loan> findByStatus(LoanStatus status);
+    List<Loan> findByAccountId(Long accountId);
+}
+```
+
+---
+
+## ৪️⃣ **Service Layer**
+
+### **LoanService.java**
+
+```java
+package com.emranhss.mkbankspring.service;
+
+import com.emranhss.mkbankspring.dto.LoanRequestDto;
+import com.emranhss.mkbankspring.dto.LoanDto;
+import com.emranhss.mkbankspring.entity.Accounts;
+import com.emranhss.mkbankspring.entity.Loan;
+import com.emranhss.mkbankspring.entity.LoanStatus;
+import com.emranhss.mkbankspring.repository.LoanRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+
+@Service
+public class LoanService {
+
+    @Autowired
+    private LoanRepository loanRepository;
+
+    @Autowired
+    private AccountService accountService;
+
+    public Loan applyLoan(Long accountId, LoanRequestDto dto, String token) {
+        Accounts account = accountService.findAccountById(accountId);
+
+        Loan loan = new Loan();
+        loan.setLoanAmount(dto.getLoanAmount());
+        loan.setLoanType(dto.getLoanType());
+        loan.setEmiAmount(calculateEmi(dto.getLoanAmount(), dto.getDurationInMonths(), dto.getLoanType().name()).getEmiAmount());
+        loan.setInterestRate(10); // placeholder
+        loan.setStatus(LoanStatus.PENDING);
+        loan.setAccount(account);
+        loan.setRemainingAmount(dto.getLoanAmount());
+        loan.setTotalAlreadyPaidAmount(0);
+        loan.setLoanStartDate(new Date());
+        loan.setUpdatedAt(new Date());
+
+        return loanRepository.save(loan);
+    }
+
+    public LoanDto getLoanDtoById(Long loanId, Long accountId) {
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new RuntimeException("Loan not found"));
+        if (!loan.getAccount().getId().equals(accountId)) {
+            throw new RuntimeException("Unauthorized access");
+        }
+        return LoanDto.fromEntity(loan);
+    }
+
+    public List<Loan> getLoansByAccount(Long accountId) {
+        return loanRepository.findByAccountId(accountId);
+    }
+
+    public EmiResponseDto calculateEmi(double amount, int months, String loanType) {
+        // Simple interest EMI calculation
+        double rate = 0.1; // 10% yearly
+        double emi = (amount + (amount * rate)) / months;
+
+        EmiResponseDto dto = new EmiResponseDto();
+        dto.setEmiAmount(emi);
+        dto.setTotalPayable(amount + (amount * rate));
+        return dto;
+    }
+}
+```
+
+---
+
+আঃ রহিম খান, এই code দিয়ে **Loan apply + EMI calculation + fetch loans** ready।
+
+পরের step: **Admin approval/reject + transactional handling** যোগ করা।
+
+আমি কি এখন সেই part শুরু করি?
+
+
+
+
+============================
+he
+===========================
+ঠিক আছে আঃ রহিম খান, তাহলে আমরা **Admin approval/reject workflow** শুরু করি।
+
+আমরা করব:
+
+1. Pending loans fetch করা
+2. Loan approve করলে account balance update + transaction entry
+3. Loan reject করলে status update
+
+---
+
+## **AdminLoanService.java**
+
+```java
+package com.emranhss.mkbankspring.service;
+
+import com.emranhss.mkbankspring.entity.Accounts;
+import com.emranhss.mkbankspring.entity.Loan;
+import com.emranhss.mkbankspring.entity.LoanStatus;
+import com.emranhss.mkbankspring.entity.Transaction;
+import com.emranhss.mkbankspring.entity.TransactionType;
+import com.emranhss.mkbankspring.repository.AccountRepository;
+import com.emranhss.mkbankspring.repository.LoanRepository;
+import com.emranhss.mkbankspring.repository.TransactionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import jakarta.transaction.Transactional;
+import java.util.Date;
+import java.util.List;
+
+@Service
+public class AdminLoanService {
+
+    @Autowired
+    private LoanRepository loanRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
+
+    public List<Loan> getPendingLoans() {
+        return loanRepository.findByStatus(LoanStatus.PENDING);
+    }
+
+    @Transactional
+    public Loan approveLoan(Long loanId) {
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new RuntimeException("Loan not found"));
+
+        if (loan.getStatus() != LoanStatus.PENDING) {
+            throw new RuntimeException("Loan is not in pending state");
+        }
+
+        loan.setStatus(LoanStatus.ACTIVE);
+        loanRepository.save(loan);
+
+        // Update account balance
+        Accounts account = loan.getAccount();
+        account.setBalance(account.getBalance() + loan.getLoanAmount());
+        accountRepository.save(account);
+
+        // Transaction entry
+        Transaction txn = new Transaction();
+        txn.setAccount(account);
+        txn.setAmount(loan.getLoanAmount());
+        txn.setType(TransactionType.DEPOSIT);
+        txn.setDescription("Loan approved and credited to account");
+        txn.setTransactionTime(new Date());
+        transactionRepository.save(txn);
+
+        return loan;
+    }
+
+    @Transactional
+    public Loan rejectLoan(Long loanId) {
+        Loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new RuntimeException("Loan not found"));
+
+        if (loan.getStatus() != LoanStatus.PENDING) {
+            throw new RuntimeException("Loan is not in pending state");
+        }
+
+        loan.setStatus(LoanStatus.REJECTED);
+        return loanRepository.save(loan);
+    }
+}
+```
+
+---
+
+## **AdminLoanRestController.java**
+
+```java
+package com.emranhss.mkbankspring.restcontroller;
+
+import com.emranhss.mkbankspring.dto.LoanDto;
+import com.emranhss.mkbankspring.entity.Loan;
+import com.emranhss.mkbankspring.service.AdminLoanService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping("/api/admin/loans")
+public class AdminLoanRestController {
+
+    @Autowired
+    private AdminLoanService adminLoanService;
+
+    // Fetch pending loans
+    @GetMapping("/pending")
+    public ResponseEntity<List<LoanDto>> getPendingLoans() {
+        List<Loan> loans = adminLoanService.getPendingLoans();
+        List<LoanDto> dtos = loans.stream().map(LoanDto::fromEntity).collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
+    // Approve loan
+    @PostMapping("/{loanId}/approve")
+    public ResponseEntity<String> approveLoan(@PathVariable Long loanId) {
+        adminLoanService.approveLoan(loanId);
+        return ResponseEntity.ok("Loan approved successfully");
+    }
+
+    // Reject loan
+    @PostMapping("/{loanId}/reject")
+    public ResponseEntity<String> rejectLoan(@PathVariable Long loanId) {
+        adminLoanService.rejectLoan(loanId);
+        return ResponseEntity.ok("Loan rejected successfully");
+    }
+}
+```
+
+---
+
+এখন **User side** এবং **Admin side** workflow পুরোপুরি ready:
+
+* User: Apply loan, fetch EMI, fetch own loans
+* Admin: Fetch pending loans, approve/reject loans, transactional balance update
+
+---
+
+আঃ রহিম খান, চাইলে আমি এখন **Loan EMI pay (user) + remainingAmount update + transaction logging** part ও বানিয়ে দিতে পারি।
+
+আমি কি সেই অংশও বানাই?
+
+=============================

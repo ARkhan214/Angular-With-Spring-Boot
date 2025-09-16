@@ -42,7 +42,6 @@ public class LoanRestController {
             @RequestBody LoanRequestDto dto,
             @RequestHeader("Authorization") String authHeader,
             Authentication authentication
-//            Authentication authentication
     ) {
 
 
@@ -79,7 +78,7 @@ public class LoanRestController {
     }
 
 
-
+// This endpoint only fetches pre-fill data for the Loan Apply form.
     @GetMapping("/apply/init")
     public ResponseEntity<LoanDto> getLoanInitData(Authentication authentication) {
         try {

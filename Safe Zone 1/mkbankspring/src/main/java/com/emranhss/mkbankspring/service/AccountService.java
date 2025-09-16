@@ -111,6 +111,7 @@ public class AccountService {
         Accounts account = accountRepository.findById(receiverId)
                 .orElseThrow(() -> new RuntimeException("Receiver account not found!"));
 
+
         if (!account.isAccountActiveStatus()) {
             throw new RuntimeException("Receiver account is closed!");
         }

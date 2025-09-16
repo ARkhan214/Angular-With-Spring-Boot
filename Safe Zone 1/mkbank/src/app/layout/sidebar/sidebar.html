@@ -14,7 +14,8 @@
     <hr class="sidebar-divider my-0" style="border-color: rgba(255,255,255,0.3);">
 
     <li class="nav-item">
-        <a class="nav-link text-warning fw-semibold" routerLink="/"><i class="fa fa-home me-1 text-warning"></i>Home</a>
+        <a class="nav-link text-warning fw-semibold text-center" routerLink="/"><i
+                class="fa fa-home me-1 text-warning"></i>Home</a>
     </li>
 
 
@@ -83,46 +84,30 @@
 
         <div>
             <li class="nav-item">
-                <a class="nav-link text-success fw-semibold" routerLink="/account-profile"><i
+                <a class="nav-link text-success fw-semibold text-center" routerLink="/account-profile"><i
                         class="fa fa-exchange me-1 text-success"></i>👤 Profile</a>
             </li>
         </div>
 
+        <div>
+            <li>
+                <a class="nav-link text-info fw-semibold text-center" routerLink="/acctrst">Transaction Statement</a>
+            </li>
+        </div>
 
-        <!-- Utilities -->
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-                style="color: #fff;">
-                <i class="fas fa-tools" style="color: #34d399;"></i>
-                <span style="margin-left: 10px;">Utilities Bill:</span>
-            </a>
-            <div id="collapseUtilities" class="collapse">
-                <div class="bg-light py-2 collapse-inner rounded">s
-                    <a class="collapse-item" routerLink="/water-bill">Water Bill</a>
-                    <a class="collapse-item" routerLink="/mobile-bill">Mobile Bill</a>
-                    <a class="collapse-item" routerLink="/credit-card-bill">Credit-Card-Bill</a>
-                    <a class="collapse-item" routerLink="/electricity-bill">Electricity Bill</a>
-                    <a class="collapse-item" routerLink="/gas-bill">GAS Bill</a>
-                    <a class="collapse-item" routerLink="/internet-bill">Internet Bill</a>
-                    <a class="collapse-item" routerLink="#">Education</a>
-                </div>
-            </div>
-        </li>
 
-        <hr class="sidebar-divider" style="border-color: rgba(255,255,255,0.2);">
+
 
         <!-- Components -->
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAccounts"
                 style="color: #fff;">
                 <i class="fas fa-puzzle-piece" style="color: #f87171;"></i>
-                <span style="margin-left: 10px;">Accounts</span>
+                <span style="margin-left: 10px;">Money Trransfer</span>
             </a>
             <div id="collapseAccounts" class="collapse">
                 <div class="bg-light py-2 collapse-inner rounded">
-                    <a class="collapse-item" routerLink="/withdraw">Withdwaw</a>
                     <a class="collapse-item" routerLink="/addtr">Transfar Money</a>
-                    <a class="collapse-item" routerLink="/acctrst">Transaction Statement</a>
                 </div>
             </div>
         </li>
@@ -179,6 +164,30 @@
                 </div>
             </div>
         </li>
+
+        <hr class="sidebar-divider" style="border-color: rgba(255,255,255,0.2);">
+        
+        <!-- Utilities -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
+                style="color: #fff;">
+                <i class="fas fa-tools" style="color: #34d399;"></i>
+                <span style="margin-left: 10px;">Utilities Bill:</span>
+            </a>
+            <div id="collapseUtilities" class="collapse">
+                <div class="bg-light py-2 collapse-inner rounded">s
+                    <a class="collapse-item" routerLink="/water-bill">Water Bill</a>
+                    <a class="collapse-item" routerLink="/mobile-bill">Mobile Bill</a>
+                    <a class="collapse-item" routerLink="/credit-card-bill">Credit-Card-Bill</a>
+                    <a class="collapse-item" routerLink="/electricity-bill">Electricity Bill</a>
+                    <a class="collapse-item" routerLink="/gas-bill">GAS Bill</a>
+                    <a class="collapse-item" routerLink="/internet-bill">Internet Bill</a>
+                    <a class="collapse-item" routerLink="#">Education</a>
+                </div>
+            </div>
+        </li>
+
+
 
     </ng-container>
     <!-- ================= USER MENUS END================= -->

@@ -104,7 +104,7 @@ public class AccountRestController {
     }
     //---------Receiver data load start
 
-    // ✅ Receiver account details by ID
+    //  Receiver account details by ID
     @GetMapping("receiver/{receiverId}")
     public ResponseEntity<AccountsDTO> getReceiverAccount(@PathVariable Long receiverId) {
         AccountsDTO dto = accountService.getReceiverAccountById(receiverId);
