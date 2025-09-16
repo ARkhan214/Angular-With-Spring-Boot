@@ -23,7 +23,10 @@ export class LoanService {
 
     return this.http.get<LoanDTO[]>(this.apiUrl, { headers });
   }
+getAll(): Observable<LoanDTO[]>{
 
+  return this.http.get<LoanDTO[]>(`${this.baseUrl}/all`);
+}
 
 
 
@@ -37,11 +40,13 @@ export class LoanService {
   // }
 
   // Admin: pending loans
-  getPendingLoans(): Observable<any> {
+  getPendingLoans(): Observable<LoanDTO[]> {
     const token = localStorage.getItem('authToken') || '';
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.get(`${this.baseUrl}/pending`, { headers });
+    return this.http.get<LoanDTO[]>(`${this.baseUrl}/all`, { headers });
   }
+
+
 
   // Admin: approve loan
   approveLoan(loanId: number): Observable<any> {

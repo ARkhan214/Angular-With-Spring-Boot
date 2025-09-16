@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { LoanService } from '../../service/loan-service';
 
 @Component({
@@ -10,15 +10,23 @@ import { LoanService } from '../../service/loan-service';
 export class AdminLoanApproveComponent implements OnInit {
 loans: any[] = [];
 
-  constructor(private loanService: LoanService) {}
+  constructor(
+    
+    private loanService: LoanService,
+    private cdr:ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.loadPendingLoans();
   }
 
   loadPendingLoans() {
-    this.loanService.getPendingLoans().subscribe({
-      next: (data) => this.loans = data,
+    this.loanService.getAll().subscribe({
+      next: (data) => {
+         this.loans = data.filter((loan: any) => loan.status === 'PENDING');
+         this.cdr.markForCheck();
+        console.log(data,"fgjytjkyu");
+      },
       error: (err) => console.error('Error fetching loans', err)
     });
   }

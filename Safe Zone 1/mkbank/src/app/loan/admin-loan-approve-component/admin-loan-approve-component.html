@@ -1,5 +1,5 @@
 <p>admin-loan-approve-component works!</p>
-<div class="container my-4">
+<div class="my-4">
   <h2 class="text-primary mb-4">Pending Loans</h2>
 
   <p *ngIf="loans.length === 0" class="text-warning">No pending loans found.</p>
@@ -19,6 +19,7 @@
           <th>Loan Complete Date</th>
           <th>Account Name</th>
           <th>Balance</th>
+          <th>Status</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -35,6 +36,7 @@
           <td>{{ loan.loanMaturityDate | date:'mediumDate' }}</td>
           <td>{{ loan.account.name }}</td>
           <td>৳ {{ loan.account.balance | number:'1.2-2' }}</td>
+          <td>৳ {{ loan.status }}</td>
           <td>
             <button class="btn btn-success btn-sm me-1" (click)="approveLoan(loan.id)">
               Approve

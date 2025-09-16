@@ -42,9 +42,44 @@ public class AdminLoanRestController {
 
 
     // View all pending loans as DTO
-    @GetMapping("/pendings")
-    public ResponseEntity<List<LoanDto>> getPendingLoan() {
-        List<Loan> loans = loanRepository.findByStatus(LoanStatus.PENDING);
+//    @GetMapping("/pendings")
+//    public ResponseEntity<List<LoanDto>> getPendingLoan() {
+//        List<Loan> loans = loanRepository.findByStatus(LoanStatus.PENDING);
+//
+//        List<LoanDto> loanDTOs = loans.stream().map(loan -> {
+//            LoanDto dto = new LoanDto();
+//            dto.setId(loan.getId());
+//            dto.setLoanAmount(loan.getLoanAmount());
+//            dto.setEmiAmount(loan.getEmiAmount());
+//            dto.setInterestRate(loan.getInterestRate());
+//            dto.setStatus(loan.getStatus().name());
+//            dto.setLoanType(loan.getLoanType().name());
+//            dto.setLoanStartDate(loan.getLoanStartDate());
+//            dto.setLoanMaturityDate(loan.getLoanMaturityDate());
+//            dto.setTotalAlreadyPaidAmount(loan.getTotalAlreadyPaidAmount());
+//            dto.setRemainingAmount(loan.getRemainingAmount());
+//            dto.setPenaltyRate(loan.getPenaltyRate());
+//            dto.setLastPaymentDate(loan.getLastPaymentDate());
+//            dto.setUpdatedAt(loan.getUpdatedAt());
+//
+//            // Account DTO mapping
+//            AccountsDTO accountDTO = new AccountsDTO();
+//            accountDTO.setId(loan.getAccount().getId());
+//            accountDTO.setName(loan.getAccount().getName());
+//            accountDTO.setBalance(loan.getAccount().getBalance());
+//            // প্রয়োজন অনুযায়ী অন্যান্য ফিল্ডও এখানে set করতে পারো
+//
+//            dto.setAccount(accountDTO);
+//
+//            return dto;
+//        }).collect(Collectors.toList());
+//
+//        return ResponseEntity.ok(loanDTOs);
+//    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<LoanDto>> getAllLoan() {
+        List<Loan> loans = loanRepository.findAll();
 
         List<LoanDto> loanDTOs = loans.stream().map(loan -> {
             LoanDto dto = new LoanDto();
@@ -67,7 +102,6 @@ public class AdminLoanRestController {
             accountDTO.setId(loan.getAccount().getId());
             accountDTO.setName(loan.getAccount().getName());
             accountDTO.setBalance(loan.getAccount().getBalance());
-            // প্রয়োজন অনুযায়ী অন্যান্য ফিল্ডও এখানে set করতে পারো
 
             dto.setAccount(accountDTO);
 
@@ -77,6 +111,8 @@ public class AdminLoanRestController {
         return ResponseEntity.ok(loanDTOs);
     }
 
+
+    //---------------------------------end
 
     // Approve Loan
     @PostMapping("/{loanId}/approve")
@@ -126,4 +162,6 @@ public class AdminLoanRestController {
 
         return ResponseEntity.ok("Loan rejected successfully!");
     }
+
+
 }

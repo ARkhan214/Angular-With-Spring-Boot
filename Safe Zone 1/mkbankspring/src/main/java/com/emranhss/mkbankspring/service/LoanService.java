@@ -184,75 +184,12 @@ public class LoanService{
 
 
 
-//loan apply korar jonno
-    public Loan applyLoan(Long accountId, LoanRequestDto dto,String token) {
-        if (dto.getDurationInMonths() <= 0 || dto.getDurationInMonths() > 60)
-            throw new IllegalArgumentException("Duration must be between 1 and 60 months");
-        if (dto.getLoanAmount() <= 0 || dto.getLoanAmount() > 99999999)
-            throw new IllegalArgumentException("Loan amount must be > 0 and <= 99,999,999");
-
-        Accounts account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
-
-        LoanType loanType = dto.getLoanType();
-        double interestRate = getFixedInterestRate(loanType);
-
-        double totalInterest = dto.getLoanAmount() * (interestRate / 100.0);
-        double totalPayable = dto.getLoanAmount() + totalInterest;
-        double emi = totalPayable / dto.getDurationInMonths();
-
-        // Update account balance
-        account.setBalance(account.getBalance() + dto.getLoanAmount());
-        accountRepository.save(account);
-
-        // Create Loan
-        Loan loan = new Loan();
-        loan.setAccount(account);
-        loan.setLoanAmount(dto.getLoanAmount());
-        loan.setInterestRate(interestRate);
-        loan.setDurationInMonths(dto.getDurationInMonths());
-        loan.setEmiAmount(emi);
-        loan.setLoanType(loanType);
-        loan.setStatus(LoanStatus.ACTIVE);
-        Date start = new Date();
-        loan.setLoanStartDate(start);
-        loan.setLoanMaturityDate(addMonths(start, dto.getDurationInMonths()));
-        loan.setTotalAlreadyPaidAmount(0.0);
-        loan.setRemainingAmount(totalPayable);
-        loan.setUpdatedAt(new Date());
-
-        Loan savedLoan = loanRepository.save(loan);
-
-        // Create Transaction for Loan Credit
-        Transaction txn = new Transaction();
-        txn.setAccount(account);
-        txn.setType(TransactionType.DEPOSIT); // Account receives money
-        txn.setTransactionTime(new Date());
-        txn.setAmount(dto.getLoanAmount());
-        txn.setDescription("Loan disbursed: Loan ID " + savedLoan.getId());
-        txn.setReceiverAccount(null); // Receiver not needed for loan credit
-        txn.setToken(token);
-        transactionRepository.save(txn);
-
-        return savedLoan;
-    }
-
-
-
-
-
-
-
-//
-//    @Override
-//    @Transactional
-//    public Loan applyLoan(Long accountId, LoanRequestDto dto) {
-//        if (dto.getDurationInMonths() <= 0) throw new IllegalArgumentException("Duration must be > 0");
-//        if (dto.getDurationInMonths() > 60) throw new IllegalArgumentException("Duration cannot exceed 60 months");
-//        if (dto.getLoanAmount() <= 0 || dto.getLoanAmount() > 99999999) {
+//loan apply korar jonno(main code and its working)
+//    public Loan applyLoan(Long accountId, LoanRequestDto dto,String token) {
+//        if (dto.getDurationInMonths() <= 0 || dto.getDurationInMonths() > 60)
+//            throw new IllegalArgumentException("Duration must be between 1 and 60 months");
+//        if (dto.getLoanAmount() <= 0 || dto.getLoanAmount() > 99999999)
 //            throw new IllegalArgumentException("Loan amount must be > 0 and <= 99,999,999");
-//        }
-//
 //
 //        Accounts account = accountRepository.findById(accountId)
 //                .orElseThrow(() -> new RuntimeException("Account not found"));
@@ -264,6 +201,11 @@ public class LoanService{
 //        double totalPayable = dto.getLoanAmount() + totalInterest;
 //        double emi = totalPayable / dto.getDurationInMonths();
 //
+//        // Update account balance
+//        account.setBalance(account.getBalance() + dto.getLoanAmount());
+//        accountRepository.save(account);
+//
+//        // Create Loan
 //        Loan loan = new Loan();
 //        loan.setAccount(account);
 //        loan.setLoanAmount(dto.getLoanAmount());
@@ -271,7 +213,7 @@ public class LoanService{
 //        loan.setDurationInMonths(dto.getDurationInMonths());
 //        loan.setEmiAmount(emi);
 //        loan.setLoanType(loanType);
-//        loan.setStatus(LoanStatus.PENDING);
+//        loan.setStatus(LoanStatus.ACTIVE);
 //        Date start = new Date();
 //        loan.setLoanStartDate(start);
 //        loan.setLoanMaturityDate(addMonths(start, dto.getDurationInMonths()));
@@ -279,11 +221,70 @@ public class LoanService{
 //        loan.setRemainingAmount(totalPayable);
 //        loan.setUpdatedAt(new Date());
 //
-//        return loanRepository.save(loan);
+//        Loan savedLoan = loanRepository.save(loan);
+//
+//        // Create Transaction for Loan Credit
+//        Transaction txn = new Transaction();
+//        txn.setAccount(account);
+//        txn.setType(TransactionType.DEPOSIT); // Account receives money
+//        txn.setTransactionTime(new Date());
+//        txn.setAmount(dto.getLoanAmount());
+//        txn.setDescription("Loan disbursed: Loan ID " + savedLoan.getId());
+//        txn.setReceiverAccount(null); // Receiver not needed for loan credit
+//        txn.setToken(token);
+//        transactionRepository.save(txn);
+//
+//        return savedLoan;
 //    }
 
 
 
+
+
+
+
+
+    @Transactional
+    public Loan applyLoan(Long accountId, LoanRequestDto dto,String token) {
+        if (dto.getDurationInMonths() <= 0) throw new IllegalArgumentException("Duration must be > 0");
+        if (dto.getDurationInMonths() > 60) throw new IllegalArgumentException("Duration cannot exceed 60 months");
+        if (dto.getLoanAmount() <= 0 || dto.getLoanAmount() > 99999999) {
+            throw new IllegalArgumentException("Loan amount must be > 0 and <= 99,999,999");
+        }
+
+
+        Accounts account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        LoanType loanType = dto.getLoanType();
+        double interestRate = getFixedInterestRate(loanType);
+
+        double totalInterest = dto.getLoanAmount() * (interestRate / 100.0);
+        double totalPayable = dto.getLoanAmount() + totalInterest;
+        double emi = totalPayable / dto.getDurationInMonths();
+
+        Loan loan = new Loan();
+        loan.setAccount(account);
+        loan.setLoanAmount(dto.getLoanAmount());
+        loan.setInterestRate(interestRate);
+        loan.setDurationInMonths(dto.getDurationInMonths());
+        loan.setEmiAmount(emi);
+        loan.setLoanType(loanType);
+        loan.setStatus(LoanStatus.PENDING);
+        Date start = new Date();
+        loan.setLoanStartDate(start);
+        loan.setLoanMaturityDate(addMonths(start, dto.getDurationInMonths()));
+        loan.setTotalAlreadyPaidAmount(0.0);
+        loan.setRemainingAmount(totalPayable);
+        loan.setUpdatedAt(new Date());
+
+        return loanRepository.save(loan);
+    }
+
+
+
+
+//----------------------------
 
     //loan pay korar jonno
     public Loan payLoan(Long accountId, LoanPaymentDto paymentDto,String token) {

@@ -116,6 +116,11 @@ export class EmployeeComponent implements OnInit {
         }
       });
     }
+
+        else {
+      this.alertService.error('Please fill all required fields!');
+    }
+
   }
 
 

@@ -25,7 +25,7 @@ export class Usercomponent implements OnInit {
     private accountService: Accountsservice,
     private formbuilder: FormBuilder,
     private transactionService: Transactionsservice,
-    private alertService:AlertService,
+    private alertService: AlertService,
     private router: Router
   ) { }
 
@@ -83,7 +83,7 @@ export class Usercomponent implements OnInit {
         dateOfBirth: formValues.dateOfBirth,
         accountOpeningDate: formValues.accountOpeningDate,
         accountClosingDate: formValues.accountClosingDate,
-        role:Role.USER
+        role: Role.USER
       };
 
       const formData = new FormData();
@@ -107,7 +107,14 @@ export class Usercomponent implements OnInit {
         }
       });
     }
+    
+    else {
+      this.alertService.error('Please fill all required fields!');
+    }
+
   }
+
+
 
   loadUserWithAccounts(userId: number) {
     this.userService.getUserById(userId).subscribe(user => {
