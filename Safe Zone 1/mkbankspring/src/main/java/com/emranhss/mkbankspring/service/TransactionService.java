@@ -2,10 +2,7 @@ package com.emranhss.mkbankspring.service;
 
 import com.emranhss.mkbankspring.dto.AccountsDTO;
 import com.emranhss.mkbankspring.dto.TransactionDTO;
-import com.emranhss.mkbankspring.entity.Accounts;
-import com.emranhss.mkbankspring.entity.Transaction;
-import com.emranhss.mkbankspring.entity.TransactionType;
-import com.emranhss.mkbankspring.entity.User;
+import com.emranhss.mkbankspring.entity.*;
 import com.emranhss.mkbankspring.repository.AccountRepository;
 import com.emranhss.mkbankspring.repository.TransactionRepository;
 import jakarta.mail.MessagingException;
@@ -13,9 +10,12 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,8 +24,6 @@ public class TransactionService {
     private TransactionRepository transactionRepository;
     @Autowired
     private AccountRepository accountRepository;
-
-
     @Autowired
     private EmailService emailService;
 
@@ -444,6 +442,31 @@ public class TransactionService {
             return "UNKNOWN";
         }
     }
+
+
+
+    public Map<String, BigDecimal> getTotalDebitAndCredit() {
+        List<Transaction> transactions = transactionRepository.findAll();
+
+        BigDecimal totalDebit = BigDecimal.ZERO;
+        BigDecimal totalCredit = BigDecimal.ZERO;
+
+        for (Transaction tx : transactions) {
+            String nature = getTransactionNature(tx);
+            if ("DEBIT".equals(nature)) {
+                totalDebit = totalDebit.add(BigDecimal.valueOf(tx.getAmount()));
+            } else if ("CREDIT".equals(nature)) {
+                totalCredit = totalCredit.add(BigDecimal.valueOf(tx.getAmount()));
+            }
+        }
+
+        Map<String, BigDecimal> result = new HashMap<>();
+        result.put("totalDebit", totalDebit);
+        result.put("totalCredit", totalCredit);
+
+        return result;
+    }
+
 
 
     //TransactionStatement Filter for Employee with giving Id

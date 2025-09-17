@@ -16,8 +16,14 @@ export class AdminDashboard implements OnInit {
 
   totalAccounts: number = 0;
   totalEmployee: number = 0;
+
   totalDeposit: number = 0;
-  totalWithdraw: number = 0;
+  totalDebit: number = 0;
+
+  currentCash: number = 0;
+
+  totalLoan!: number;
+
   totalUsers: number = 0;
   totalSalary: number = 0;
 
@@ -29,6 +35,8 @@ export class AdminDashboard implements OnInit {
     private employeeService: EmployeeService,
     private cdr: ChangeDetectorRef
   ) { }
+
+
 
   ngOnInit(): void {
     //  Total Accounts(its working)
@@ -66,20 +74,27 @@ export class AdminDashboard implements OnInit {
 
 
     //  Total Deposit (positive)(its working)
-    this.transactionService.getPositiveTransactions().subscribe({
-      next: (transactions) => {
-        this.totalDeposit = transactions
-          .map(t => t.amount)
-          .reduce((acc, curr) => acc + curr, 0);
-        this.cdr.markForCheck();
-      }
-    });
+this.transactionService.getPositiveTransactions().subscribe({
+  next: (data) => {
+    // Response er totalCredit, totalDebit directly use korte parba
+    this.totalDeposit = data.totalCredit;
+    this.totalDebit = data.totalDebit;
+
+    this.currentCash = this.totalDeposit - this.totalDebit - this.totalSalary;
+
+    this.cdr.markForCheck();
+  },
+  error: (err) => {
+    console.error('Error fetching totals:', err);
+  }
+});
+
 
     //  Total Withdraw (negative)
     this.transactionService.getWithdrawTransactions().subscribe({
       next: (transactions) => {
         console.log('Withdraw Transactions:', transactions);
-        this.totalWithdraw = transactions
+        this.totalDebit = transactions
           .map(t => t.amount) // positive value
           .reduce((acc, curr) => acc + curr, 0);
         this.cdr.markForCheck();
@@ -90,5 +105,20 @@ export class AdminDashboard implements OnInit {
     });
 
 
+
+
+    //for All loan Sum
+  this.transactionService.getAllLoanAmount().subscribe({
+  next: (loanAmount) => {
+    this.totalLoan =  loanAmount.totalLoan;  //  property ধরতে হবে
+    this.cdr.markForCheck();
+    console.log('LoanAmount--:', this.totalLoan);
+  },
+  error: (err) => {
+    console.error('LoanAmount fetch failed:', err);
   }
+});
+  }
+
+
 }

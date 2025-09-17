@@ -9,10 +9,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -591,4 +589,24 @@ public class LoanService{
 //
 //        return loanRepository.save(loan);
 //    }
+
+
+    public Map<String, BigDecimal> getTotalLoanForAdminDashboard() {
+        List<Loan> loans = loanRepository.findAll();
+
+        BigDecimal totalLoan = BigDecimal.ZERO;
+
+        for (Loan loan : loans) {
+            // loanAmount is double → convert to BigDecimal
+            totalLoan = totalLoan.add(BigDecimal.valueOf(loan.getLoanAmount()));
+        }
+
+        Map<String, BigDecimal> response = new HashMap<>();
+        response.put("totalLoan", totalLoan);
+
+        return response;
+    }
+
+
+
 }

@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/loans")
@@ -182,6 +184,12 @@ public class LoanRestController {
         return ResponseEntity.ok(loanDto);
     }
 
+
+    //  Total Loan for Admin Dashboard
+    @GetMapping("/total")
+    public Map<String, BigDecimal> getTotalLoanForAdminDashboard() {
+        return loanService1.getTotalLoanForAdminDashboard();
+    }
 
 //    @GetMapping("/{id}")
 //    public ResponseEntity<LoanDto> getLoanById(

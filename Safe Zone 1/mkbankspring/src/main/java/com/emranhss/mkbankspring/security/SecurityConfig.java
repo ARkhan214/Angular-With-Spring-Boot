@@ -71,7 +71,8 @@ public class SecurityConfig {
                                 "/{fdId}/transactions",
                                 "/api/account/receiver/{receiverId}",
                                 "/api/admin/loans/pending",
-                                "/api/admin/loans/all"
+                                "/api/admin/loans/all",
+                                "/api/loans/total"
 
 
                         )

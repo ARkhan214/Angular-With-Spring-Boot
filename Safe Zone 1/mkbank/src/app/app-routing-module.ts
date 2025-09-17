@@ -101,7 +101,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, {
-      scrollPositionRestoration: 'enabled' // ✅ রাউট চেঞ্জ হলে সবসময় টপে স্ক্রল করবে
+      scrollPositionRestoration: 'enabled' //sidebar menu click korle top theke dekhabe.
     })
   ],
   exports: [RouterModule]

@@ -54,7 +54,7 @@
       <div class="card bg-danger text-white text-center shadow">
         <div class="card-body">
           <h5 class="card-title">Total Withdrawn</h5>
-          <h2>৳ {{ totalWithdraw | number }}</h2>
+          <h2>৳ {{ totalDebit | number }}</h2>
           <i class="fas fa-arrow-up fa-2x mt-2"></i>
         </div>
       </div>
@@ -65,7 +65,7 @@
       <div class="card bg-light text-dark text-center shadow">
         <div class="card-body">
           <h5 class="card-title">Total Loan Amount</h5>
-          <h2>৳ {{ totalWithdraw | number }}</h2>
+          <h2>৳ {{ totalLoan | number }}</h2>
           <i class="fas fa-arrow-up fa-2x mt-2"></i>
         </div>
       </div>
@@ -77,14 +77,14 @@
       <div class="card bg-dark text-white text-center shadow">
         <div class="card-body">
           <h5 class="card-title">Total Revenue From Opening Account</h5>
-          <h2>৳ {{ totalWithdraw | number }}</h2>
+          <h2>৳ {{ currentCash | number }}</h2>
           <i class="fas fa-arrow-up fa-2x mt-2"></i>
         </div>
       </div>
     </div>
 
 
-        <!--Total Revenue From Opening Account Amount -->
+        <!--Total Salary-->
     <div class="col-md-6 mb-3">
       <div class="card bg-secondary text-white text-center shadow">
         <div class="card-body">

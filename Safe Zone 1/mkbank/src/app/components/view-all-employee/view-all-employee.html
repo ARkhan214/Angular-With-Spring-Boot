@@ -2,6 +2,43 @@
 <div class="employee-container">
   <h2 class="text-primary mb-4">All Employees</h2>
 
+<!-- 🔍 Search Inputs -->
+  <div class="row mb-3 g-2">
+    <div class="col-md-4">
+      <input
+        type="text"
+        [(ngModel)]="searchById"
+        placeholder="Search by ID"
+        class="form-control"
+        (input)="filterById()"
+        (keydown.enter)="filterById()"
+      />
+    </div>
+
+    <div class="col-md-4">
+      <input
+        type="text"
+        [(ngModel)]="searchByNid"
+        placeholder="Search by NID"
+        class="form-control"
+        (input)="filterByNid()"
+        (keydown.enter)="filterByNid()"
+      />
+    </div>
+
+    <div class="col-md-4">
+      <input
+        type="text"
+        [(ngModel)]="searchByPhone"
+        placeholder="Search by Phone"
+        class="form-control"
+        (input)="filterByPhone()"
+        (keydown.enter)="filterByPhone()"
+      />
+    </div>
+  </div>
+
+
   <!-- Loading & Error Messages -->
   <div *ngIf="!employee?.length" class="alert alert-info">
     No employees found.
@@ -27,7 +64,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let emp of employee">
+        <tr *ngFor="let emp of filteredAccount" class="hover:bg-gray-50">
           <td>{{ emp.id }}</td>
           <td>{{ emp.name }}</td>
           <td>{{ emp.status }}</td>

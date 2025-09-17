@@ -14,8 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -74,6 +76,15 @@ public class TransactionRestController {
         return transactionService.onlyTransfer(transaction, sender.getId(), receiverId, token);
     }
 
+
+
+//---------Debit & Credit---Start--For Admin Dashbord-
+    @GetMapping("totals")
+    public ResponseEntity<Map<String, BigDecimal>> getTotals() {
+        Map<String, BigDecimal> totals = transactionService.getTotalDebitAndCredit();
+        return ResponseEntity.ok(totals);
+    }
+//---------Debit & Credit---End
 
 
 

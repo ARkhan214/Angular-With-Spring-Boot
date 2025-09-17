@@ -64,25 +64,49 @@ export class EmpTranStatement implements OnInit {
   }
 
 computeTotals() {
-    this.totalWithdraw = 0;
-    this.totalDeposit = 0;
-    this.totalBalance = 0;
+  this.totalWithdraw = 0;
+  this.totalDeposit = 0;
+  this.totalBalance = 0;
 
-    for (let tx of this.transactions) {
-      if (tx.type === 'DEBIT') {
-        this.totalWithdraw += tx.amount!;
-      } else if (tx.type === 'CREDIT') {
-        this.totalDeposit += tx.amount!;
-      }
+  let runningBalance = 0;
 
-      this.totalBalance = tx.account.balance ?? tx.account.balance; // last balance
+  for (let tx of this.transactions) {
+    if (tx.type === 'DEBIT') {
+      this.totalWithdraw += tx.amount!;
+      runningBalance -= tx.amount!;
+    } else if (tx.type === 'CREDIT') {
+      this.totalDeposit += tx.amount!;
+      runningBalance += tx.amount!;
     }
 
-    console.log(this.totalWithdraw + "1111111111111111111111111");
-    console.log(this.totalDeposit + "22222222222222222222222222");
-    console.log(this.totalBalance + "333333333333333333333333333");
-
+    // প্রতিটি ট্রানজেকশনের জন্য running balance সেট
+    tx.runningBalance = runningBalance;
   }
+
+  this.totalBalance = runningBalance;
+}
+
+
+// computeTotals() {
+//     this.totalWithdraw = 0;
+//     this.totalDeposit = 0;
+//     this.totalBalance = 0;
+
+//     for (let tx of this.transactions) {
+//       if (tx.type === 'DEBIT') {
+//         this.totalWithdraw += tx.amount!;
+//       } else if (tx.type === 'CREDIT') {
+//         this.totalDeposit += tx.amount!;
+//       }
+
+//       this.totalBalance = tx.account.balance ?? tx.account.balance; // last balance
+//     }
+
+//     console.log(this.totalWithdraw + "1111111111111111111111111");
+//     console.log(this.totalDeposit + "22222222222222222222222222");
+//     console.log(this.totalBalance + "333333333333333333333333333");
+
+//   }
 
 
   //For Traansaction Statement Filter Start---------------------
