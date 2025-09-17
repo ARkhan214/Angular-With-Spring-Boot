@@ -44,60 +44,66 @@ import { ViewAllFd } from './components/view-all-fd/view-all-fd';
 import { DpsComponent } from './components/dps-component/dps-component';
 import { DpsPayComponent } from './components/dps-pay-component/dps-pay-component';
 import { ViewAllDPS } from './components/view-all-dps/view-all-dps';
+import { AdminGuard } from './guards/admin-guard';
+import { AdminEmployeeGuard} from './guards/admin-employee-guard';
+import { EmployeeGuard } from './guards/employee-guard';
 
 
 
 
 const routes: Routes = [
   { path: '', component: Home },
-  { path: 'adduser', component: Usercomponent },
-  { path: 'addemployee', component: EmployeeComponent },
-  { path: 'viewalluser', component: Viewallusercomponent },
+  { path: 'adduser', component: Usercomponent, canActivate: [EmployeeGuard] },
+  { path: 'addemployee', component: EmployeeComponent,canActivate: [AdminGuard]},
+  { path: 'viewalluser', component: Viewallusercomponent,canActivate: [AdminGuard] },
   { path: 'updateuser/:id', component: Updateusercomponent },
-  { path: 'viewallaccount', component: ViewAllAccounts },
-  { path: 'viewallemp', component: ViewAllEmployee },
-  { path: 'deposit', component: DepositComponent },
+  { path: 'viewallaccount', component: ViewAllAccounts, canActivate: [AdminEmployeeGuard] },
+  { path: 'viewallemp', component: ViewAllEmployee,canActivate: [AdminGuard]},
+  { path: 'deposit', component: DepositComponent, canActivate: [EmployeeGuard] },
   { path: 'withdraw', component: WithdrawComponent },
   { path: 'about', component: AboutBank },
   { path: 'transaction', component: TransactionComponent },
-  { path: 'addtr', component: Addtransaction },
-  { path: 'emptr', component: EmployeeTransaction },
+  { path: 'addtr', component: Addtransaction, canActivate: [UserGuard] },
+  { path: 'emptr', component: EmployeeTransaction, canActivate: [EmployeeGuard] },
   { path: 'trst', component: TransactionStatement },
-  { path: 'acctrst', component: AccTranStatement },
-  { path: 'emptrst', component: EmpTranStatement },
+  { path: 'acctrst', component: AccTranStatement, canActivate: [UserGuard] },
+  { path: 'emptrst', component: EmpTranStatement, canActivate: [AdminEmployeeGuard] },
   { path: 'login', component: Login },
   { path: 'logout', component: Logout },
   { path: 'user-profile', component: UserProfile },
-  { path: 'account-profile', component: AccountHolderProfile },
-  { path: 'employee-profile', component: EmployeeProfile },
-  { path: 'admin-profile', component: AdminProfile },
+  { path: 'account-profile', component: AccountHolderProfile,canActivate: [UserGuard]  },
+  { path: 'employee-profile', component: EmployeeProfile, canActivate: [EmployeeGuard] },
+  { path: 'admin-profile', component: AdminProfile,canActivate: [AdminGuard] },
   { path: 'contact', component: ContactUs },
-  { path: 'admindash', component: AdminDashboard },
-  { path: 'onlyadduser', component: OnlyAddUser },
+  { path: 'admindash', component: AdminDashboard,canActivate: [AdminGuard] },
+  { path: 'onlyadduser', component: OnlyAddUser,canActivate: [AdminGuard] },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
-  { path: 'water-bill', component: WaterBillComponent },
-  { path: 'mobile-bill', component: MobileBillComponent },
-  { path: 'credit-card-bill', component: CreditCardBillComponent },
-  { path: 'electricity-bill', component: ElectricityBillComponent },
-  { path: 'gas-bill', component: GasBillComponent },
-  { path: 'internet-bill', component: InternetBillComponent },
-  { path: 'apply-loan', component: ApplyLoanComponent },
-  { path: 'view-all-loan', component: ViewAllLoans },
-  { path: 'pay-loan', component: PayLoan },
-  { path: 'admin-approval-loan', component: AdminLoanApproveComponent },
-  { path: 'fd', component: FixedDepositComponent },
-  { path: 'view-all-fd', component: ViewAllFd },
-  { path: 'dps', component: DpsComponent },
-  { path: 'dps-pay', component: DpsPayComponent },
-  { path: 'view-all-dps', component: ViewAllDPS },
+  { path: 'water-bill', component: WaterBillComponent, canActivate: [UserGuard] },
+  { path: 'mobile-bill', component: MobileBillComponent, canActivate: [UserGuard] },
+  { path: 'credit-card-bill', component: CreditCardBillComponent, canActivate: [UserGuard] },
+  { path: 'electricity-bill', component: ElectricityBillComponent, canActivate: [UserGuard] },
+  { path: 'gas-bill', component: GasBillComponent, canActivate: [UserGuard] },
+  { path: 'internet-bill', component: InternetBillComponent, canActivate: [UserGuard] },
+  { path: 'apply-loan', component: ApplyLoanComponent, canActivate: [UserGuard] },
+  { path: 'view-all-loan', component: ViewAllLoans, canActivate: [UserGuard] },
+  { path: 'pay-loan', component: PayLoan, canActivate: [UserGuard] },
+  { path: 'admin-approval-loan', component: AdminLoanApproveComponent,canActivate: [AdminGuard] },
+  { path: 'fd', component: FixedDepositComponent,canActivate: [UserGuard] },
+  { path: 'view-all-fd', component: ViewAllFd, canActivate: [UserGuard] },
+  { path: 'dps', component: DpsComponent, canActivate: [UserGuard] },
+  { path: 'dps-pay', component: DpsPayComponent, canActivate: [UserGuard] },
+  { path: 'view-all-dps', component: ViewAllDPS, canActivate: [UserGuard] },
 
 
 
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, {
+      scrollPositionRestoration: 'enabled' // ✅ রাউট চেঞ্জ হলে সবসময় টপে স্ক্রল করবে
+    })
+  ],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

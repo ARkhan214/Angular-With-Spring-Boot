@@ -7,11 +7,11 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class LoanService {
-  
+
   private apiUrl = 'http://localhost:8085/api/loans/myloans';
   private baseUrl = 'http://localhost:8085/api/admin/loans';    //For admin approval.
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getMyLoans(): Observable<LoanDTO[]> {
     const token = localStorage.getItem('authToken');
@@ -23,10 +23,10 @@ export class LoanService {
 
     return this.http.get<LoanDTO[]>(this.apiUrl, { headers });
   }
-getAll(): Observable<LoanDTO[]>{
+  getAll(): Observable<LoanDTO[]> {
 
-  return this.http.get<LoanDTO[]>(`${this.baseUrl}/all`);
-}
+    return this.http.get<LoanDTO[]>(`${this.baseUrl}/all`);
+  }
 
 
 
@@ -73,7 +73,7 @@ getAll(): Observable<LoanDTO[]>{
 
   //Way one start----------------
 
-  
+
   //  Common function to set Authorization header
   // private getAuthHeaders(): HttpHeaders {
   //   const token = localStorage.getItem('authToken');
@@ -106,7 +106,7 @@ getAll(): Observable<LoanDTO[]>{
 
 
   //Way two start----------------
-  
+
   // getPendingLoans(token: string): Observable<any> {
   //   const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
   //   return this.http.get(`${this.baseUrl}/pending`, { headers });
@@ -122,6 +122,6 @@ getAll(): Observable<LoanDTO[]>{
   //   return this.http.post(`${this.baseUrl}/${loanId}/reject`, {}, { headers });
   // }
 
- //Way two end----------------
-  
+  //Way two end----------------
+
 }

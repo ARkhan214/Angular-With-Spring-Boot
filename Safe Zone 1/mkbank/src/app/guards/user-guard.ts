@@ -8,25 +8,70 @@ import { AuthService } from '../service/auth-service';
 })
 export class UserGuard implements CanActivate {
 
-  constructor(
-
+constructor(
+    private authService: AuthService,
     private router: Router
+  ) {}
 
-  ) { }
+  canActivate(): boolean | UrlTree | Observable<boolean | UrlTree> {
+    console.log('Checking UserGuard. Current Role:', this.authService.getUserRole());
 
-  canActivate(): boolean {
-    const data = localStorage.getItem('loggedInUser');
-    if (data) {
-      const user = JSON.parse(data);
-      if (user.type === 'user') {
-        console.log(' User access granted');
-        return true;
-      }
+    if (this.authService.isUser()) {
+      return true;
     }
 
-    console.warn(' User access denied');
-    this.router.navigate(['/login']);
-    return false;
+    return this.router.createUrlTree(['/login']);
   }
+
+
+
+  //---------------
+
+// constructor(
+
+//     private authService: AuthService,
+//     private router: Router,
+
+//     @Inject(PLATFORM_ID) private platformId: Object
+//   ) {}
+
+
+//    canActivate(): boolean | UrlTree | Observable<boolean | UrlTree> {
+
+//     console.log('Role from AuthService:', this.authService.getUserRole());
+
+//     if(this.authService.isUser()){
+      
+//       return true;
+//     }
+
+//     return this.router.createUrlTree(['login']);
+ 
+//   }
+  
+
+
+
+//-----------------------
+  // constructor(
+
+  //   private router: Router
+
+  // ) { }
+
+  // canActivate(): boolean {
+  //   const data = localStorage.getItem('loggedInUser');
+  //   if (data) {
+  //     const user = JSON.parse(data);
+  //     if (user.type === 'user') {
+  //       console.log(' User access granted');
+  //       return true;
+  //     }
+  //   }
+
+  //   console.warn(' User access denied');
+  //   this.router.navigate(['/login']);
+  //   return false;
+  // }
 
 }

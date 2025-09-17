@@ -22,6 +22,7 @@ export class AuthService {
   private userRoleSubject: BehaviorSubject<Role | null> = new BehaviorSubject<Role | null>(null);
   public userRole$: Observable<Role | null> = this.userRoleSubject.asObservable();
 
+  // userRole: string | null = null;
 
   constructor(
     private alertService: AlertService,
@@ -118,34 +119,61 @@ export class AuthService {
 
 
   logout(): void {
-  if (this.isBrowser()) {
-    const token = localStorage.getItem('authToken');
-    const role = localStorage.getItem('userRole');
+    if (this.isBrowser()) {
+      const token = localStorage.getItem('authToken');
+      const role = localStorage.getItem('userRole');
 
-    if (!token || !role) {
-      this.alertService.warning('You are not logged in!', 'Logout Failed');
-      return;
-    }
+      if (!token || !role) {
+        this.alertService.warning('You are not logged in!', 'Logout Failed');
+        return;
+      }
 
-    // browser built-in confirm dialog
-    const confirmed = window.confirm('Do you really want to logout?');
+      // browser built-in confirm dialog
+      const confirmed = window.confirm('Do you really want to logout?');
 
-    if (confirmed) {
-      localStorage.removeItem('userRole');
-      localStorage.removeItem('authToken');
-      this.userRoleSubject.next(null);
+      if (confirmed) {
+        localStorage.removeItem('userRole');
+        localStorage.removeItem('authToken');
+        this.userRoleSubject.next(null);
 
-      this.router.navigate(['/']).then(() => {
-        // SweetAlert success message
-        this.alertService.success('You have been logged out successfully!', 'Logged Out');
-      });
-    } else {
-      // SweetAlert info message
-      this.alertService.info('Logout cancelled', 'Cancelled');
+        this.router.navigate(['/']).then(() => {
+          // SweetAlert success message
+          this.alertService.success('You have been logged out successfully!', 'Logged Out');
+        });
+      } else {
+        // SweetAlert info message
+        this.alertService.info('Logout cancelled', 'Cancelled');
+      }
     }
   }
-}
 
+
+
+  // logout(): void {
+  //   if (!this.isBrowser()) return;
+
+  //   const token = localStorage.getItem('authToken');
+  //   const role = localStorage.getItem('userRole');
+
+  //   if (!token || !role) {
+  //     this.alertService.warning('You are not logged in!', 'Logout Failed');
+  //     return;
+  //   }
+
+  //   const confirmed = window.confirm('Do you really want to logout?');
+
+  //   if (confirmed) {
+  //     localStorage.removeItem('authToken');
+  //     localStorage.removeItem('userRole');
+  //     this.userRoleSubject.next(null);
+
+  //     this.router.navigate(['/']).then(() => {
+  //       this.alertService.success('You have been logged out successfully!', 'Logged Out');
+  //     });
+  //   } else {
+  //     this.alertService.info('Logout cancelled', 'Cancelled');
+  //   }
+  // }
 
 
 
@@ -158,7 +186,7 @@ export class AuthService {
   //       this.alertService.warning('You are not logged in!', 'Logout Failed');
   //       return;
   //     }
-      
+
   //     this.alertService.confirm('Do you really want to logout?', 'Logout Confirmation')
   //       .then((result) => {
   //         if (result.isConfirmed) {
@@ -195,4 +223,20 @@ export class AuthService {
     return userRole ? roles.includes(userRole) : false;
   }
 
+
+  //Guard Section(For Guard)---Start---
+  // auth-service.ts
+  isAdmin(): boolean {
+    return this.getUserRole() === Role.ADMIN;
+  }
+
+  isUser(): boolean {
+    return this.getUserRole() === Role.USER;
+  }
+
+  isEmployee(): boolean {
+    return this.getUserRole() === Role.EMPLOYEE;
+  }
+
+  //Guard Section(For Guard)---end---
 }

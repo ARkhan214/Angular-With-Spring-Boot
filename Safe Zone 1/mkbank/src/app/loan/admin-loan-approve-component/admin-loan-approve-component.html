@@ -38,10 +38,10 @@
           <td>৳ {{ loan.account.balance | number:'1.2-2' }}</td>
           <td>৳ {{ loan.status }}</td>
           <td>
-            <button class="btn btn-success btn-sm me-1" (click)="approveLoan(loan.id)">
+            <button class="btn btn-success btn-sm me-1 mb-2" (click)="approveLoan(loan.id)">
               Approve
             </button>
-            <button class="btn btn-danger btn-sm" (click)="rejectLoan(loan.id)">
+            <button class="btn btn-danger btn-sm mb-2" (click)="rejectLoan(loan.id)">
               Reject
             </button>
           </td>

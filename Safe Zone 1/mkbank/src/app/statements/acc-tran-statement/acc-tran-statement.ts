@@ -8,6 +8,7 @@ import { Transactionsservice } from '../../service/transactionsservice';
 // Import jsPDF and html2canvas for PDF export
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { TransactionType } from '../../model/transactionType.model';
 
 @Component({
   selector: 'app-acc-tran-statement',
@@ -32,7 +33,7 @@ export class AccTranStatement implements OnInit {
   startDate: string = '';
   endDate: string = '';
   type: string = '';
-  transactionType: string = '';
+  transactionType!: TransactionType;
   //For Traansaction Statement Filter End----------------------
 
 

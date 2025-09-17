@@ -293,6 +293,10 @@ public class LoanService{
         Loan loan = loanRepository.findById(paymentDto.getLoanId())
                 .orElseThrow(() -> new RuntimeException("Loan not found"));
 
+        if (loan.getStatus() == LoanStatus.PENDING) {
+            throw new RuntimeException("This loan is Pending. No payment allowed");
+        }
+
         if (loan.getStatus() == LoanStatus.CLOSED) {
             throw new RuntimeException("This loan is already closed. No further payments allowed.");
         }
