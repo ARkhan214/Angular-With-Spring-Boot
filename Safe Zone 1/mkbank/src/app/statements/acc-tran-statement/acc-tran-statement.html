@@ -24,7 +24,7 @@
       </div>
       <div class="col-md-2">
         <label class="form-label fw-bold">Type:</label>
-        <select class="form-select" [(ngModel)]="type">
+        <select class="form-select" [(ngModel)]="type" (change)="onTypeChange()">
           <option value="">All</option>
           <option value="DEBIT">Debit</option>
           <option value="CREDIT">Credit</option>
@@ -93,13 +93,13 @@
           </td>
 
           <!-- Always show total Amount -->
-        <td>{{ tx.runningBalance | number:'1.2-2' }}</td>
+          <td>{{ tx.runningBalance | number:'1.2-2' }}</td>
 
           <td>{{ tx.companyName }}</td>
           <td>{{ tx.accountHolderBillingId }}</td>
         </tr>
 
-         <!-- Totals Row -->
+        <!-- Totals Row -->
         <tr class="table-secondary fw-bold">
           <td colspan="6" class="text-end">Totals</td>
           <td>{{ totalWithdraw | number:'1.2-2' }}</td>

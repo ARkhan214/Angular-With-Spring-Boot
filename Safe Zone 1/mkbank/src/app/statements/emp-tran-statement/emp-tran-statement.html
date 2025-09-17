@@ -62,7 +62,7 @@
           <!-- Type -->
           <div class="col-md-2">
             <label class="form-label fw-bold">Type:</label>
-            <select class="form-select" [(ngModel)]="type">
+            <select class="form-select" [(ngModel)]="type" (change)="onTypeChange()">
               <option value="">All</option>
               <option value="DEBIT">Debit</option>
               <option value="CREDIT">Credit</option>
