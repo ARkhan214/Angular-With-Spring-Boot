@@ -1,0 +1,88 @@
+
+
+<!-- Scrolling notice -->
+<div class="bg-primary py-2 text-center animate__animated animate__fadeInDown">
+  <marquee behavior="scroll" direction="left" scrollamount="6" class="fw-semibold text-white ">
+    Your trusted partner in secure and smart banking.
+  </marquee>
+</div>
+
+<!-- Hero Section -->
+<section class="bg-primary text-white text-center py-5 animate__animated animate__zoomIn">
+  <div class="container">
+    <h1 class="display-4 fw-bold">Welcome to <span class="text-warning">MK Bank</span></h1>
+    <p class="lead mb-4">Smart. Secure. Simple Banking Solution.</p>
+    <a class="btn btn-light btn-lg fw-semibold animate__animated animate__pulse animate__infinite" routerLink="/login">Open an
+      Account</a>
+  </div>
+</section>
+
+<!-- Services Section -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <h2 class="text-center mb-5 fw-bold text-primary animate__animated animate__fadeInUp">Our Services</h2>
+    <div class="row g-4 text-center">
+      <div class="col-md-4 animate__animated animate__fadeInLeft animate__delay-1s">
+        <div class="card border-0 shadow-lg h-100 hover-shadow">
+          <div class="card-body">
+            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135755.png" alt="Account" class="mb-3"
+              style="height: 60px;">
+            <h5 class="card-title fw-bold">Savings Account</h5>
+            <p class="card-text text-muted">Secure and flexible savings with attractive interest rates.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 animate__animated animate__fadeInUp animate__delay-2s">
+        <div class="card border-0 shadow-lg h-100">
+          <div class="card-body">
+            <img src="https://cdn-icons-png.flaticon.com/512/2331/2331966.png" alt="Loan" class="mb-3"
+              style="height: 60px;">
+            <h5 class="card-title fw-bold">Personal Loans</h5>
+            <p class="card-text text-muted">Fast loan approval with low interest and flexible repayment.</p>
+
+            <div class="container mt-4">
+              <div class="text-center animate__animated animate__pulse animate__infinite">
+                We are going to start <span class="text-danger">Loan Facility</span> very soon!
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 animate__animated animate__fadeInRight animate__delay-3s">
+        <div class="card border-0 shadow-lg h-100">
+          <div class="card-body">
+            <img src="https://cdn-icons-png.flaticon.com/512/190/190411.png" alt="FD" class="mb-3"
+              style="height: 60px;">
+            <h5 class="card-title fw-bold">Fixed Deposits</h5>
+            <p class="card-text text-muted">Enjoy higher returns with safe and secure fixed deposits.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- About Us -->
+<section class="bg-white py-5 animate__animated animate__fadeIn animate__delay-2s">
+  <div class="container text-center">
+    <h2 class="fw-bold text-primary mb-4">Why Choose MK Bank?</h2>
+    <p class="text-muted mx-auto" style="max-width: 700px;">
+      MK Bank is committed to delivering a world-class banking experience through advanced technology, personalized
+      services, and total security. We value your trust and work hard every day to exceed your expectations.
+    </p>
+  </div>
+</section>
+
+<!-- Contact Prompt -->
+<section class="bg-info text-white text-center py-5 animate__animated animate__fadeInUp animate__delay-3s">
+  <div class="container">
+    <h2 class="fw-bold mb-3">Need Help?</h2>
+    <p class="mb-4">Call us at <strong>+880-1234-567890</strong> or visit your nearest branch today.</p>
+    <a href="contact" class="btn btn-light fw-semibold">Contact Us</a>
+  </div>
+</section>
+
+
+F:\Backend & Frontnd Spring boot with Angular\Angular-With-Spring-Boot\Safe Zone 1\mkbank\src\assets\img
+F:\Backend & Frontnd Spring boot with Angular\Angular-With-Spring-Boot\Safe Zone 1\mkbank\src\assets\img\undraw_posting_photo.svg

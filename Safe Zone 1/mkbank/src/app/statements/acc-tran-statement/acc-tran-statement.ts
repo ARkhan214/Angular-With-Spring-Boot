@@ -103,6 +103,7 @@ export class AccTranStatement implements OnInit {
     ).subscribe({
       next: (data) => {
         this.transactions = data;
+        this.computeTotals();
         this.loading = false;
         this.cdr.markForCheck();
       },
@@ -299,7 +300,7 @@ export class AccTranStatement implements OnInit {
         tx.transactionTime ? new Date(tx.transactionTime).toLocaleDateString() : '',
         tx.description || '',
         tx.id || '',
-        tx.receiverAccount?.name || '',
+        // tx.receiverAccount?.name || '',
         tx.type || '',
         tx.transactionType || '',
         tx.type === 'DEBIT' ? tx.amount?.toFixed(2) : '',
@@ -310,7 +311,7 @@ export class AccTranStatement implements OnInit {
 
     // Totals row
     tableRows.push([
-      "", "TOTAL", "", "", "", "",
+      "", "TOTAL", "", "", "",
       this.totalWithdraw.toFixed(2),
       this.totalDeposit.toFixed(2),
       this.totalBalance.toFixed(2)
@@ -318,7 +319,7 @@ export class AccTranStatement implements OnInit {
 
     // AutoTable
     autoTable(pdf, {
-      head: [['Date', 'Particulars', 'Instrument No', 'Receiver', 'Type', 'Transaction Type', 'Withdraw', 'Deposit', 'Balance']],
+      head: [['Date', 'Particulars', 'Instrument No', 'Type', 'Transaction Type', 'Withdraw', 'Deposit', 'Balance']],
       body: tableRows,
       startY: 95,
       theme: 'grid',

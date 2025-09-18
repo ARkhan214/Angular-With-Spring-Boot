@@ -129,6 +129,7 @@ computeTotals() {
     ).subscribe({
       next: (data) => {
         this.transactions = data;
+        this.computeTotals();
         this.loading = false;
         this.cdr.markForCheck();
       },
@@ -312,7 +313,7 @@ computeTotals() {
         tx.transactionTime ? new Date(tx.transactionTime).toLocaleDateString() : '',
         tx.description || '',
         tx.id || '',
-        tx.receiverAccount?.name || '',
+        // tx.receiverAccount?.name || '',
         tx.type || '',
         tx.transactionType || '',
         tx.type === 'DEBIT' ? tx.amount?.toFixed(2) : '',
@@ -331,7 +332,7 @@ computeTotals() {
 
     // AutoTable
     autoTable(pdf, {
-      head: [['Date', 'Particulars', 'Instrument No', 'Receiver', 'Type', 'Transaction Type', 'Withdraw', 'Deposit', 'Balance']],
+      head: [['Date', 'Particulars', 'Instrument No', 'Type', 'Transaction Type', 'Withdraw', 'Deposit', 'Balance']],
       body: tableRows,
       startY: 95,
       theme: 'grid',
