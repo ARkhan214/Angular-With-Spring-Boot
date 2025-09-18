@@ -1,0 +1,30 @@
+package com.emranhss.mkbankspring.entity;
+
+public enum GLType {
+    ACCOUNT_OPEN,
+    ACCOUNT_CLOSED,
+
+    FD_OPEN,
+    FD_CLOSED,
+    FD_CLOSED_PENALTY,
+
+    DPS_OPEN,
+    DPS_PAYMENT,
+    DPS_INTEREST_PAYABLE,
+    DPS_CLOSED,
+
+    LOAN_OPEN,
+    LOAN_PAYMENT,
+    LOAN_CLOSED,
+
+    PENALTY,
+
+
+
+    ELECTRICITY_BILL_GL,
+    GAS_BILL_GL,
+    WATER_BILL_GL,
+    INTERNET_BILL_GL,
+    MOBILE_BILL_GL,
+    CREDIT_CARD_BILL_GL
+}

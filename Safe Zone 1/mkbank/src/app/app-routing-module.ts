@@ -47,6 +47,7 @@ import { ViewAllDPS } from './components/view-all-dps/view-all-dps';
 import { AdminGuard } from './guards/admin-guard';
 import { AdminEmployeeGuard} from './guards/admin-employee-guard';
 import { EmployeeGuard } from './guards/employee-guard';
+import { ViewAllLoanForAdmin } from './loan/view-all-loan-for-admin/view-all-loan-for-admin';
 
 
 
@@ -87,6 +88,7 @@ const routes: Routes = [
   { path: 'internet-bill', component: InternetBillComponent, canActivate: [UserGuard] },
   { path: 'apply-loan', component: ApplyLoanComponent, canActivate: [UserGuard] },
   { path: 'view-all-loan', component: ViewAllLoans, canActivate: [UserGuard] },
+  { path: 'view-all-loan-for-admin', component:ViewAllLoanForAdmin,canActivate: [AdminGuard] },
   { path: 'pay-loan', component: PayLoan, canActivate: [UserGuard] },
   { path: 'admin-approval-loan', component: AdminLoanApproveComponent,canActivate: [AdminGuard] },
   { path: 'fd', component: FixedDepositComponent,canActivate: [UserGuard] },
