@@ -1,4 +1,5 @@
-<div id="wrapper">
+<!-- Wrapper depends on login status -->
+<div *ngIf="loginStatus$ | async as role; else onlyContent" id="wrapper">
 
   <!-- Sidebar Component -->
   <app-sidebar></app-sidebar>
@@ -28,6 +29,13 @@
 
 </div>
 <!-- End of Page Wrapper -->
+
+<!-- Template for non-logged in users -->
+<ng-template #onlyContent>
+  <div class="container-fluid mt-3">
+    <router-outlet></router-outlet>
+  </div>
+</ng-template>
 
 <!-- Scroll to Top Button-->
 <a class="scroll-to-top rounded" href="#page-top">

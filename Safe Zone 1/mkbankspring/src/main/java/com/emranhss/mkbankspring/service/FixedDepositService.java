@@ -246,6 +246,8 @@ public FixedDepositDTO closeFD(Long fdId, Long accountId,String token) {
         glTxn.setAmount(penaltyAmount);
         glTxn.setType(GLType.FD_CLOSED_PENALTY);
         glTxn.setDescription("FD closed within 30 days, penalty applied and The penalty FD ID is: "+fd.getId());
+        glTxn.setReferenceId(fd.getId());
+        glTxn.setReferenceType("FD");
         glTransactionRepository.save(glTxn);
 
         GLTransaction glTxn2 = new GLTransaction();

@@ -4,6 +4,7 @@ import com.emranhss.mkbankspring.dto.AccountsDTO;
 import com.emranhss.mkbankspring.dto.TransactionDTO;
 import com.emranhss.mkbankspring.entity.*;
 import com.emranhss.mkbankspring.repository.AccountRepository;
+import com.emranhss.mkbankspring.repository.GLTransactionRepository;
 import com.emranhss.mkbankspring.repository.TransactionRepository;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
@@ -26,6 +27,8 @@ public class TransactionService {
     private AccountRepository accountRepository;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private GLTransactionRepository gLTransactionRepository;
 
     //last update for tranST
     public List<Transaction> getTransactionsByAccount(Long accountId) {
@@ -174,7 +177,15 @@ public class TransactionService {
         senderTx.setToken(token);
         transactionRepository.save(senderTx);
 
-        // 🔔 Send notification to Sender
+
+        GLTransaction glTxn = new GLTransaction();
+        glTxn.setAmount(requestTx.getAmount());
+        glTxn.setType(GLType.TRANSFER);
+        glTxn.setDescription(requestTx.getAmount()+" Taka "+TransactionType.TRANSFER.name()+" Successfull and The reaceiver id is: "+receiver.getId());
+        glTxn.setReferenceId(sender.getId());
+        glTxn.setReferenceType("Transfer Money");
+        gLTransactionRepository.save(glTxn);
+        //  Send notification to Sender
         this.sendTransactionEmail(senderTx);
 
         // 2️⃣ Receiver Transaction (RECEIVE = credit)
@@ -188,7 +199,15 @@ public class TransactionService {
         receiverTx.setToken(token);
         transactionRepository.save(receiverTx);
 
-        // 🔔 Send notification to receiver
+        GLTransaction glTxn1 = new GLTransaction();
+        glTxn1.setAmount(requestTx.getAmount());
+        glTxn1.setType(GLType.RECEIVE);
+        glTxn1.setDescription(requestTx.getAmount()+" Received from "+receiver.getName()+" Sender ID is: "+sender.getId());
+        glTxn1.setReferenceId(receiver.getId());
+        glTxn1.setReferenceType("Receive Money");
+        gLTransactionRepository.save(glTxn1);
+
+        // Send notification to receiver
         this.cashIN(receiverId, requestTx.getAmount());
 
         // return sender transaction as main response
@@ -430,12 +449,12 @@ public class TransactionService {
                 || tx.getType() == TransactionType.FIXED_DEPOSIT
                 || tx.getType() == TransactionType.FD_CLOSED_PENALTY
                 || tx.getType() == TransactionType.TRANSFER
-                || tx.getType() == TransactionType.BILL_PAYMENT_MOBILE
-                || tx.getType() == TransactionType.BILL_PAYMENT_WATER
-                || tx.getType() == TransactionType.BILL_PAYMENT_INTERNET
-                || tx.getType() == TransactionType.BILL_PAYMENT_GAS
-                || tx.getType() == TransactionType.BILL_PAYMENT_ELECTRICITY
-                || tx.getType() == TransactionType.BILL_PAYMENT_CREDIT_CARD
+                || tx.getType() == TransactionType.MOBILE_RECHARGE
+                || tx.getType() == TransactionType.WATER_BILL
+                || tx.getType() == TransactionType.INTERNET_BILL
+                || tx.getType() == TransactionType.GAS_BILL
+                || tx.getType() == TransactionType.ELECTRICITY_BILL
+                || tx.getType() == TransactionType.CREDIT_CARD_BILL
                 || tx.getType() == TransactionType.DPS_DEPOSIT) {
             return "DEBIT";
         } else {
@@ -725,6 +744,30 @@ public class TransactionService {
         account.setBalance(account.getBalance() - amount);
         accountRepository.save(account);
 
+
+        // ================= GL Transaction Mapping Start=================
+        Map<TransactionType, GLType> glMapping = Map.of(
+                TransactionType.ELECTRICITY_BILL, GLType.ELECTRICITY_BILL,
+                TransactionType.GAS_BILL, GLType.GAS_BILL,
+                TransactionType.WATER_BILL, GLType.WATER_BILL,
+                TransactionType.INTERNET_BILL, GLType.INTERNET_BILL,
+                TransactionType.MOBILE_RECHARGE, GLType.MOBILE_RECHARGE,
+                TransactionType.CREDIT_CARD_BILL, GLType.CREDIT_CARD_BILL
+        );
+
+        GLType glType = glMapping.get(type);
+
+        if(glType != null) {
+            GLTransaction glTxn = new GLTransaction();
+            glTxn.setAmount(amount);
+            glTxn.setType(glType);
+            glTxn.setDescription("Bill payment GL for " + type.name());
+            glTxn.setReferenceId(account.getId());
+            glTxn.setReferenceType("Utility Bill Payment");
+            gLTransactionRepository.save(glTxn);
+        }
+        //---------------------End
+
         // Create transaction
         Transaction transaction = new Transaction();
         transaction.setAccount(account);
@@ -733,7 +776,7 @@ public class TransactionService {
         transaction.setAccountHolderBillingId(customerBillingId);
         transaction.setAmount(amount);
         transaction.setTransactionTime(new Date());
-        transaction.setDescription("Bill payment: " + type.name());
+        transaction.setDescription(type.name()+" Payment Successfull Company Name: " + companyName +" Billing id is: " + customerBillingId);
 
         transaction.setToken(token);
 
@@ -743,26 +786,32 @@ public class TransactionService {
     // =================== Specific Bill Payment Methods ===================
 
     public Transaction payElectricityBill(Long accountId, double amount, String companyName, String customerBillingId, String token) {
-        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_ELECTRICITY, token);
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.ELECTRICITY_BILL, token);
     }
 
     public Transaction payGasBill(Long accountId, double amount, String companyName, String customerBillingId, String token) {
-        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_GAS, token);
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.GAS_BILL, token);
     }
 
     public Transaction payWaterBill(Long accountId, double amount, String companyName, String customerBillingId, String token) {
-        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_WATER, token);
+        return processBillPayment(
+                accountId,
+                amount,
+                companyName,
+                customerBillingId,
+                TransactionType.WATER_BILL,
+                token);
     }
 
     public Transaction payInternetBill(Long accountId, double amount, String companyName, String customerBillingId, String token) {
-        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_INTERNET, token);
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.INTERNET_BILL, token);
     }
 
     public Transaction payMobileBill(Long accountId, double amount, String companyName, String customerBillingId, String token) {
-        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_MOBILE, token);
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.MOBILE_RECHARGE, token);
     }
 
     public Transaction payCreditCardBill(Long accountId, double amount, String companyName, String customerBillingId, String token) {
-        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.BILL_PAYMENT_CREDIT_CARD, token);
+        return processBillPayment(accountId, amount, companyName, customerBillingId, TransactionType.CREDIT_CARD_BILL, token);
     }
 }

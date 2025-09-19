@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../service/auth-service';
 
 @Component({
   selector: 'app-home',
@@ -15,7 +16,6 @@ export class Home implements OnInit{
 //     'If you are already a user, please go to the Login page.');
 // }
 
-
 currentYear: number = new Date().getFullYear();
 
   stats = [
@@ -24,19 +24,28 @@ currentYear: number = new Date().getFullYear();
     { label: 'Support', value: 24, unit: '/7', small: 'Live' },
   ];
 
-  constructor() { }
+  constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
+    // অন্য initialization কাজ এখানে রাখতে পারো
+  }
+
+  ngAfterViewInit(): void {
+    // DOM ready হওয়ার পরে counter animate করা
     this.animateCounters();
   }
 
+  // Browser-safe animateCounters
   animateCounters(): void {
+    if (typeof document === 'undefined') return; // Node বা SSR environment skip
+
     setTimeout(() => {
       const counters = document.querySelectorAll<HTMLElement>('.stat');
       counters.forEach(counter => {
         const target = Number(counter.getAttribute('data-target') || '0');
         let current = 0;
         const increment = Math.ceil(target / 200);
+
         const update = () => {
           current = Math.min(current + increment, target);
           counter.innerText = current.toLocaleString();
@@ -44,6 +53,7 @@ currentYear: number = new Date().getFullYear();
             requestAnimationFrame(update);
           }
         };
+
         const observer = new IntersectionObserver(entries => {
           entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -52,9 +62,24 @@ currentYear: number = new Date().getFullYear();
             }
           });
         }, { threshold: 0.4 });
+
         observer.observe(counter);
       });
     }, 0);
   }
 
+  // Browser-safe scrollTo
+  scrollTo(sectionId: string): void {
+    if (typeof document === 'undefined') return;
+
+    const el = document.getElementById(sectionId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  logout(): void {
+    this.authService.logout();
+  }
+  
 }

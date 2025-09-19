@@ -2,17 +2,16 @@ package com.emranhss.mkbankspring.restcontroller;
 
 import com.emranhss.mkbankspring.dto.AccountsDTO;
 import com.emranhss.mkbankspring.dto.LoanDto;
-import com.emranhss.mkbankspring.entity.Loan;
-import com.emranhss.mkbankspring.entity.LoanStatus;
-import com.emranhss.mkbankspring.entity.Transaction;
-import com.emranhss.mkbankspring.entity.TransactionType;
+import com.emranhss.mkbankspring.entity.*;
 import com.emranhss.mkbankspring.repository.AccountRepository;
+import com.emranhss.mkbankspring.repository.GLTransactionRepository;
 import com.emranhss.mkbankspring.repository.LoanRepository;
 import com.emranhss.mkbankspring.repository.TransactionRepository;
 import com.emranhss.mkbankspring.service.LoanService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -33,6 +32,8 @@ public class AdminLoanRestController {
     private TransactionRepository transactionRepository;
     @Autowired
     private LoanService loanService;
+    @Autowired
+    private GLTransactionRepository gLTransactionRepository;
 
 //    @GetMapping("/pending")
 //    public ResponseEntity<List<LoanDto>> getPendingLoans() {
@@ -117,7 +118,11 @@ public class AdminLoanRestController {
     // Approve Loan
     @PostMapping("/{loanId}/approve")
     @Transactional
-    public ResponseEntity<String> approveLoan(@PathVariable Long loanId) {
+    public ResponseEntity<String> approveLoan(
+            @PathVariable Long loanId,
+            Authentication authentication
+    ) {
+        String token = (String) authentication.getCredentials();  // raw JWT token
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new RuntimeException("Loan not found"));
 
@@ -141,7 +146,16 @@ public class AdminLoanRestController {
         txn.setType(TransactionType.DEPOSIT);
         txn.setDescription("Loan Approved and Credited to Account");
         txn.setTransactionTime(new Date());
+        txn.setToken(token);
         transactionRepository.save(txn);
+
+        GLTransaction glTxn = new GLTransaction();
+        glTxn.setAmount(account.getBalance());
+        glTxn.setType(GLType.LOAN_OPEN);
+        glTxn.setDescription("Loan Approved Successfull."+loan.getLoanAmount()+" Taka add with your balance.");
+        glTxn.setReferenceId(account.getId());
+        glTxn.setReferenceType("Loan Amount");
+        gLTransactionRepository.save(glTxn);
 
         return ResponseEntity.ok("Loan approved successfully!");
     }
@@ -149,7 +163,9 @@ public class AdminLoanRestController {
     // Reject Loan
     @PostMapping("/{loanId}/reject")
     @Transactional
-    public ResponseEntity<String> rejectLoan(@PathVariable Long loanId) {
+    public ResponseEntity<String> rejectLoan(
+            @PathVariable Long loanId
+    ) {
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new RuntimeException("Loan not found"));
 

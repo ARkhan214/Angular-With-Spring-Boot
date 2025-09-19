@@ -10,6 +10,7 @@ public enum GLType {
 
     DPS_OPEN,
     DPS_PAYMENT,
+    DPS_DEPOSIT,
     DPS_INTEREST_PAYABLE,
     DPS_CLOSED,
 
@@ -19,12 +20,14 @@ public enum GLType {
 
     PENALTY,
 
+    TRANSFER,
+    RECEIVE,
 
+    ELECTRICITY_BILL,  // Electricity bill payment
+    GAS_BILL,          // Gas bill payment
+    WATER_BILL,        // Water bill payment
+    INTERNET_BILL,     // Internet / broadband bill payment
+    MOBILE_RECHARGE,       // Mobile recharge / postpaid bill payment
+    CREDIT_CARD_BILL   // Credit card bill payment
 
-    ELECTRICITY_BILL_GL,
-    GAS_BILL_GL,
-    WATER_BILL_GL,
-    INTERNET_BILL_GL,
-    MOBILE_BILL_GL,
-    CREDIT_CARD_BILL_GL
 }
