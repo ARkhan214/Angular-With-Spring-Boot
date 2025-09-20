@@ -4,6 +4,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlertService } from '../../service/alert-service';
 import { Transaction } from '../../model/transactions.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-water-bill-component',
@@ -20,6 +21,7 @@ export class WaterBillComponent implements OnInit {
     private fb: FormBuilder,
     private billPaymentService: BillPaymentService,
     private alertService: AlertService,
+    private router:Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
@@ -73,6 +75,7 @@ export class WaterBillComponent implements OnInit {
       next: res => {
         this.alertService.success(`${res.amount} Taka Payment successful!`);
         this.resetForm();
+        this.router.navigate(['/invoice']);
       },
       error: err => {
         this.alertService.error(err.error?.message || 'Payment failed!');

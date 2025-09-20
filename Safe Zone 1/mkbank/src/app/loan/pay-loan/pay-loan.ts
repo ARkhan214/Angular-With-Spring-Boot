@@ -108,6 +108,7 @@ export class PayLoan {
         this.alertService.success('Payment successful! ' + this.amount);
         this.errorMessage = '';
         this.resetForm();
+        this.router.navigate(['/invoice']);
         this.loading = false;
         this.fetchLoanDetails(); // refresh loan info
       },

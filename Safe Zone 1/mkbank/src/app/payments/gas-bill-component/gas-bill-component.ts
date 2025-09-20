@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BillPaymentService } from '../../service/bill-payment-service';
 import { AlertService } from '../../service/alert-service';
 import { isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-gas-bill-component',
@@ -13,13 +14,14 @@ import { isPlatformBrowser } from '@angular/common';
 })
 export class GasBillComponent {
 
- gasBillForm!: FormGroup;
+  gasBillForm!: FormGroup;
   token: string = '';
 
   constructor(
     private fb: FormBuilder,
     private billPaymentService: BillPaymentService,
     private alertService: AlertService,
+    private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
@@ -65,6 +67,7 @@ export class GasBillComponent {
       next: res => {
         this.alertService.success(`${res.amount} Taka GAS Bill Payment successful!`);
         this.resetForm();
+        this.router.navigate(['/invoice']);
       },
       error: err => {
         this.alertService.error(err.error?.message || 'Payment failed!');

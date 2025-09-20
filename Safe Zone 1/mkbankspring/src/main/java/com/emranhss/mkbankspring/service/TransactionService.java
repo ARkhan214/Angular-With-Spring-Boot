@@ -195,14 +195,14 @@ public class TransactionService {
         receiverTx.setTransactionTime(now);
         receiverTx.setDescription("Received from " + sender.getName());
         receiverTx.setAccount(receiver);
-        receiverTx.setReceiverAccount(sender);
+        receiverTx.setReceiverAccount(receiver);
         receiverTx.setToken(token);
         transactionRepository.save(receiverTx);
 
         GLTransaction glTxn1 = new GLTransaction();
         glTxn1.setAmount(requestTx.getAmount());
         glTxn1.setType(GLType.RECEIVE);
-        glTxn1.setDescription(requestTx.getAmount()+" Received from "+receiver.getName()+" Sender ID is: "+sender.getId());
+        glTxn1.setDescription(requestTx.getAmount()+" Received by "+receiver.getName()+". Sender ID is: "+sender.getId());
         glTxn1.setReferenceId(receiver.getId());
         glTxn1.setReferenceType("Receive Money");
         gLTransactionRepository.save(glTxn1);

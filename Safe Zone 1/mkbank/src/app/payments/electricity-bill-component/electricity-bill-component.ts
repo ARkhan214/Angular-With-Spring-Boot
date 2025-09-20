@@ -4,6 +4,7 @@ import { BillPaymentService } from '../../service/bill-payment-service';
 import { AlertService } from '../../service/alert-service';
 import { isPlatformBrowser } from '@angular/common';
 import { Transaction } from '../../model/transactions.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-electricity-bill-component',
@@ -11,7 +12,7 @@ import { Transaction } from '../../model/transactions.model';
   templateUrl: './electricity-bill-component.html',
   styleUrl: './electricity-bill-component.css'
 })
-export class ElectricityBillComponent implements OnInit{
+export class ElectricityBillComponent implements OnInit {
 
 
   electricityBillForm!: FormGroup;
@@ -21,6 +22,7 @@ export class ElectricityBillComponent implements OnInit{
     private fb: FormBuilder,
     private billPaymentService: BillPaymentService,
     private alertService: AlertService,
+    private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
@@ -74,6 +76,7 @@ export class ElectricityBillComponent implements OnInit{
       next: res => {
         this.alertService.success(`${res.amount} Taka Electricity Bill Payment successful!`);
         this.resetForm();
+        this.router.navigate(['/invoice']);
       },
       error: err => {
         this.alertService.error(err.error?.message || 'Payment failed!');

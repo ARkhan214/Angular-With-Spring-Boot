@@ -176,7 +176,7 @@ if (this.depositAmount < 50000 || this.durationInMonths < 12 || this.durationInM
           this.durationInMonths = 0;
           this.estimatedInterestRate = 0;
           this.estimatedMaturityAmount = 0;
-          this.router.navigate(['/view-all-fd']);
+          this.router.navigate(['/invoice']);
         },
         error: (err: any) => {
           console.error(err);

@@ -52,3 +52,14 @@
   margin: 20px;
   font-weight: bold;
 }
+
+/* td:nth-child(2) means:
+   👉 It will target the 2nd <td> (table cell) of each <tr> (table row).
+   In this table, the 2nd column is "Particulars" (description). */
+.table td:nth-child(2) {
+  max-width: 200px;          /* set a fixed column width */
+  white-space: normal;       /* allow text to wrap into multiple lines */
+  word-break: break-word;    /* break long words if needed */
+  overflow-wrap: anywhere;   /* break text anywhere if it's too long */
+}
+

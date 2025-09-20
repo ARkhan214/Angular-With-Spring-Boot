@@ -57,8 +57,6 @@
           <th>Trans Date</th>
           <th>Particulars</th>
           <th>Instrument No</th>
-
-          <th>Receiver</th>
           <th>Type</th>
           <th>Transaction Type</th>
           <th>Withdraw Amount</th>
@@ -71,8 +69,6 @@
           <td>{{ tx.transactionTime | date:'short' }}</td>
           <td>{{ tx.description }}</td>
           <td>{{ tx.id }}</td>
-
-          <td>{{ tx.receiverAccount?.name }}</td>
           <td [ngClass]="{'debit': tx.type === 'DEBIT', 'credit': tx.type === 'CREDIT'}">
             {{ tx.type }}
           </td>
@@ -96,11 +92,10 @@
 
         <!-- Totals Row -->
         <tr class="table-secondary fw-bold">
-          <td colspan="6" class="text-end">Totals</td>
+          <td colspan="5" class="text-end">Totals</td>
           <td>{{ totalWithdraw | number:'1.2-2' }}</td>
           <td>{{ totalDeposit | number:'1.2-2' }}</td>
           <td>{{ totalBalance | number:'1.2-2' }}</td>
-          <td colspan="2"></td>
         </tr>
       </tbody>
     </table>

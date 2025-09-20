@@ -107,6 +107,7 @@ export class DpsPayComponent implements OnInit {
           this.dpsData = null;
           this.dpsId = null;
           this.cdr.markForCheck();
+          this.router.navigate(['/invoice']);
           this.loading = false;
         },
         error: (err: any) => {

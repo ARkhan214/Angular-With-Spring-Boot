@@ -48,6 +48,7 @@ import { AdminGuard } from './guards/admin-guard';
 import { AdminEmployeeGuard} from './guards/admin-employee-guard';
 import { EmployeeGuard } from './guards/employee-guard';
 import { ViewAllLoanForAdmin } from './loan/view-all-loan-for-admin/view-all-loan-for-admin';
+import { InvoiceForUser } from './statements/invoice-for-user/invoice-for-user';
 
 
 
@@ -96,6 +97,7 @@ const routes: Routes = [
   { path: 'dps', component: DpsComponent, canActivate: [UserGuard] },
   { path: 'dps-pay', component: DpsPayComponent, canActivate: [UserGuard] },
   { path: 'view-all-dps', component: ViewAllDPS, canActivate: [UserGuard] },
+  { path: 'invoice', component: InvoiceForUser, canActivate: [UserGuard] },
 
 
 

@@ -8,7 +8,8 @@
             <i class="fas fa-user-shield fa-lg" style="color: rgb(252, 218, 30);"></i>
         </div> -->
         <div class="sidebar-brand-text mx-3 fw-bold" style="font-weight: bold;">
-             <i class="fa fa-university mr-2 text-info" style="font-size: 2rem;"></i>MK Bank</div>
+            <i class="fa fa-university mr-2 text-info" style="font-size: 2rem;"></i>MK Bank
+        </div>
     </a>
 
     <hr class="sidebar-divider my-0" style="border-color: rgba(255,255,255,0.3);">
@@ -34,18 +35,18 @@
         </li>
 
 
-    <!-- Loan Section -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#adminLoanMenu">
-            <i class="fas fa-hand-holding-usd"></i> Loan
-        </a>
-        <div id="adminLoanMenu" class="collapse">
-            <div class="bg-light py-2 collapse-inner rounded">
-                <a class="collapse-item" routerLink="/admin-approval-loan">Pending Loan</a>
-                <a class="collapse-item" routerLink="/view-all-loan-for-admin">View All Loan</a>
+        <!-- Loan Section -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#adminLoanMenu">
+                <i class="fas fa-hand-holding-usd"></i> Loan
+            </a>
+            <div id="adminLoanMenu" class="collapse">
+                <div class="bg-light py-2 collapse-inner rounded">
+                    <a class="collapse-item" routerLink="/admin-approval-loan">Pending Loan</a>
+                    <a class="collapse-item" routerLink="/view-all-loan-for-admin">View All Loan</a>
+                </div>
             </div>
-        </div>
-    </li>
+        </li>
 
         <li class="nav-item">
             <a class="nav-link text-info fw-semibold" routerLink="/viewallaccount">
@@ -55,7 +56,7 @@
 
         <li class="nav-item">
             <a class="nav-link text-info fw-semibold" routerLink="/viewalluser">
-                 <i class="fas fa-users"></i>All Users</a>
+                <i class="fas fa-users"></i>All Users</a>
         </li>
 
         <li class="nav-item">
@@ -99,12 +100,17 @@
 
         <div>
             <li>
+                <a class="nav-link text-info fw-semibold text-center mt-0" routerLink="/invoice">
+                    <i class="fas fa-file-alt"></i> Invoice</a>
+            </li>
+        </div>
+
+        <div>
+            <li>
                 <a class="nav-link text-info fw-semibold text-center" routerLink="/acctrst">
                     <i class="fas fa-file-alt"></i> Transaction Statement</a>
             </li>
         </div>
-
-
 
 
         <!-- Components -->
@@ -180,7 +186,7 @@
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
                 style="color: #fff;">
-                 <i class="fas fa-tools"></i> 
+                <i class="fas fa-tools"></i>
                 <span style="margin-left: 10px;">Utilities Bill:</span>
             </a>
             <div id="collapseUtilities" class="collapse">
@@ -226,14 +232,12 @@
 
         <li class="nav-item">
             <a class="nav-link text-muted fw-semibold" routerLink="/adduser">
-                <i
-                    class="fa fa-user-plus me-1 text-muted"></i>Create Account</a>
+                <i class="fa fa-user-plus me-1 text-muted"></i>Create Account</a>
         </li>
 
         <li class="nav-item">
             <a class="nav-link text-info fw-semibold" routerLink="/viewallaccount">
-                <i
-                    class="fa fa-credit-card me-1 text-info"></i>All Accounts</a>
+                <i class="fa fa-credit-card me-1 text-info"></i>All Accounts</a>
         </li>
 
         <hr class="sidebar-divider" style="border-color: rgba(255,255,255,0.2);">
@@ -275,7 +279,7 @@
     <!-- Pages -->
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" style="color: #fff;">
-          <i class="fas fa-key" style="color: #facc15;"></i>
+            <i class="fas fa-key" style="color: #facc15;"></i>
             <span style="margin-left: 10px;">Reset Password</span>
         </a>
         <div id="collapsePages" class="collapse">

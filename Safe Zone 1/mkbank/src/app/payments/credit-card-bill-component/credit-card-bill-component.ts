@@ -4,6 +4,7 @@ import { BillPaymentService } from '../../service/bill-payment-service';
 import { AlertService } from '../../service/alert-service';
 import { isPlatformBrowser } from '@angular/common';
 import { Transaction } from '../../model/transactions.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-credit-card-bill-component',
@@ -13,13 +14,14 @@ import { Transaction } from '../../model/transactions.model';
 })
 export class CreditCardBillComponent {
 
-creditCardBillForm!: FormGroup;
+  creditCardBillForm!: FormGroup;
   token: string = '';
 
   constructor(
     private fb: FormBuilder,
     private billPaymentService: BillPaymentService,
     private alertService: AlertService,
+    private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
@@ -60,7 +62,11 @@ creditCardBillForm!: FormGroup;
     };
 
     this.billPaymentService.payCreditCard(transaction, this.token).subscribe({
-      next: res => { this.alertService.success(`${res.amount} Taka Credit Card Bill Paymeny successful!`); this.resetForm(); },
+      next: res => {
+        this.alertService.success(`${res.amount} Taka Credit Card Bill Paymeny successful!`);
+        this.resetForm();
+        this.router.navigate(['/invoice']);
+      },
       error: err => { this.alertService.error(err.error?.message || 'Payment failed!'); }
     });
   }

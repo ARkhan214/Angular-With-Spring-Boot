@@ -4,6 +4,7 @@ import { BillPaymentService } from '../../service/bill-payment-service';
 import { AlertService } from '../../service/alert-service';
 import { isPlatformBrowser } from '@angular/common';
 import { Transaction } from '../../model/transactions.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-mobile-bill-component',
@@ -21,6 +22,7 @@ export class MobileBillComponent {
     private fb: FormBuilder,
     private billPaymentService: BillPaymentService,
     private alertService: AlertService,
+    private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
@@ -61,7 +63,11 @@ export class MobileBillComponent {
     };
 
     this.billPaymentService.payMobile(transaction, this.token).subscribe({
-      next: res => { this.alertService.success(`${res.amount} Taka Mobile Recharge successful!`); this.resetForm(); },
+      next: res => {
+        this.alertService.success(`${res.amount} Taka Mobile Recharge successful!`);
+        this.resetForm();
+        this.router.navigate(['/invoice']);
+      },
       error: err => { this.alertService.error(err.error?.message || 'Payment failed!'); }
     });
   }

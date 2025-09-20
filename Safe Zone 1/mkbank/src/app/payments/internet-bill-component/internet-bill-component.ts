@@ -4,6 +4,7 @@ import { BillPaymentService } from '../../service/bill-payment-service';
 import { AlertService } from '../../service/alert-service';
 import { isPlatformBrowser } from '@angular/common';
 import { Transaction } from '../../model/transactions.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-internet-bill-component',
@@ -13,13 +14,14 @@ import { Transaction } from '../../model/transactions.model';
 })
 export class InternetBillComponent {
 
-internetBillForm!: FormGroup;
+  internetBillForm!: FormGroup;
   token: string = '';
 
   constructor(
     private fb: FormBuilder,
     private billPaymentService: BillPaymentService,
     private alertService: AlertService,
+    private router:Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
@@ -60,7 +62,11 @@ internetBillForm!: FormGroup;
     };
 
     this.billPaymentService.payInternet(transaction, this.token).subscribe({
-      next: res => { this.alertService.success(`${res.amount} Taka Internet Bill Payment successful!`); this.resetForm(); },
+      next: res => {
+        this.alertService.success(`${res.amount} Taka Internet Bill Payment successful!`);
+        this.resetForm();
+      this.router.navigate(['/invoice']);
+      },
       error: err => { this.alertService.error(err.error?.message || 'Payment failed!'); }
     });
   }
