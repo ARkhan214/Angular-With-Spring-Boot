@@ -57,6 +57,7 @@ import { ViewAllFd } from './components/view-all-fd/view-all-fd';
 import { DpsPayComponent } from './components/dps-pay-component/dps-pay-component';
 import { ViewAllDPS } from './components/view-all-dps/view-all-dps';
 import { ViewAllLoanForAdmin } from './loan/view-all-loan-for-admin/view-all-loan-for-admin';
+import { InvoiceForUser } from './statements/invoice-for-user/invoice-for-user';
 
 
 @NgModule({
@@ -110,6 +111,7 @@ import { ViewAllLoanForAdmin } from './loan/view-all-loan-for-admin/view-all-loa
     DpsPayComponent,
     ViewAllDPS,
     ViewAllLoanForAdmin,
+    InvoiceForUser,
   ],
   imports: [
     BrowserModule,

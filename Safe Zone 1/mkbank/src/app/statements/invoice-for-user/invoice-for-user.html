@@ -1,0 +1,10 @@
+<p>invoice-for-user works!</p>
+<div class="invoice-card" *ngIf="transaction">
+  <h3>Invoice</h3>
+  <p><strong>Customer:</strong> {{transaction.account.name}}</p>
+  <p><strong>Transaction ID:</strong> {{transaction.id}}</p>
+  <p><strong>Amount:</strong> {{transaction.amount}}</p>
+  <p><strong>Type:</strong> {{transaction.type}}</p>
+  <p><strong>Date:</strong> {{transaction.transactionTime | date:'short'}}</p>
+  <button (click)="exportPDF()" class="btn btn-success">Download PDF</button>
+</div>
