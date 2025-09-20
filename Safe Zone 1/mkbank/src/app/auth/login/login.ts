@@ -76,6 +76,15 @@ export class Login {
     });
   }
 
+  onReset(): void {
+  this.user = {
+    email: '',
+    password: ''
+  };
+  this.errorMessage = '';
+  this.successMessage = '';
+}
+
 
   // const userInfo = {
 

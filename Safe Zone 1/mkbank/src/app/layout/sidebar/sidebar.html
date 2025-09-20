@@ -7,8 +7,8 @@
         <!-- <div class="sidebar-brand-icon rotate-n-15">
             <i class="fas fa-user-shield fa-lg" style="color: rgb(252, 218, 30);"></i>
         </div> -->
-        <div class="sidebar-brand-text mx-3 fw-bold" style="font-weight: bold;"> <i
-                class="fa fa-university mr-2 text-info"></i>MK Bank</div>
+        <div class="sidebar-brand-text mx-3 fw-bold" style="font-weight: bold;">
+             <i class="fa fa-university mr-2 text-info" style="font-size: 2rem;"></i>MK Bank</div>
     </a>
 
     <hr class="sidebar-divider my-0" style="border-color: rgba(255,255,255,0.3);">
@@ -24,57 +24,61 @@
     <ng-container *ngIf="isAdmin()">
 
         <li class="nav-item">
-            <a class="nav-link text-success fw-semibold" routerLink="/admin-profile"><i
-                    class="fa-solid fa-user me-1"></i>👤 Profile</a>
+            <a class="nav-link text-success fw-semibold" routerLink="/admin-profile">
+                <i class="fas fa-user-circle me-2 text-success"></i> Profile</a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link text-info fw-semibold" routerLink="/viewallaccount"><i
-                    class="fa fa-credit-card me-1 text-info"></i>All Accounts</a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link text-info fw-semibold" routerLink="/admindash"><i
-                    class="fa fa-credit-card me-1 text-info"></i>Dashboard</a>
+            <a class="nav-link text-info fw-semibold" routerLink="/admindash">
+                <i class="fas fa-chart-line"></i>Dashboard</a>
         </li>
 
 
+    <!-- Loan Section -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#adminLoanMenu">
+            <i class="fas fa-hand-holding-usd"></i> Loan
+        </a>
+        <div id="adminLoanMenu" class="collapse">
+            <div class="bg-light py-2 collapse-inner rounded">
+                <a class="collapse-item" routerLink="/admin-approval-loan">Pending Loan</a>
+                <a class="collapse-item" routerLink="/view-all-loan-for-admin">View All Loan</a>
+            </div>
+        </div>
+    </li>
+
         <li class="nav-item">
-            <a class="nav-link text-info fw-semibold" routerLink="/admin-approval-loan"><i
-                    class="fa fa-credit-card me-1 text-info"></i>Pending Loan</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-info fw-semibold" routerLink="/view-all-loan-for-admin"><i
-                    class="fa fa-credit-card me-1 text-info"></i>View AllLoan</a>
+            <a class="nav-link text-info fw-semibold" routerLink="/viewallaccount">
+                <i class="fas fa-university"></i>All Accounts</a>
         </li>
 
 
         <li class="nav-item">
-            <a class="nav-link text-info fw-semibold" routerLink="/viewalluser"><i
-                    class="fa fa-credit-card me-1 text-info"></i>All Users</a>
+            <a class="nav-link text-info fw-semibold" routerLink="/viewalluser">
+                 <i class="fas fa-users"></i>All Users</a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link text-info fw-semibold" routerLink="/viewallemp"><i
-                    class="fa fa-credit-card me-1 text-info"></i>All
+            <a class="nav-link text-info fw-semibold" routerLink="/viewallemp">
+                <i class="fas fa-user-tie"></i>All
                 Employees</a>
         </li>
 
 
 
         <li class="nav-item">
-            <a class="nav-link text-muted fw-semibold" routerLink="/addemployee"><i
-                    class="fa fa-user-plus me-1 text-muted"></i>Add Employees</a>
+            <a class="nav-link text-muted fw-semibold" routerLink="/addemployee">
+                <i class="fas fa-user-plus"></i>Add Employees</a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link text-info fw-semibold" routerLink="/onlyadduser"><i
-                    class="fa fa-credit-card me-1 text-info"></i>Admin Registration</a>
+            <a class="nav-link text-info fw-semibold" routerLink="/onlyadduser">
+                <i class="fas fa-edit"></i>Admin Registration</a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link text-success fw-semibold" routerLink="/emptrst"><i
-                    class="fa fa-exchange me-1 text-success"></i>Transaction Statement</a>
+            <a class="nav-link text-success fw-semibold" routerLink="/emptrst">
+                <i class="fas fa-file-alt"></i>Transaction Statement</a>
         </li>
 
 
@@ -88,14 +92,15 @@
 
         <div>
             <li class="nav-item">
-                <a class="nav-link text-success fw-semibold text-center" routerLink="/account-profile"><i
-                        class="fa fa-exchange me-1 text-success"></i>👤 Profile</a>
+                <a class="nav-link text-success fw-semibold text-center" routerLink="/account-profile">
+                    <i class="fas fa-user-circle me-2 text-success"></i> Profile</a>
             </li>
         </div>
 
         <div>
             <li>
-                <a class="nav-link text-info fw-semibold text-center" routerLink="/acctrst">Transaction Statement</a>
+                <a class="nav-link text-info fw-semibold text-center" routerLink="/acctrst">
+                    <i class="fas fa-file-alt"></i> Transaction Statement</a>
             </li>
         </div>
 
@@ -106,7 +111,7 @@
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAccounts"
                 style="color: #fff;">
-                <i class="fas fa-puzzle-piece" style="color: #f87171;"></i>
+                <i class="fas fa-exchange-alt"></i>
                 <span style="margin-left: 10px;">Money Trransfer</span>
             </a>
             <div id="collapseAccounts" class="collapse">
@@ -122,7 +127,7 @@
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFD"
                 style="color: #fff;">
-                <i class="fas fa-puzzle-piece" style="color: #f87171;"></i>
+                <i class="fas fa-piggy-bank"></i>
                 <span style="margin-left: 10px;">FD</span>
             </a>
             <div id="collapseFD" class="collapse">
@@ -138,7 +143,7 @@
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLoan"
                 style="color: #fff;">
-                <i class="fas fa-puzzle-piece" style="color: #f87171;"></i>
+                <i class="fas fa-hand-holding-usd"></i>
                 <span style="margin-left: 10px;">Loan</span>
             </a>
             <div id="collapseLoan" class="collapse">
@@ -156,7 +161,7 @@
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDps"
                 style="color: #fff;">
-                <i class="fas fa-puzzle-piece" style="color: #f87171;"></i>
+                <i class="fas fa-box"></i>
                 <span style="margin-left: 10px;">DPS</span>
             </a>
             <div id="collapseDps" class="collapse">
@@ -175,7 +180,7 @@
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
                 style="color: #fff;">
-                <i class="fas fa-tools" style="color: #34d399;"></i>
+                 <i class="fas fa-tools"></i> 
                 <span style="margin-left: 10px;">Utilities Bill:</span>
             </a>
             <div id="collapseUtilities" class="collapse">
@@ -200,32 +205,34 @@
     <!-- ================= EMPLOYEE MENUS START ================= -->
     <ng-container *ngIf="isEmployee()">
         <li class="nav-item">
-            <a class="nav-link text-success fw-semibold" routerLink="/employee-profile"><i
-                    class="fa fa-exchange me-1 text-success"></i>👤 Profile</a>
+            <a class="nav-link text-success fw-semibold" routerLink="/employee-profile">
+                <i class="fas fa-user-circle me-2 text-success"></i> Profile</a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link text-success fw-semibold" routerLink="/emptr"><i
-                    class="fa fa-exchange me-1 text-success"></i>Transfar Money</a>
+            <a class="nav-link text-success fw-semibold" routerLink="/emptrst">
+                <i class="fas fa-file-alt"></i>Transaction Statement</a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link text-success fw-semibold" routerLink="/deposit"><i
-                    class="fa fa-exchange me-1 text-success"></i>Deposit & Withdwaw</a>
+            <a class="nav-link text-success fw-semibold" routerLink="/emptr">
+                <i class="fas fa-exchange-alt"></i>Transfar Money</a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link text-muted fw-semibold" routerLink="/adduser"><i
+            <a class="nav-link text-success fw-semibold" routerLink="/deposit">
+                <i class="fas fa-hand-holding-usd me-2 text-success"></i>Deposit & Withdwaw</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link text-muted fw-semibold" routerLink="/adduser">
+                <i
                     class="fa fa-user-plus me-1 text-muted"></i>Create Account</a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link text-success fw-semibold" routerLink="/emptrst"><i
-                    class="fa fa-exchange me-1 text-success"></i>Transaction Statement</a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link text-info fw-semibold" routerLink="/viewallaccount"><i
+            <a class="nav-link text-info fw-semibold" routerLink="/viewallaccount">
+                <i
                     class="fa fa-credit-card me-1 text-info"></i>All Accounts</a>
         </li>
 
@@ -268,8 +275,8 @@
     <!-- Pages -->
     <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" style="color: #fff;">
-            <i class="fas fa-copy" style="color: #facc15;"></i>
-            <span style="margin-left: 10px;">Pages</span>
+          <i class="fas fa-key" style="color: #facc15;"></i>
+            <span style="margin-left: 10px;">Reset Password</span>
         </a>
         <div id="collapsePages" class="collapse">
             <div class="bg-light py-2 collapse-inner rounded">

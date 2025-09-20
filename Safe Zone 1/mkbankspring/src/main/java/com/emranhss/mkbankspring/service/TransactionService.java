@@ -776,7 +776,7 @@ public class TransactionService {
         transaction.setAccountHolderBillingId(customerBillingId);
         transaction.setAmount(amount);
         transaction.setTransactionTime(new Date());
-        transaction.setDescription(type.name()+" Payment Successfull Company Name: " + companyName +" Billing id is: " + customerBillingId);
+        transaction.setDescription(type.name()+" Payment Successfull Company Name: " + companyName +" and Account Holder Billing id is: " + customerBillingId);
 
         transaction.setToken(token);
 
