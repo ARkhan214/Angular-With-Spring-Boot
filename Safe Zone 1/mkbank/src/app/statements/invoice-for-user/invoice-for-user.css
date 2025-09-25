@@ -109,3 +109,24 @@
   width: 100%;
   font-size: 11px; /* slightly smaller */
 }
+.invoice-container {
+  background-color: #fff; /* ensure white background */
+  color: #333;            /* default text color */
+}
+
+.invoice-container table {
+  background-color: #fff; /* table background white */
+}
+
+.invoice-container th {
+  background-color: #0d1a2b; 
+  color: #fff;
+}
+
+.invoice-container td {
+  background-color: #fff; /* td background white */
+  color: #333;
+}
+
+.invoice-container td.debit { color: #d9534f; }
+.invoice-container td.credit { color: #5cb85c; }

@@ -1,3 +1,9 @@
+
+How To Be A Better AI Engineer
+Learn with Sumit
+
+
+
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { TransactionDTO } from '../../model/transactionStatementDTO.model';
 import { environment } from '../../environment/environment';
