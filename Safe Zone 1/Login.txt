@@ -1,3 +1,37 @@
+
+Request:============
+POST http://localhost:8085/api/user/login
+
+Body->raw->Json
+
+{
+  "email": "mdrahimkhan107107@gmail.com",
+  "password": "12345"
+}
+
+
+
+
+Response:=============
+{
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtZHJhaGlta2hhbjEwNzEwN0BnbWFpbC5jb20iLCJpZCI6NCwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTk2MTEwNDAsImV4cCI6MTc1OTY5NzQ0MH0.NwjL-XcT9oJiSOwp-b6CxkTiDDvIkoom9g2C89M3jHE",
+    "message": "User Login Successful"
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Ques:--login kora thakle saideber er manute login option thakbe na amon korte parba?
 
 Ans:--
