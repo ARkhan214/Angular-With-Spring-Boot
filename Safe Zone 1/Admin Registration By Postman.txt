@@ -13,6 +13,10 @@ Content Type--application/json,multipart/form-data
   "dateOfBirth": "2000-01-01"
 }
 
+Robotix {
+arduino
+raspberry pi
+}
 
 EMAIL:=
 farihamariam@gmail.com
