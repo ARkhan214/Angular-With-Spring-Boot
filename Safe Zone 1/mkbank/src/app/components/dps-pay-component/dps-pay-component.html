@@ -6,11 +6,28 @@
     <div class="card-body">
 
       <!-- DPS ID Input -->
-      <div class="mb-3 row">
+      <!-- <div class="mb-3 row">
         <label class="col-sm-3 col-form-label">DPS ID:</label>
         <div class="col-sm-9">
           <input type="number" class="form-control" [(ngModel)]="dpsId" name="dpsId"
                  placeholder="Enter DPS ID" (ngModelChange)="fetchDpsDetails()" required>
+        </div>
+      </div> -->
+
+
+      <!--  DPS Dropdown -->
+      <div class="mb-3 row">
+        <label class="col-sm-3 col-form-label" style="font-size: 1.2rem; font-weight: 600;">
+          Select DPS:
+        </label>
+        <div class="col-sm-9">
+          <select class="form-select" [(ngModel)]="dpsId" (change)="fetchDpsDetails()" name="dpsId" required
+            style="font-size: 1.1rem; padding: 0.5rem;">
+            <option value="" disabled selected>-- Choose your DPS --</option>
+            <option *ngFor="let dps of allDpsList" [value]="dps.id">
+              DPS #{{ dps.id }} — {{ dps.status }} (৳{{ dps.monthlyAmount }})
+            </option>
+          </select>
         </div>
       </div>
 
@@ -35,7 +52,7 @@
           </div>
         </div>
 
-                <div class="mb-3 row">
+        <div class="mb-3 row">
           <label class="col-sm-3 col-form-label">Months Paid</label>
           <div class="col-sm-9">
             <input type="text" class="form-control" [value]="dpsData.monthsPaid" readonly>

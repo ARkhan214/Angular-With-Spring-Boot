@@ -7,6 +7,7 @@ import com.emranhss.mkbankspring.entity.*;
 import com.emranhss.mkbankspring.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -104,7 +105,96 @@ public class DpsService {
         else return 10.0;
     }
 
-    //monthly payments
+
+
+//=======================================================
+    //monthly payments methode  Starts =================
+    // ======================================================
+
+
+    //Methode One======>
+//    public void processMonthlyPayment(Long dpsId, String token) {
+//        Dps dpsAccount = dpsAccountRepository.findById(dpsId)
+//                .orElseThrow(() -> new RuntimeException("DPS not found"));
+//
+//        if (dpsAccount.getStatus() == DpsStatus.CLOSED) {
+//            throw new RuntimeException("DPS is closed. No further payments allowed.");
+//        }
+//
+//        Accounts account = dpsAccount.getAccount();
+//        double amount = dpsAccount.getMonthlyAmount();
+//
+//
+//        if (account.getBalance() < amount)
+//            throw new RuntimeException("Insufficient balance for monthly DPS payment.");
+//
+//        account.setBalance(account.getBalance() - amount);
+//        dpsAccount.setMonthsPaid(dpsAccount.getMonthsPaid() + 1);
+//        dpsAccount.setTotalDeposited(dpsAccount.getTotalDeposited() + amount);
+//
+//
+//
+//        DpsPayment payment = new DpsPayment();
+//        payment.setDps(dpsAccount);
+//        payment.setPaymentDate(new Date());
+//        payment.setPenalty(0.0);
+//        payment.setAmount(amount);
+//        payment.setNote("DPS Payment For DPS ID "+ dpsId);
+//
+//        Transaction txn = new Transaction();
+//        txn.setAccount(account);
+//        System.out.println("Account number " + account);
+//        txn.setAmount(amount);
+//        txn.setTransactionTime(new Date());
+//        txn.setType(TransactionType.DPS_DEPOSIT);
+//        txn.setDescription("DPS Payment For DPS ID "+ dpsId);
+//        txn.setToken(token);
+//        System.out.println("token----------" + token);
+//        transactionRepository.save(txn);
+//
+//        dpsPaymentRepository.save(payment);
+//
+//        // Create GL transaction for DPS Payment
+//        GLTransaction glTxn = new GLTransaction();
+//        glTxn.setAmount(amount);
+//        glTxn.setType(GLType.DPS_PAYMENT);
+//        glTxn.setDescription("DPS Payment.DPS ID Is :"+dpsAccount.getId());
+//        glTxn.setReferenceId(dpsAccount.getId());
+//        glTxn.setReferenceType("DPS");
+//        glTransactionRepository.save(glTxn);
+//
+//
+//        if (dpsAccount.getMonthsPaid() >= dpsAccount.getTermMonths()) {
+//            dpsAccount.setStatus(DpsStatus.CLOSED);
+//            //account close hole maturity ammount soho taka balance a add hobe.
+//            account.setBalance(account.getBalance() + dpsAccount.getMaturityAmount());
+//            Transaction transaction = new Transaction();
+//            transaction.setAccount(account);
+//            transaction.setAmount(dpsAccount.getMaturityAmount());
+//            transaction.setTransactionTime(new Date());
+//            transaction.setType(TransactionType.DEPOSIT);
+//            transaction.setDescription("Deposit maturity Ammount from DPS ID "+dpsId);
+//            transaction.setToken(token);
+//            transactionRepository.save(transaction);
+//
+//            GLTransaction glTxn1 = new GLTransaction();
+//            glTxn1.setAmount(-dpsAccount.getMaturityAmount());    // minus because money going out
+//            glTxn1.setType(GLType.DPS_CLOSED);
+//            glTxn1.setDescription("Maturity amount credited for DPS ID " + dpsId);
+//            glTxn1.setReferenceId(dpsAccount.getId());
+//            glTxn1.setReferenceType("DPS");
+//            glTransactionRepository.save(glTxn1);
+//
+//        }
+//
+//
+//        accountRepository.save(account);
+//        dpsAccountRepository.save(dpsAccount);
+//    }
+
+
+    //methode two======>
+
     public void processMonthlyPayment(Long dpsId, String token) {
         Dps dpsAccount = dpsAccountRepository.findById(dpsId)
                 .orElseThrow(() -> new RuntimeException("DPS not found"));
@@ -116,75 +206,114 @@ public class DpsService {
         Accounts account = dpsAccount.getAccount();
         double amount = dpsAccount.getMonthlyAmount();
 
-
+        // পর্যাপ্ত ব্যালেন্স আছে কিনা চেক করা
         if (account.getBalance() < amount)
             throw new RuntimeException("Insufficient balance for monthly DPS payment.");
 
+        // ব্যালেন্স ও ডিপিএস আপডেট
         account.setBalance(account.getBalance() - amount);
         dpsAccount.setMonthsPaid(dpsAccount.getMonthsPaid() + 1);
         dpsAccount.setTotalDeposited(dpsAccount.getTotalDeposited() + amount);
 
+        //===================================================next Debit Date=======Start============
+        // নতুন nextDebitDate সেট করা (শেষ পেমেন্ট থেকে ৩০ দিন পর)
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date()); // বর্তমান পেমেন্ট তারিখ
+        cal.add(Calendar.DAY_OF_MONTH, 30);
+        dpsAccount.setNextDebitDate(cal.getTime());
+
+        // 1 দিন পরের জন্য
+//        Calendar cal = Calendar.getInstance();
+//        cal.setTime(new Date()); // বর্তমান পেমেন্ট তারিখ
+//        cal.add(Calendar.DAY_OF_MONTH, 1); // 1 দিন
+//        dpsAccount.setNextDebitDate(cal.getTime());
 
 
+        //1 ঘণ্টা পরের জন্য
+//        Calendar cal = Calendar.getInstance();
+//        cal.setTime(new Date()); // বর্তমান সময়
+//        cal.add(Calendar.HOUR_OF_DAY, 1); // 1 ঘণ্টা পরে
+//        dpsAccount.setNextDebitDate(cal.getTime());
+
+
+
+        //1 মিনিট পরের জন্য
+//        Calendar cal = Calendar.getInstance();
+//        cal.setTime(new Date());
+//        cal.add(Calendar.MINUTE, 1); // 1 মিনিট
+//        dpsAccount.setNextDebitDate(cal.getTime());
+
+
+        // 10 সেকেন্ড পরের জন্য
+//        Calendar cal = Calendar.getInstance();
+//        cal.setTime(new Date());
+//        cal.add(Calendar.SECOND, 20); // 10 সেকেন্ড
+//        dpsAccount.setNextDebitDate(cal.getTime());
+
+
+
+        //=============================================================End=============
+
+        // DpsPayment entity তৈরি ও সংরক্ষণ
         DpsPayment payment = new DpsPayment();
         payment.setDps(dpsAccount);
         payment.setPaymentDate(new Date());
         payment.setPenalty(0.0);
         payment.setAmount(amount);
-        payment.setNote("DPS Payment For DPS ID "+ dpsId);
+        payment.setNote("DPS Payment for DPS ID " + dpsId);
+        dpsPaymentRepository.save(payment);
 
+        // Transaction তৈরি
         Transaction txn = new Transaction();
         txn.setAccount(account);
-        System.out.println("Account number " + account);
         txn.setAmount(amount);
         txn.setTransactionTime(new Date());
         txn.setType(TransactionType.DPS_DEPOSIT);
-        txn.setDescription("DPS Payment For DPS ID "+ dpsId);
+        txn.setDescription("DPS Payment for DPS ID " + dpsId);
         txn.setToken(token);
-        System.out.println("token----------" + token);
         transactionRepository.save(txn);
 
-        dpsPaymentRepository.save(payment);
-
-        // Create GL transaction for DPS Payment
+        // GL Transaction তৈরি
         GLTransaction glTxn = new GLTransaction();
         glTxn.setAmount(amount);
         glTxn.setType(GLType.DPS_PAYMENT);
-        glTxn.setDescription("DPS Payment.DPS ID Is :"+dpsAccount.getId());
+        glTxn.setDescription("DPS Payment. DPS ID: " + dpsId);
         glTxn.setReferenceId(dpsAccount.getId());
         glTxn.setReferenceType("DPS");
         glTransactionRepository.save(glTxn);
 
-
+        // যদি মেয়াদ পূর্ণ হয় → DPS বন্ধ করা + maturity টাকা ফেরত দেওয়া
         if (dpsAccount.getMonthsPaid() >= dpsAccount.getTermMonths()) {
             dpsAccount.setStatus(DpsStatus.CLOSED);
-            //account close hole maturity ammount soho taka balance a add hobe.
+
             account.setBalance(account.getBalance() + dpsAccount.getMaturityAmount());
-            Transaction transaction = new Transaction();
-            transaction.setAccount(account);
-            transaction.setAmount(dpsAccount.getMaturityAmount());
-            transaction.setTransactionTime(new Date());
-            transaction.setType(TransactionType.DEPOSIT);
-            transaction.setDescription("Deposit maturity Ammount from DPS ID "+dpsId);
-            transaction.setToken(token);
-            transactionRepository.save(transaction);
 
-            GLTransaction glTxn1 = new GLTransaction();
-            glTxn1.setAmount(-dpsAccount.getMaturityAmount());    // minus because money going out
-            glTxn1.setType(GLType.DPS_CLOSED);
-            glTxn1.setDescription("Maturity amount credited for DPS ID " + dpsId);
-            glTxn1.setReferenceId(dpsAccount.getId());
-            glTxn1.setReferenceType("DPS");
-            glTransactionRepository.save(glTxn1);
+            Transaction maturityTxn = new Transaction();
+            maturityTxn.setAccount(account);
+            maturityTxn.setAmount(dpsAccount.getMaturityAmount());
+            maturityTxn.setTransactionTime(new Date());
+            maturityTxn.setType(TransactionType.DEPOSIT);
+            maturityTxn.setDescription("Deposit maturity amount from DPS ID " + dpsId);
+            maturityTxn.setToken(token);
+            transactionRepository.save(maturityTxn);
 
+            GLTransaction glTxnClose = new GLTransaction();
+            glTxnClose.setAmount(-dpsAccount.getMaturityAmount());
+            glTxnClose.setType(GLType.DPS_CLOSED);
+            glTxnClose.setDescription("Maturity credited for DPS ID " + dpsId);
+            glTxnClose.setReferenceId(dpsAccount.getId());
+            glTxnClose.setReferenceType("DPS");
+            glTransactionRepository.save(glTxnClose);
         }
-
 
         accountRepository.save(account);
         dpsAccountRepository.save(dpsAccount);
     }
 
 
+//======================================================
+    //monthly payments methode  End =================
+//======================================================
 
 
 
