@@ -216,39 +216,23 @@ public class DpsService {
         dpsAccount.setTotalDeposited(dpsAccount.getTotalDeposited() + amount);
 
         //===================================================next Debit Date=======Start============
-        // নতুন nextDebitDate সেট করা (শেষ পেমেন্ট থেকে ৩০ দিন পর)
+        // নতুন nextDebitDate সেট করা
+        //1 ঘণ্টা পরের জন্য
         Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date()); // বর্তমান পেমেন্ট তারিখ
-        cal.add(Calendar.DAY_OF_MONTH, 30);
+        cal.setTime(new Date()); // বর্তমান সময়
+        cal.add(Calendar.DAY_OF_MONTH, 1); // 1 দিন পরের জন্য
         dpsAccount.setNextDebitDate(cal.getTime());
 
-        // 1 দিন পরের জন্য
-//        Calendar cal = Calendar.getInstance();
-//        cal.setTime(new Date()); // বর্তমান পেমেন্ট তারিখ
-//        cal.add(Calendar.DAY_OF_MONTH, 1); // 1 দিন
-//        dpsAccount.setNextDebitDate(cal.getTime());
+        //        cal.add(Calendar.DAY_OF_MONTH, 30);    // ৩০ দিন  পরের জন্য
 
+        //        cal.add(Calendar.DAY_OF_MONTH, 1); // 1 দিন পরের জন্য
 
-        //1 ঘণ্টা পরের জন্য
-//        Calendar cal = Calendar.getInstance();
-//        cal.setTime(new Date()); // বর্তমান সময়
-//        cal.add(Calendar.HOUR_OF_DAY, 1); // 1 ঘণ্টা পরে
-//        dpsAccount.setNextDebitDate(cal.getTime());
+       //        cal.add(Calendar.HOUR_OF_DAY, 1); // 1 ঘণ্টা পরে
 
+        //        cal.add(Calendar.MINUTE, 1); // 1 মিনিট পরের জন্য
 
+        //        cal.add(Calendar.SECOND, 20); // 10 সেকেন্ড পরের জন্য
 
-        //1 মিনিট পরের জন্য
-//        Calendar cal = Calendar.getInstance();
-//        cal.setTime(new Date());
-//        cal.add(Calendar.MINUTE, 1); // 1 মিনিট
-//        dpsAccount.setNextDebitDate(cal.getTime());
-
-
-        // 10 সেকেন্ড পরের জন্য
-//        Calendar cal = Calendar.getInstance();
-//        cal.setTime(new Date());
-//        cal.add(Calendar.SECOND, 20); // 10 সেকেন্ড
-//        dpsAccount.setNextDebitDate(cal.getTime());
 
 
 
@@ -270,7 +254,9 @@ public class DpsService {
         txn.setTransactionTime(new Date());
         txn.setType(TransactionType.DPS_DEPOSIT);
         txn.setDescription("DPS Payment for DPS ID " + dpsId);
-        txn.setToken(token);
+//        txn.setToken(token);
+        txn.setToken(token != null ? token : "SYSTEM");
+
         transactionRepository.save(txn);
 
         // GL Transaction তৈরি
