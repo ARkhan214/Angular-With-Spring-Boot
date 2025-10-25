@@ -1,0 +1,186 @@
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { CanActivate, Router, UrlTree } from '@angular/router';
+import { Observable } from 'rxjs';
+import { AuthService } from '../service/auth-service';
+// import * as CryptoJS from 'crypto-js';
+import * as CryptoJS from 'crypto-js'
+
+@Injectable({
+  providedIn: 'root'
+})
+export class UserGuard implements CanActivate {
+
+  private secretKey = 'secretKeyDebona';
+
+
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) { }
+
+  private decrypt(value: string): string {
+    try {
+      const bytes = CryptoJS.AES.decrypt(value, this.secretKey);
+      return bytes.toString(CryptoJS.enc.Utf8);
+    } catch (error) {
+      console.error('Decryption error:', error);
+      return '';
+    }
+  }
+
+  canActivate(): boolean | UrlTree | Observable<boolean | UrlTree> {
+    console.log('Checking UserGuard. Current Role:', this.authService.getUserRole());
+
+    const encryptedRole = localStorage.getItem('userRole');
+    console.log('Encrypted Role:', encryptedRole);
+
+    if (!encryptedRole) {
+      return this.router.createUrlTree(['/login']);
+    }
+
+    const decryptedRole = this.decrypt(encryptedRole);
+    console.log('Decrypted Role:', decryptedRole);
+
+    if (decryptedRole === 'USER') {
+      return true;
+    }
+
+    if (this.authService.isUser()) {
+      return true;
+    }
+
+    return this.router.createUrlTree(['/login']);
+  }
+
+
+
+  //---------------
+
+  // constructor(
+
+  //     private authService: AuthService,
+  //     private router: Router,
+
+  //     @Inject(PLATFORM_ID) private platformId: Object
+  //   ) {}
+
+
+  //    canActivate(): boolean | UrlTree | Observable<boolean | UrlTree> {
+
+  //     console.log('Role from AuthService:', this.authService.getUserRole());
+
+  //     if(this.authService.isUser()){
+
+  //       return true;
+  //     }
+
+  //     return this.router.createUrlTree(['login']);
+
+  //   }
+
+
+
+
+  //-----------------------
+  // constructor(
+
+  //   private router: Router
+
+  // ) { }
+
+  // canActivate(): boolean {
+  //   const data = localStorage.getItem('loggedInUser');
+  //   if (data) {
+  //     const user = JSON.parse(data);
+  //     if (user.type === 'user') {
+  //       console.log(' User access granted');
+  //       return true;
+  //     }
+  //   }
+
+  //   console.warn(' User access denied');
+  //   this.router.navigate(['/login']);
+  //   return false;
+  // }
+
+}
+
+================Old Cod ====Working=======24/10/2025======
+
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { CanActivate, Router, UrlTree } from '@angular/router';
+import { Observable } from 'rxjs';
+import { AuthService } from '../service/auth-service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class UserGuard implements CanActivate {
+
+constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  canActivate(): boolean | UrlTree | Observable<boolean | UrlTree> {
+    console.log('Checking UserGuard. Current Role:', this.authService.getUserRole());
+
+    if (this.authService.isUser()) {
+      return true;
+    }
+
+    return this.router.createUrlTree(['/login']);
+  }
+
+
+
+  //---------------
+
+// constructor(
+
+//     private authService: AuthService,
+//     private router: Router,
+
+//     @Inject(PLATFORM_ID) private platformId: Object
+//   ) {}
+
+
+//    canActivate(): boolean | UrlTree | Observable<boolean | UrlTree> {
+
+//     console.log('Role from AuthService:', this.authService.getUserRole());
+
+//     if(this.authService.isUser()){
+      
+//       return true;
+//     }
+
+//     return this.router.createUrlTree(['login']);
+ 
+//   }
+  
+
+
+
+//-----------------------
+  // constructor(
+
+  //   private router: Router
+
+  // ) { }
+
+  // canActivate(): boolean {
+  //   const data = localStorage.getItem('loggedInUser');
+  //   if (data) {
+  //     const user = JSON.parse(data);
+  //     if (user.type === 'user') {
+  //       console.log(' User access granted');
+  //       return true;
+  //     }
+  //   }
+
+  //   console.warn(' User access denied');
+  //   this.router.navigate(['/login']);
+  //   return false;
+  // }
+
+}
